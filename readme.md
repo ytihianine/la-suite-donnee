@@ -43,7 +43,7 @@ make test
 ├── .github/
 │    ├── workflows: workflows github
 │    └── skills: skills copilot
-├── src/         # Code source
+├── argocd/      # ArgoCD application manifests
 ├── tests/       # Tests unitaires (pytest)
 └── docs/        # Documentation complementaire
 ```
