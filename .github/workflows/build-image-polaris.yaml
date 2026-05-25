@@ -1,0 +1,29 @@
+name: Build and Push custom apache polaris image
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/apache-polaris
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image
+        run: docker build -f images/polaris/Dockerfile -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA::7} .
+
+      - name: Push Docker image
+        if: github.ref == 'refs/heads/main'
+        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA::7}
