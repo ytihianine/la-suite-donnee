@@ -1,4 +1,6 @@
-FROM trinodb/trino:latest
+ARG TRINO_VERSION=481
+
+FROM trinodb/trino:${TRINO_VERSION}
 
 USER root
 
