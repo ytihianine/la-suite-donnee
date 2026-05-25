@@ -1,0 +1,11 @@
+apiVersion: v2
+name: superset-mef
+description: Apache Superset umbrella chart
+type: application
+version: 0.1.0
+appVersion: "1.0"
+
+dependencies:
+- name: superset
+  version: 0.15.5
+  repository: http://apache.github.io/superset/
