@@ -8,7 +8,7 @@ spec:
     server: https://kubernetes.default.svc
   source:
     path: argocd/secret-operator
-    repoURL: https://github.com/ytihianine/deploiement-application.git
+    repoURL: https://github.com/ytihianine/la-suite-donnee.git
     targetRevision: HEAD
     helm:
       valueFiles:
