@@ -1,0 +1,801 @@
+# /app/docker/pythonpath/superset_config_docker.py
+from typing import Any
+
+# ------------------------
+# Application - configuration
+# ------------------------
+SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 6553500
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "pool_size": 20,       # default: 5
+    "max_overflow": 30,    # default: 10
+    "pool_timeout": 60,    # default: 30
+    "pool_recycle": 1800,  # refresh every 30 minutes to avoid stale connections
+}
+
+# ------------------------
+# Langues
+# ------------------------
+BABEL_DEFAULT_LOCALE = "fr"
+
+LANGUAGES = {
+    "fr": {"flag": "fr", "name": "Français"},
+    "en": {"flag": "us", "name": "English"},
+}
+
+# ------------------------
+# Number & Datetime format
+# ------------------------
+# Pour plus d'informations: https://github.com/apache/superset/blob/886f52554539318521858fbcf493123c8c4199ef/superset/config.py#L500
+D3_FORMAT = {
+    "decimal": ",",           # - decimal place string (e.g., ".").
+    "thousands": " ",         # - group separator string (e.g., " ").
+    "grouping": [3],          # - array of group sizes (e.g., [3]), cycled as needed.
+    "currency": ["", " €"]     # - currency prefix/suffix strings (e.g., ["$", ""])
+}
+D3_TIME_FORMAT = {
+    "dateTime": "%A %e %B %Y à %X",
+    "date": "%d/%m/%Y",
+    "time": "%H:%M:%S",
+    "periods": ["", ""],
+    "days": [
+        "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"
+    ],
+    "shortDays": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    "months": [
+        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
+        "Septembre", "Octobre", "Novembre", "Décembre"
+    ],
+    "shortMonths": [
+        "Jan", "Fév", "Mar", "Avr",
+        "Mai", "Jun", "Jul", "Aoû",
+        "Sep", "Oct", "Nov", "Déc"
+    ]
+}
+
+
+# ------------------------
+# Fonctionnalités complémentaires
+# ------------------------
+# Pour plus d'informations: https://github.com/apache/superset/blob/886f52554539318521858fbcf493123c8c4199ef/superset/config.py#L500
+FEATURE_FLAGS: dict[str, bool] = {
+    # When using a recent version of Druid that supports JOINs turn this on
+    "DRUID_JOINS": False,
+    "DYNAMIC_PLUGINS": False,
+    # Authorize jinja templating
+    "ENABLE_TEMPLATE_PROCESSING": True,
+    # Allow for javascript controls components
+    # this enables programmers to customize certain charts (like the
+    # geospatial ones) by inputting javascript in controls. This exposes
+    # an XSS security vulnerability
+    "ENABLE_JAVASCRIPT_CONTROLS": True,  # deprecated
+    # When this feature is enabled, nested types in Presto will be
+    # expanded into extra columns and/or arrays. This is experimental,
+    # and doesn't work with all nested types.
+    "PRESTO_EXPAND_DATA": False,
+    # Exposes API endpoint to compute thumbnails
+    "THUMBNAILS": False,
+    # Enables the endpoints to cache and retrieve dashboard screenshots via webdriver.
+    # Requires configuring Celery and a cache using THUMBNAIL_CACHE_CONFIG.
+    "ENABLE_DASHBOARD_SCREENSHOT_ENDPOINTS": False,
+    # Generate screenshots (PDF or JPG) of dashboards using the web driver.
+    # When disabled, screenshots are generated on the fly by the browser.
+    # This feature flag is used by the download feature in the dashboard view.
+    # It is dependent on ENABLE_DASHBOARD_SCREENSHOT_ENDPOINT being enabled.
+    "ENABLE_DASHBOARD_DOWNLOAD_WEBDRIVER_SCREENSHOT": False,
+    "TAGGING_SYSTEM": True,
+    "SQLLAB_BACKEND_PERSISTENCE": True,
+    "LISTVIEWS_DEFAULT_CARD_VIEW": False,
+    # When True, this escapes HTML (rather than rendering it) in Markdown components
+    "ESCAPE_MARKDOWN_HTML": False,
+    "DASHBOARD_VIRTUALIZATION": False,
+    # This feature flag is stil in beta and is not recommended for production use.
+    "GLOBAL_ASYNC_QUERIES": False,
+    "EMBEDDED_SUPERSET": True,
+    # Enables Alerts and reports new implementation
+    "ALERT_REPORTS": True,
+    "ALERT_REPORT_TABS": True,
+    "ALERT_REPORT_SLACK_V2": False,
+    "DASHBOARD_RBAC": True,
+    "ENABLE_ADVANCED_DATA_TYPES": False,
+    # Enabling ALERTS_ATTACH_REPORTS, the system sends email and slack message
+    # with screenshot and link
+    # Disables ALERTS_ATTACH_REPORTS, the system DOES NOT generate screenshot
+    # for report with type 'alert' and sends email and slack message with only link;
+    # for report with type 'report' still send with email and slack message with
+    # screenshot and link
+    "ALERTS_ATTACH_REPORTS": True,
+    # Allow users to export full CSV of table viz type.
+    # This could cause the server to run out of memory or compute.
+    "ALLOW_FULL_CSV_EXPORT": True,
+    "ALLOW_ADHOC_SUBQUERY": False,
+    "USE_ANALOGOUS_COLORS": False,
+    # Apply RLS rules to SQL Lab queries. This requires parsing and manipulating the
+    # query, and might break queries and/or allow users to bypass RLS. Use with care!
+    "RLS_IN_SQLLAB": False,
+    # Try to optimize SQL queries — for now only predicate pushdown is supported.
+    "OPTIMIZE_SQL": False,
+    # When impersonating a user, use the email prefix instead of the username
+    "IMPERSONATE_WITH_EMAIL_PREFIX": False,
+    # Enable caching per impersonation key (e.g username) in a datasource where user
+    # impersonation is enabled
+    "CACHE_IMPERSONATION": False,
+    # Enable caching per user key for Superset cache (not database cache impersonation)
+    "CACHE_QUERY_BY_USER": False,
+    # Enable sharing charts with embedding
+    "EMBEDDABLE_CHARTS": True,
+    "DRILL_TO_DETAIL": True,  # deprecated
+    "DRILL_BY": True,
+    "DATAPANEL_CLOSED_BY_DEFAULT": False,
+    # The feature is off by default, and currently only supported in Presto and Postgres,  # noqa: E501
+    # and Bigquery.
+    # It also needs to be enabled on a per-database basis, by adding the key/value pair
+    # `cost_estimate_enabled: true` to the database `extra` attribute.
+    "ESTIMATE_QUERY_COST": False,
+    # Allow users to enable ssh tunneling when creating a DB.
+    # Users must check whether the DB engine supports SSH Tunnels
+    # otherwise enabling this flag won't have any effect on the DB.
+    "SSH_TUNNELING": False,
+    "AVOID_COLORS_COLLISION": True,
+    # Do not show user info in the menu
+    "MENU_HIDE_USER_INFO": False,
+    # Allows users to add a ``superset://`` DB that can query across databases. This is
+    # an experimental feature with potential security and performance risks, so use with
+    # caution. If the feature is enabled you can also set a limit for how much data is
+    # returned from each database in the ``SUPERSET_META_DB_LIMIT`` configuration value
+    # in this file.
+    "ENABLE_SUPERSET_META_DB": False,
+    # Set to True to replace Selenium with Playwright to execute reports and thumbnails.
+    # Unlike Selenium, Playwright reports support deck.gl visualizations
+    # Enabling this feature flag requires installing "playwright" pip package
+    "PLAYWRIGHT_REPORTS_AND_THUMBNAILS": False,
+    # Set to True to enable experimental chart plugins
+    "CHART_PLUGINS_EXPERIMENTAL": True,
+    # Regardless of database configuration settings, force SQLLAB to run async using Celery  # noqa: E501
+    "SQLLAB_FORCE_RUN_ASYNC": False,
+    # Set to True to to enable factory resent CLI command
+    "ENABLE_FACTORY_RESET_COMMAND": False,
+    # Whether Superset should use Slack avatars for users.
+    # If on, you'll want to add "https://avatars.slack-edge.com" to the list of allowed
+    # domains in your TALISMAN_CONFIG
+    "SLACK_ENABLE_AVATARS": False,
+    # Allow users to optionally specify date formats in email subjects, which will be parsed if enabled. # noqa: E501
+    "DATE_FORMAT_IN_EMAIL_SUBJECT": False,
+    # Allow metrics and columns to be grouped into (potentially nested) folders in the
+    # chart builder
+    "DATASET_FOLDERS": True,
+}
+
+# ------------------------
+# HTML Sanitization
+# ------------------------
+# Pour plus d'informations: https://github.com/apache/superset/blob/886f52554539318521858fbcf493123c8c4199ef/superset/config.py#L940
+HTML_SANITIZATION = False
+HTML_SANITIZATION_SCHEMA_EXTENSIONS: dict[str, Any] = {}
+
+# ------------------------
+# Thèmes
+# ------------------------
+THEME_DEFAULT = {
+  "token": {
+    "wireframe": False,
+    "brandAppName": "ChartsGouv",  # Window titles
+    "brandLogoAlt": "ChartsGouv",  # Logo alt text
+    "brandLogoUrl": "/static/assets/local/images/app_icon_avec_titre_horizontal.png",
+    "colorPrimary": "#000091",
+    "colorInfo": "#000091",
+    "colorError": "#ce0500",
+    "colorSuccess": "#18753c",
+    "colorWarning": "#b34000",
+    "colorPrimaryHover": "#1212ff",
+    "colorPrimaryActive": "#2323ff",
+    "colorSuccessHover": "#27a959",
+    "colorSuccessActive": "#2fc368",
+    "colorWarningHover": "#ff6218",
+    "colorWarningActive": "#ff7a55",
+    "colorErrorHover": "#ff2725",
+    "colorErrorActive": "#ff4140",
+    "colorLink": "#000091",
+    "colorLinkHover": "#1212ff",
+    "colorLinkActive": "#2323ff",
+    "colorSuccessText": "#18753c",
+    "colorWarningText": "#ffffff",
+    "colorWarningTextActive": "#ffffff",
+    "colorWarningTextHover": "#ffffff",
+    "colorErrorTextHover": "#ffffff",
+    "colorErrorText": "#ffffff",
+    "colorErrorTextActive": "#ffffff",
+    "colorInfoTextHover": "#ffffff",
+    "colorInfoText": "#ffffff",
+    "colorInfoTextActive": "#ffffff",
+    "colorInfoHover": "#98b4ff",
+    "colorInfoActive": "#b4c7ff",
+    "colorTextBase": "#3a3a3a"
+  },
+  "components": {
+    "Button": {
+      "borderRadius": 0,
+      "borderRadiusSM": 0,
+      "borderRadiusLG": 0,
+      "textTextColor": "rgb(255,255,255)",
+      "textTextActiveColor": "rgb(255,255,255)",
+      "textTextHoverColor": "rgb(255,255,255)",
+      "solidTextColor": "rgb(255,255,255)",
+      "colorText": "rgb(255,255,255)",
+      "colorPrimaryText": "rgb(106,106,244)",
+      "colorPrimaryTextActive": "rgb(255,255,255)",
+      "colorPrimaryTextHover": "rgb(255,255,255)",
+      "colorBgTextActive": "rgb(255,255,255)",
+      "textHoverBg": "rgb(255,255,255)",
+      "colorBgContainerDisabled": "rgb(255,255,255)",
+      "colorBgSolid": "rgb(255,255,255)",
+      "colorBgSolidActive": "rgb(255,255,255)",
+      "colorBgSolidHover": "rgb(255,255,255)",
+      "colorPrimaryBgHover": "rgb(18,18,255)",
+      "colorTextLightSolid": "rgb(255,255,255)",
+      "defaultColor": "rgb(0,0,145)",
+      "algorithm": True,
+      "colorError": "rgb(201,25,30)",
+      "colorErrorActive": "rgb(249,90,92)",
+      "colorErrorHover": "rgb(249,63,66)",
+      "primaryShadow": "",
+      "defaultBg": "rgb(238,238,238)",
+      "defaultBorderColor": "rgb(0,0,145)"
+    },
+    "Tag": {
+      "colorSuccessText": "#ffffff",
+      "borderRadiusSM": 0
+    },
+    "Typography": {
+      "fontFamilyCode": "'Marianne','SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace",
+      "colorText": "rgb(58,58,58)",
+      "algorithm": True,
+      "fontSize": 16,
+      "fontSizeHeading1": 40,
+      "fontSizeHeading2": 32,
+      "fontSizeHeading3": 28,
+      "fontSizeHeading4": 24,
+      "fontSizeHeading5": 22
+    },
+    "InputNumber": {
+      "activeBg": "rgb(238,238,238)",
+      "activeBorderColor": "rgb(0,0,145)",
+      "addonBg": "rgb(238,238,238)",
+      "handleBorderColor": "rgb(238,238,238)",
+      "handleHoverColor": "rgb(0,0,145)",
+      "hoverBorderColor": "rgb(0,0,145)",
+      "colorBgContainer": "rgb(238,238,238)",
+      "borderRadius": 0,
+      "borderRadiusLG": 0,
+      "borderRadiusSM": 0,
+      "hoverBg": "rgb(238,238,238)",
+      "activeShadow": "",
+      "errorActiveShadow": "",
+      "warningActiveShadow": "",
+      "motionDurationMid": "0s",
+      "motionDurationSlow": "0s",
+      "colorText": "rgb(58,58,58)"
+    },
+    "Select": {
+      "motionDurationSlow": "0.s",
+      "motionDurationMid": "0.s",
+      "borderRadius": 0,
+      "borderRadiusLG": 0,
+      "borderRadiusSM": 0,
+      "borderRadiusXS": 0,
+      "activeBorderColor": "rgb(0,0,145)",
+      "boxShadowSecondary": "",
+      "activeOutlineColor": "rgb(255,255,255)",
+      "hoverBorderColor": "rgb(0,0,145)",
+      "optionSelectedBg": "rgb(238,238,238)",
+      "colorBgBase": "rgb(238,238,238)"
+    },
+    "Dropdown": {
+      "boxShadowPopoverArrow": "",
+      "motionDurationMid": "0s",
+      "boxShadowSecondary": "",
+      "borderRadiusLG": 0,
+      "borderRadiusSM": 0,
+      "borderRadiusXS": 0
+    },
+    "Menu": {
+      "motionDurationSlow": "0s",
+      "motionDurationMid": "0s",
+      "motionDurationFast": "0s",
+      "boxShadowSecondary": "",
+      "borderRadius": 0,
+      "borderRadiusLG": 0,
+      "itemBorderRadius": 0,
+      "subMenuItemBorderRadius": 0,
+      "itemHoverBg": "rgb(238,238,238)",
+      "subMenuItemBg": "rgb(255,255,255)",
+      "subMenuItemSelectedColor": "rgb(0,0,145)",
+      "itemColor": "rgb(58,58,58)",
+      "colorText": "rgb(58,58,58)",
+      "horizontalItemSelectedBg": "rgb(227,227,253)",
+      "horizontalItemSelectedColor": "rgb(0,0,145)"
+    },
+    "Slider": {
+      "railSize": 8,
+      "handleSize": 16,
+      "borderRadiusXS": 20,
+      "railBg": "rgb(255,255,255)",
+      "railHoverBg": "rgb(255,255,255)",
+      "trackBg": "rgb(0,0,145)",
+      "colorPrimaryBorderHover": "rgb(0,0,145)",
+      "handleActiveColor": "rgb(0,0,145)",
+      "handleColor": "rgb(0,0,145)",
+      "handleLineWidth": 1,
+      "handleLineWidthHover": 1,
+      "handleSizeHover": 16
+    },
+    "Pagination": {
+      "borderRadius": 0,
+      "borderRadiusLG": 0,
+      "borderRadiusSM": 0,
+      "itemInputBg": "rgb(238,238,238)",
+      "colorBgContainer": "rgba(255,255,255,0)",
+      "controlHeight": 32,
+      "colorBgTextActive": "rgb(255,255,255)",
+      "colorPrimaryBorder": "rgb(0,0,145)",
+      "colorPrimaryHover": "rgb(0,0,145)",
+      "colorBgTextHover": "rgb(58,58,58)"
+    },
+    "Input": {
+      "borderRadius": 0,
+      "borderRadiusLG": 0,
+      "borderRadiusSM": 0,
+      "activeBg": "rgb(238,238,238)",
+      "activeBorderColor": "rgb(0,0,145)",
+      "hoverBorderColor": "rgb(0,0,145)",
+      "hoverBg": "rgb(238,238,238)",
+      "addonBg": "rgb(238,238,238)",
+      "colorText": "rgb(58,58,58)"
+    },
+    "Modal": {
+      "borderRadiusLG": 0,
+      "borderRadiusSM": 0,
+      "colorText": "rgb(22,22,22)",
+      "titleFontSize": 20,
+      "colorIcon": "rgb(0,0,145)",
+      "colorIconHover": "rgb(0,0,145)",
+      "colorBgTextHover": "rgb(238,238,238)"
+    },
+    "Tooltip": {
+      "borderRadius": 0,
+      "borderRadiusXS": 0,
+      "colorTextLightSolid": "rgb(58,58,58)",
+      "colorBgSpotlight": "rgb(255,255,255)"
+    },
+    "Alert": {
+      "borderRadiusLG": 0
+    },
+    "Message": {
+      "borderRadiusLG": 0
+    },
+    "Popover": {
+      "borderRadiusLG": 0,
+      "borderRadiusXS": 0,
+      "fontWeightStrong": 800
+    },
+    "Checkbox": {
+      "borderRadiusSM": 2,
+      "controlInteractiveSize": 18,
+      "colorPrimaryHover": "rgb(0,0,145)"
+    },
+    "Tabs": {
+      "borderRadius": 0,
+      "borderRadiusLG": 0,
+      "inkBarColor": "rgb(0,0,145)",
+      "itemActiveColor": "rgb(0,0,145)",
+      "itemHoverColor": "rgba(58,58,58,0.88)",
+      "cardBg": "rgb(227,227,253)"
+    },
+    "Table": {
+      "headerBg": "rgb(246,246,246)",
+      "borderRadius": 0,
+      "headerBorderRadius": 0
+    }
+  }
+}
+
+THEME_DARK = None
+
+
+# ------------------------
+# Couleurs & Palettes
+# ------------------------
+DSFR_COLORS = {
+    "sun": {
+        "grey-1000-50": "#fff",
+        "grey-975-75": "#f6f6f6",
+        "grey-950-100": "#eee",
+        "grey-200-850": "#3a3a3a",
+        "grey-925-125": "#e5e5e5",
+        "grey-1000-75": "#fff",
+        "grey-1000-100": "#fff",
+        "grey-975-100": "#f6f6f6",
+        "grey-975-125": "#f6f6f6",
+        "grey-950-125": "#eee",
+        "grey-950-150": "#eee",
+        "grey-50-1000": "#161616",
+        "grey-425-625": "#666",
+        "grey-625-425": "#929292",
+        "grey-0-1000": "#000",
+        "grey-900-175": "#ddd",
+        "blue-france-975-75": "#f5f5fe",
+        "blue-france-950-100": "#ececfe",
+        "blue-france-sun-113-625": "#000091",
+        "blue-france-925-125": "#e3e3fd",
+        "blue-france-975-sun-113": "#f5f5fe",
+        "blue-france-main-525": "#6a6af4",
+        "blue-france-850-200": "#cacafb",
+        "info-950-100": "#e8edff",
+        "info-950-100-hover": "#c2d1ff",
+        "info-950-100-active": "#a9bfff",
+        "info-425-625": "#0063cb",
+        "info-425-625-hover": "#3b87ff",
+        "info-425-625-active": "#6798ff",
+        "info-975-75": "#f4f6ff",
+        "success-950-100": "#b8fec9",
+        "success-950-100-hover": "#46fd89",
+        "success-950-100-active": "#34eb7b",
+        "success-425-625": "#18753c",
+        "success-425-625-hover": "#27a959",
+        "success-425-625-active": "#2fc368",
+        "success-975-75": "#dffee6",
+        "warning-950-100": "#ffe9e6",
+        "warning-950-100-hover": "#ffc6bd",
+        "warning-950-100-active": "#ffb0a2",
+        "warning-425-625": "#b34000",
+        "warning-425-625-hover": "#ff6218",
+        "warning-425-625-active": "#ff7a55",
+        "warning-975-75": "#fff4f3",
+        "error-950-100": "#ffe9e9",
+        "error-950-100-hover": "#ffc5c5",
+        "error-950-100-active": "#ffafaf",
+        "error-425-625": "#ce0500",
+        "error-425-625-hover": "#ff2725",
+        "error-425-625-active": "#ff4140",
+        "error-975-75": "#fff4f4",
+        "green-tilleul-verveine-975-75": "#fef7da",
+        "green-tilleul-verveine-sun-418-moon-817": "#66673d",
+        "green-tilleul-verveine-925-125": "#fbe769",
+        "green-bourgeon-sun-425-moon-759": "#447049",
+        "green-emeraude-sun-425-moon-753": "#297254",
+        "green-menthe-sun-373-moon-652": "#37635f",
+        "green-archipel-sun-391-moon-716": "#006a6f",
+        "blue-ecume-sun-247-moon-675": "#2f4077",
+        "blue-cumulus-sun-368-moon-732": "#3558a2",
+        "purple-glycine-sun-319-moon-630": "#6e445a",
+        "pink-macaron-sun-406-moon-833": "#8d533e",
+        "pink-tuile-sun-425-moon-750": "#a94645",
+        "yellow-tournesol-sun-407-moon-922": "#716043",
+        "yellow-moutarde-sun-348-moon-860": "#695240",
+        "orange-terre-battue-sun-370-moon-672": "#755348",
+        "brown-cafe-creme-sun-383-moon-885": "#685c48",
+        "brown-caramel-sun-425-moon-901": "#845d48",
+        "brown-opera-sun-395-moon-820": "#745b47",
+        "beige-gris-galet-sun-407-moon-821": "#6a6156",
+    },
+    "moon": {
+        "grey-1000-50": "#161616",
+        "grey-975-75": "#1e1e1e",
+        "grey-950-100": "#242424",
+        "grey-200-850": "#cecece",
+        "grey-925-125": "#2a2a2a",
+        "grey-1000-75": "#1e1e1e",
+        "grey-1000-100": "#242424",
+        "grey-975-100": "#242424",
+        "grey-975-125": "#2a2a2a",
+        "grey-950-125": "#2a2a2a",
+        "grey-950-150": "#2f2f2f",
+        "grey-50-1000": "#fff",
+        "grey-425-625": "#929292",
+        "grey-625-425": "#666",
+        "grey-0-1000": "#fff",
+        "grey-900-175": "#353535",
+        "blue-france-975-75": "#1b1b35",
+        "blue-france-950-100": "#21213f",
+        "blue-france-sun-113-625": "#8585f6",
+        "blue-france-925-125": "#272747",
+        "blue-france-975-sun-113": "#000091",
+        "blue-france-main-525": "#6a6af4",
+        "blue-france-850-200": "#313178",
+        "info-950-100": "#1d2437",
+        "info-425-625": "#518fff",
+        "success-950-100": "#19271d",
+        "success-425-625": "#27a658",
+        "warning-950-100": "#361e19",
+        "warning-425-625": "#fc5d00",
+        "error-950-100": "#391c1c",
+        "error-425-625": "#ff5655",
+        "green-tilleul-verveine-975-75": "#201e14",
+        "green-tilleul-verveine-sun-418-moon-817": "#d8c634",
+        "green-tilleul-verveine-925-125": "#2d2a1d",
+        "green-bourgeon-sun-425-moon-759": "#99c221",
+        "green-emeraude-sun-425-moon-753": "#34cb6a",
+        "green-menthe-sun-373-moon-652": "#21ab8e",
+        "green-archipel-sun-391-moon-716": "#34bab5",
+        "blue-ecume-sun-247-moon-675": "#869ece",
+        "blue-cumulus-sun-368-moon-732": "#7ab1e8",
+        "purple-glycine-sun-319-moon-630": "#ce70cc",
+        "pink-macaron-sun-406-moon-833": "#ffb7ae",
+        "pink-tuile-sun-425-moon-750": "#ff9575",
+        "yellow-tournesol-sun-407-moon-922": "#ffe552",
+        "yellow-moutarde-sun-348-moon-860": "#ffca00",
+        "orange-terre-battue-sun-370-moon-672": "#ff732c",
+        "brown-cafe-creme-sun-383-moon-885": "#ecd7a2",
+        "brown-caramel-sun-425-moon-901": "#fbd8ab",
+        "brown-opera-sun-395-moon-820": "#e6be92",
+        "beige-gris-galet-sun-407-moon-821": "#d0c3b7",
+    },
+}
+
+
+DSFR_CHART_COLORS = {
+    "sun": {
+        "dsfr-chart-colors-01": "#5C68E5",
+        "dsfr-chart-colors-02": "#82B5F2",
+        "dsfr-chart-colors-03": "#29598F",
+        "dsfr-chart-colors-04": "#31A7AE",
+        "dsfr-chart-colors-05": "#81EEF5",
+        "dsfr-chart-colors-06": "#B478F1",
+        "dsfr-chart-colors-07": "#CFB1F5",
+        "dsfr-chart-colors-08": "#CECECE",
+        "dsfr-chart-colors-09": "#DBDAFF",
+        "dsfr-chart-colors-10": "#00005F",
+        "dsfr-chart-colors-11": "#298641",
+        "dsfr-chart-colors-12": "#79D289",
+        "dsfr-chart-colors-13": "#EFB900",
+        "dsfr-chart-colors-14": "#FFA373",
+        "dsfr-chart-colors-15": "#E91719",
+        "dsfr-chart-colors-default": "#5C68E5",
+        "dsfr-chart-colors-neutral": "#B1B1B1",
+    },
+    "moon": {
+        "dsfr-chart-colors-01": "#5C68E5",
+        "dsfr-chart-colors-02": "#699BD6",
+        "dsfr-chart-colors-03": "#4878B1",
+        "dsfr-chart-colors-04": "#00828A",
+        "dsfr-chart-colors-05": "#51C1C8",
+        "dsfr-chart-colors-06": "#BC8AF2",
+        "dsfr-chart-colors-07": "#CFB1F5",
+        "dsfr-chart-colors-08": "#A4A4A4",
+        "dsfr-chart-colors-09": "#B8B9FF",
+        "dsfr-chart-colors-10": "#3647CA",
+        "dsfr-chart-colors-11": "#298641",
+        "dsfr-chart-colors-12": "#449D57",
+        "dsfr-chart-colors-13": "#AF8800",
+        "dsfr-chart-colors-14": "#FFA373",
+        "dsfr-chart-colors-15": "#E16834",
+        "dsfr-chart-colors-default": "#5C68E5",
+        "dsfr-chart-colors-neutral": "#808080",
+    },
+}
+
+
+# THEME_OVERRIDES is used for adding custom theme to superset
+# pour le theme par default voir superset-frontend/packages/superset-ui-core/src/style/index.tsx
+# https://preset.io/blog/theming-superset-progress-update/
+# [SIP-82] Improving Superset Theming https://github.com/apache/superset/issues/20159
+# https://www.systeme-de-design.gouv.fr/version-courante/fr/fondamentaux/couleurs--palette
+
+# EXTRA_CATEGORICAL_COLOR_SCHEMES is used for adding custom categorical color schemes
+# see DSFR colors "Couleurs illustratives"
+# https://preset.io/blog/customizing-chart-colors-with-superset-and-preset/#creating-custom-color-palettes
+# https://gouvernementfr.github.io/dsfr-chart/#colors
+EXTRA_CATEGORICAL_COLOR_SCHEMES = [
+    {
+        "id": "dsfr_sun",
+        "description": "Couleurs illustratives du DSFR (thème clair)",
+        "label": "DSFR (thème clair)",
+        "isDefault": True,
+        "colors": [
+            DSFR_COLORS["sun"]["green-bourgeon-sun-425-moon-759"],
+            DSFR_COLORS["sun"]["blue-ecume-sun-247-moon-675"],
+            DSFR_COLORS["sun"]["purple-glycine-sun-319-moon-630"],
+            DSFR_COLORS["sun"]["pink-macaron-sun-406-moon-833"],
+            DSFR_COLORS["sun"]["yellow-tournesol-sun-407-moon-922"],
+            DSFR_COLORS["sun"]["orange-terre-battue-sun-370-moon-672"],
+            DSFR_COLORS["sun"]["brown-cafe-creme-sun-383-moon-885"],
+            DSFR_COLORS["sun"]["beige-gris-galet-sun-407-moon-821"],
+            DSFR_COLORS["sun"]["green-emeraude-sun-425-moon-753"],
+            DSFR_COLORS["sun"]["blue-cumulus-sun-368-moon-732"],
+            DSFR_COLORS["sun"]["pink-tuile-sun-425-moon-750"],
+            DSFR_COLORS["sun"]["yellow-moutarde-sun-348-moon-860"],
+            DSFR_COLORS["sun"]["brown-caramel-sun-425-moon-901"],
+            DSFR_COLORS["sun"]["green-menthe-sun-373-moon-652"],
+            DSFR_COLORS["sun"]["brown-opera-sun-395-moon-820"],
+            DSFR_COLORS["sun"]["green-archipel-sun-391-moon-716"],
+            DSFR_COLORS["sun"]["green-tilleul-verveine-sun-418-moon-817"],
+        ],
+    },
+    {
+        "id": "dsfr_moon",
+        "description": "Couleurs illustratives du DSFR (thème sombre)",
+        "label": "DSFR (thème sombre)",
+        "isDefault": False,
+        "colors": [
+            DSFR_COLORS["moon"]["green-bourgeon-sun-425-moon-759"],
+            DSFR_COLORS["moon"]["blue-ecume-sun-247-moon-675"],
+            DSFR_COLORS["moon"]["purple-glycine-sun-319-moon-630"],
+            DSFR_COLORS["moon"]["pink-macaron-sun-406-moon-833"],
+            DSFR_COLORS["moon"]["yellow-tournesol-sun-407-moon-922"],
+            DSFR_COLORS["moon"]["orange-terre-battue-sun-370-moon-672"],
+            DSFR_COLORS["moon"]["brown-cafe-creme-sun-383-moon-885"],
+            DSFR_COLORS["moon"]["beige-gris-galet-sun-407-moon-821"],
+            DSFR_COLORS["moon"]["green-emeraude-sun-425-moon-753"],
+            DSFR_COLORS["moon"]["blue-cumulus-sun-368-moon-732"],
+            DSFR_COLORS["moon"]["pink-tuile-sun-425-moon-750"],
+            DSFR_COLORS["moon"]["yellow-moutarde-sun-348-moon-860"],
+            DSFR_COLORS["moon"]["brown-caramel-sun-425-moon-901"],
+            DSFR_COLORS["moon"]["green-menthe-sun-373-moon-652"],
+            DSFR_COLORS["moon"]["brown-opera-sun-395-moon-820"],
+            DSFR_COLORS["moon"]["green-archipel-sun-391-moon-716"],
+            DSFR_COLORS["moon"]["green-tilleul-verveine-sun-418-moon-817"],
+        ],
+    },
+    {
+        "id": "dsfr_chart_sun",
+        "description": "Couleurs du DSFR pour les graphiques (thème clair)",
+        "label": "DSFR Chart (thème clair)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-01"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-02"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-03"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-04"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-05"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-06"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-07"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-08"],
+        ],
+    },
+    {
+        "id": "dsfr_chart_moon",
+        "description": "Couleurs du DSFR pour les graphiques (thème sombre)",
+        "label": "DSFR Chart (thème sombre)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-01"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-02"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-03"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-04"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-05"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-06"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-07"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-08"],
+        ],
+    },
+    {
+        "id": "dsfr_chart_default_sun",
+        "description": "Couleur par défault du DSFR pour les graphiques (thème clair)",
+        "label": "DSFR Chart par défault (thème clair)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-default"],
+        ],
+    },
+    {
+        "id": "dsfr_chart_neutral_moon",
+        "description": "Couleur neutre du DSFR pour les graphiques (thème sombre)",
+        "label": "DSFR Chart neutre (thème sombre)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-default"],
+        ],
+    },
+    {
+        "id": "dsfr_chart_neutral_sun",
+        "description": "Couleur neutre du DSFR pour les graphiques (thème clair)",
+        "label": "DSFR Chart neutre (thème clair)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-neutral"],
+        ],
+    },
+    {
+        "id": "dsfr_chart_neutral_moon",
+        "description": "Couleur neutre du DSFR pour les graphiques (thème sombre)",
+        "label": "DSFR Chart neutre (thème sombre)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-neutral"],
+        ],
+    },
+]
+
+
+def make_description(color_name):
+    try:
+        cut_index = color_name.index("sun")
+        formatted_color_name = color_name[:cut_index].replace("-", " ")
+        return formatted_color_name.title()
+    except ValueError:
+        return color_name.title().replace("-", " ")
+
+
+# EXTRA_SEQUENTIAL_COLOR_SCHEMES is used for adding custom sequential color schemes
+EXTRA_SEQUENTIAL_COLOR_SCHEMES = [
+    {
+        "id": "dsfr_sequential_unicolor_sun",
+        "description": "Palette séquentielle unicolore du DSFR (thème clair)",
+        "isDiverging": False,
+        "label": "DSFR séquentielle unicolore (thème clair)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-09"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-10"],
+        ],
+    },
+    {
+        "id": "dsfr_sequential_unicolor_moon",
+        "description": "Palette séquentielle unicolore du DSFR (thème sombre)",
+        "isDiverging": False,
+        "label": "DSFR séquentielle unicolore (thème sombre)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-09"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-10"],
+        ],
+    },
+    {
+        "id": "dsfr_sequential_divergent_sun",
+        "description": "Palette séquentielle divergent du DSFR (thème clair)",
+        "isDiverging": False,
+        "label": "Séquentielle divergente (thème clair)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-11"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-13"],
+            DSFR_CHART_COLORS["sun"]["dsfr-chart-colors-15"],
+        ],
+    },
+    {
+        "id": "dsfr_sequential_divergent_moon",
+        "description": "Palette séquentielle divergent du DSFR (thème sombre)",
+        "isDiverging": False,
+        "label": "Séquentielle divergente (thème sombre)",
+        "isDefault": False,
+        "colors": [
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-11"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-13"],
+            DSFR_CHART_COLORS["moon"]["dsfr-chart-colors-15"],
+        ],
+    },
+]
+EXTRA_SEQUENTIAL_COLOR_SCHEMES.extend(
+    [
+        {
+            "id": colorname,
+            "description": make_description(colorname),
+            "isDiverging": True,
+            "label": make_description(colorname),
+            "isDefault": False,
+            "colors": [
+                DSFR_COLORS["sun"]["grey-950-100"],
+                DSFR_COLORS["sun"][colorname],
+            ],
+        }
+        for colorname in [
+            "green-bourgeon-sun-425-moon-759",
+            "blue-ecume-sun-247-moon-675",
+            "purple-glycine-sun-319-moon-630",
+            "pink-macaron-sun-406-moon-833",
+            "yellow-tournesol-sun-407-moon-922",
+            "orange-terre-battue-sun-370-moon-672",
+            "brown-cafe-creme-sun-383-moon-885",
+            "beige-gris-galet-sun-407-moon-821",
+            "green-emeraude-sun-425-moon-753",
+            "blue-cumulus-sun-368-moon-732",
+            "pink-tuile-sun-425-moon-750",
+            "yellow-moutarde-sun-348-moon-860",
+            "brown-caramel-sun-425-moon-901",
+            "green-menthe-sun-373-moon-652",
+            "brown-opera-sun-395-moon-820",
+            "green-archipel-sun-391-moon-716",
+            "green-tilleul-verveine-sun-418-moon-817",
+        ]
+    ]
+)
+EXTRA_SEQUENTIAL_COLOR_SCHEMES[0]["isDefault"] = True
