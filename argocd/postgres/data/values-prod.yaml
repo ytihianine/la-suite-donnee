@@ -1,0 +1,26 @@
+postgresql:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 17.6.0-debian-12-r4
+
+  auth:
+    # Password for the "postgres" admin user
+    postgresPassword: postgres
+    # User to create
+    username: pg_admin
+    password: pg_admin
+    database: defaultdb
+
+  primary:
+    name: main
+    resources:
+      limits:
+        cpu: "2"
+        memory: 10Gi
+      requests:
+        cpu: 250m
+        memory: 5Gi
+    persistence:
+      volumeName: "data"
+      size: 20Gi

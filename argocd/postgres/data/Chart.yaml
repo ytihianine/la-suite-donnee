@@ -1,0 +1,11 @@
+apiVersion: v2
+name: db-config-prod
+description: Postgres Database umbrella chart for app data 
+type: application
+version: 0.1.0
+appVersion: "1.0"
+
+dependencies:
+- name: postgresql
+  version: 18.6.7
+  repository: https://charts.bitnami.com/bitnami
