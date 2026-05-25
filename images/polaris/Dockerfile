@@ -1,4 +1,6 @@
-FROM apache/polaris:1.5.0
+ARG POLARIS_VERSION=1.5.0
+
+FROM apache/polaris:${POLARIS_VERSION}
 
 USER root
 
