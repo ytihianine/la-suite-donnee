@@ -1,0 +1,32 @@
+name: Build and Push custom Apache Superset image
+
+on:
+  workflow_dispatch:
+
+env:
+  SUPERSET_VERSION: 6.0.0
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/apache-superset
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image
+        run: docker build -f images/superset/Dockerfile 
+          --build-arg SUPERSET_VERSION=${{ env.SUPERSET_VERSION }}
+          -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA::7} .
+
+      - name: Push Docker image
+        if: github.ref == 'refs/heads/main'
+        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${GITHUB_SHA::7}
