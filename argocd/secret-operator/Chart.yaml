@@ -8,4 +8,4 @@ appVersion: "1.0"
 dependencies:
 - name: vault-secrets-operator
   version: 1.4.0
-  repository: https://github.com/hashicorp
+  repository: https://helm.releases.hashicorp.com
