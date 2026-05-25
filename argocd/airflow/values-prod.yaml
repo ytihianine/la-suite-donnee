@@ -1,0 +1,195 @@
+airflow:
+  # Must be set for ArgoCD deployment
+  createUserJob:
+    useHelmHooks: false
+    applyCustomEnv: false
+  migrateDatabaseJob:
+    jobAnnotations:
+      "argocd.argoproj.io/hook": Sync
+    useHelmHooks: false
+    applyCustomEnv: false
+
+  # Default airflow repository -- overridden by all the specific images below
+  defaultAirflowRepository: apache/airflow
+
+  # Default airflow tag to deploy
+  defaultAirflowTag: "3.1.7"
+
+  # Default airflow digest. If specified, it takes precedence over tag
+  defaultAirflowDigest: ~
+
+  # Airflow version (Used to make some decisions based on Airflow Version being deployed)
+  airflowVersion: "3.1.7"
+
+  # Images
+  images:
+    airflow:
+      repository: ghcr.io/ytihianine/traitement-de-donnees
+      tag: 3.1.7
+      # Specifying digest takes precedence over tag.
+      # digest:
+      pullPolicy: Always
+
+  extraEnvFrom: |
+    - secretRef:
+        name: 'airflow-secret'
+
+  # Ingress configuration
+  ingress:
+    # Configs for the Ingress of the API Server - Airflow 3+
+    apiServer:
+      # Enable API Server ingress resource
+      enabled: true
+
+      # The hostnames or hosts configuration for the API Server Ingress
+      hosts:
+      - name: airflow-mef.lab.sspcloud.fr
+        # configs for web Ingress TLS
+        tls:
+          # Enable TLS termination for the web Ingress
+          enabled: false
+          # the name of a pre-created Secret containing a TLS private key and certificate
+          secretName: ""
+
+      # The Ingress Class for the API Server Ingress (used only with Kubernetes v1.19 and above)
+      ingressClassName: "nginx"
+
+    # Configs for the Ingress of the web Service - Airflow < 3
+    web:
+      # Enable web ingress resource
+      enabled: false
+
+    # Configs for the Ingress of the flower Service
+    flower:
+      # Enable web ingress resource
+      enabled: false
+
+    # Configs for the Ingress of the statsd Service
+    statsd:
+      # Enable web ingress resource
+      enabled: false
+
+    # Configs for the Ingress of the pgbouncer Service
+    pgbouncer:
+      # Enable web ingress resource
+      enabled: false
+
+  # Environment variables for all airflow containers
+  # env: []
+
+  # Airflow database & redis config
+  data:
+    # Otherwise pass connection values in
+    metadataConnection:
+      user: postgres
+      pass: postgres
+      protocol: postgresql
+      host: postgresql-prod
+      port: 5432
+      db: airflow_config
+
+
+  # Fernet key settings
+  # Note: fernetKey can only be set during install, not upgrade
+  fernetKey: fernetKeyValue
+
+  # Flask secret key for Airflow 3+ Api: `[api] secret_key` in airflow.cfg
+  apiSecretKey: apiSecretKeyValue
+
+  # Secret key used to encode and decode JWTs: `[api_auth] jwt_secret` in airflow.cfg
+  jwtSecret: jwtSecretValue
+
+
+  # Airflow webserver settings
+  webserver:
+    enabled: false
+
+    # Create initial user.
+    defaultUser:
+      enabled: true
+      role: Admin
+      username: airflow_admin
+      email: mail@mail.fr
+      firstName: admin
+      lastName: test
+      password: airflow_admin
+
+  # Airflow Worker Config
+  workers:
+    persistence:
+      # Enable persistent volumes
+      enabled: false
+      # This policy determines whether PVCs should be deleted when StatefulSet is scaled down or removed.
+      persistentVolumeClaimRetentionPolicy: ~
+      # Volume size for triggerer StatefulSet
+      size: 30Gi
+
+  # Airflow Triggerer Config
+  triggerer:
+    persistence:
+      # Enable persistent volumes
+      enabled: false
+      # This policy determines whether PVCs should be deleted when StatefulSet is scaled down or removed.
+      persistentVolumeClaimRetentionPolicy: ~
+      # Volume size for triggerer StatefulSet
+      size: 10Gi
+
+  postgresql:
+    enabled: false
+
+  # Configuration for the redis provisioned by the chart
+  redis:
+    enabled: true
+    terminationGracePeriodSeconds: 10
+
+    persistence:
+      # Enable persistent volumes
+      enabled: false
+      # Volume size for worker StatefulSet
+      size: 1Gi
+      # If using a custom storageClass, pass name ref to all statefulSets here
+      storageClassName: "longhorn"
+
+  # Git sync
+  dags:
+    # Where dags volume will be mounted. Works for both persistence and gitSync.
+    # If not specified, dags mount path will be set to $AIRFLOW_HOME/dags
+    mountPath: ~
+    persistence:
+      # Enable persistent volume for storing dags
+      enabled: false
+
+    gitSync:
+      enabled: true
+
+      # git repo clone url
+      # ssh example: git@github.com:apache/airflow.git
+      # https example: https://github.com/apache/airflow.git
+      repo: https://github.com/ytihianine/traitement-de-donnees.git
+      branch: main
+      rev: HEAD
+      # The git revision (branch, tag, or hash) to check out, v4 only
+      ref: main
+      depth: 1
+      # the number of consecutive failures allowed before aborting
+      maxFailures: 2
+      # subpath within the repo where dags are located
+      # should be "" if dags are at repo root
+      subPath: ""
+      period: 30s
+      wait: ~
+      # add variables from secret into gitSync containers, such proxy-config
+      envFrom: ~
+      # envFrom: |
+      #   - secretRef:
+      #       name: 'proxy-config'
+
+  logs:
+    # Configuration for empty dir volume (if logs.persistence.enabled == false)
+    # emptyDirConfig:
+    #   sizeLimit: 1Gi
+    #   medium: Memory
+
+    persistence:
+      # Enable persistent volume for storing logs
+      enabled: false
