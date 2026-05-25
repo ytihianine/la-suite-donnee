@@ -1,0 +1,11 @@
+apiVersion: v2
+name: renovatebot-prod
+description: Renovate bot umbrella chart
+type: application
+version: 0.1.0
+appVersion: "1.0"
+
+dependencies:
+- name: renovate
+  version: 46.163.1
+  repository: oci://ghcr.io/renovatebot/charts
