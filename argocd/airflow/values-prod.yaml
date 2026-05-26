@@ -88,16 +88,21 @@ airflow:
       port: 5432
       db: airflow_config
 
-
+  # For Airflow v3+
+  # For each key, you have to either define it raw in file or through kube secret
   # Fernet key settings
   # Note: fernetKey can only be set during install, not upgrade
-  fernetKey: fernetKeyValue
+  # If set, the secret must contain a 'fernet-key' key with a base64-encoded key value
+  fernetKeySecretName: airflow-secret
+  # fernetKey: fernetKeyValue
 
   # Flask secret key for Airflow 3+ Api: `[api] secret_key` in airflow.cfg
-  apiSecretKey: apiSecretKeyValue
+  apiSecretKeySecretName: airflow-secret
+  # apiSecretKey: apiSecretKeyValue
 
   # Secret key used to encode and decode JWTs: `[api_auth] jwt_secret` in airflow.cfg
-  jwtSecret: jwtSecretValue
+  jwtSecret: airflow-secret
+  # jwtSecret: jwtSecretValue
 
 
   # Airflow webserver settings
@@ -178,6 +183,10 @@ airflow:
       subPath: ""
       period: 30s
       wait: ~
+      # If your repo needs a username/password, you can load them to a k8s secret
+      #
+      # credentialsSecret: git-credentials
+
       # add variables from secret into gitSync containers, such proxy-config
       envFrom: ~
       # envFrom: |
