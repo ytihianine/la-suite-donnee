@@ -8,7 +8,7 @@ postgresql:
         username: pg_admin
         # password: pg_admin
         database: defaultdb
-        existingSecret: "db-config-secret"
+        existingSecret: "db-data-secret"
         secretKeys:
           adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
           userPasswordKey: "POSTGRES_USER_PASSWORD"
