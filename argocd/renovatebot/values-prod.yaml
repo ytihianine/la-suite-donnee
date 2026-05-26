@@ -40,6 +40,20 @@ renovate:
         },
         "packageRules": [
           {
+            "matchDatasources": ["*"],
+            "autoApprove": true,
+            "minimumReleaseAge": "7 days",
+            "matchUpdateTypes": ["major"],
+            "automerge": false
+          },
+          {
+            "matchDatasources": ["*"],
+            "autoApprove": true,
+            "minimumReleaseAge": "7 days",
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "automerge": true
+          },
+          {
             "matchManagers": ["pip_requirements", "pipenv", "poetry"],
             "groupName": "python dependencies"
           },
