@@ -23,8 +23,8 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -f images/trino/Dockerfile 
-          --build-arg TRINO_VERSION=${{ env.TRINO_VERSION }} 
+        run: docker build -f images/trino/Dockerfile
+          --build-arg TRINO_VERSION=${{ env.TRINO_VERSION }}
           -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TRINO_VERSION }}-${GITHUB_SHA::7} .
 
       - name: Push Docker image
