@@ -1,3 +1,16 @@
+## [1.1.0](https://github.com/ytihianine/la-suite-donnee/compare/v1.0.0...v1.1.0) (2026-05-27)
+
+### Features
+
+* **argocd:** add polaris and trino argocd manifest ([#30](https://github.com/ytihianine/la-suite-donnee/issues/30)) ([d92223f](https://github.com/ytihianine/la-suite-donnee/commit/d92223fb42b75cc87b6f95b9f4f22093f619280c))
+* **argocd:** add trino argocd manifest ([13d9a7d](https://github.com/ytihianine/la-suite-donnee/commit/13d9a7df10f42ba1bfbc41c8bea064d8cf4e2095))
+* **argocd:** update the way secrets are handled ([#26](https://github.com/ytihianine/la-suite-donnee/issues/26)) ([51e8938](https://github.com/ytihianine/la-suite-donnee/commit/51e8938a471ba868b49e7d46ad09c52eb6b473c2))
+* **make:** add commands to build images ([1dbcd2c](https://github.com/ytihianine/la-suite-donnee/commit/1dbcd2c0a32f4f25f1d739ea2adf8987de44566d))
+
+### Bug Fixes
+
+* **images:** update folder path to match ci pipeline ([0b24a20](https://github.com/ytihianine/la-suite-donnee/commit/0b24a206580cd6415ebca35d9e0a4e755a840c21))
+
 ## 1.0.0 (2026-05-25)
 
 ### Features
