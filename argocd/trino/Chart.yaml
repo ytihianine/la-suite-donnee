@@ -6,6 +6,6 @@ version: 0.1.0
 appVersion: "1.0"
 
 dependencies:
-- name: trino 
+- name: trino
   version: 1.42.2
   repository: https://trinodb.github.io/charts/

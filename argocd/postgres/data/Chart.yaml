@@ -1,6 +1,6 @@
 apiVersion: v2
 name: db-config-prod
-description: Postgres Database umbrella chart for app data 
+description: Postgres Database umbrella chart for app data
 type: application
 version: 0.1.0
 appVersion: "1.0"

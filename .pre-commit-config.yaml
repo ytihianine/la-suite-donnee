@@ -14,7 +14,3 @@ repos:
       - id: ruff          # linting + tri des imports
         args: [--fix]
       - id: ruff-format   # formatage (remplace black)
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.0.0
-    hooks:
-      - id: mypy

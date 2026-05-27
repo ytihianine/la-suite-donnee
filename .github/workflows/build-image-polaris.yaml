@@ -23,8 +23,8 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -f images/polaris/Dockerfile 
-          --build-arg POLARIS_VERSION=${{ env.POLARIS_VERSION }} 
+        run: docker build -f images/polaris/Dockerfile
+          --build-arg POLARIS_VERSION=${{ env.POLARIS_VERSION }}
           -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.POLARIS_VERSION }}-${GITHUB_SHA::7} .
 
       - name: Push Docker image
