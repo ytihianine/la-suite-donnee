@@ -41,6 +41,9 @@ setup-dev-env: create-py-env install-py-packages install-pre-commit ## Configure
 test: ## Lancer les tests pytest
 	$(VENV_BIN)/python -m pytest tests/
 
+run-pre-commit: ## Lancer pre-commit sur tous les fichiers
+	$(VENV_BIN)/pre-commit run --all-files
+
 build-trino: ## Build the custom Trino Docker image locally (TRINO_VERSION=481)
 	docker build -f images/trino/Dockerfile \
 		--no-cache \
