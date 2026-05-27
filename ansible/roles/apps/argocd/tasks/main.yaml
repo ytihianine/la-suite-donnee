@@ -1,0 +1,27 @@
+---
+- name: Add ArgoCD Helm repo
+  kubernetes.core.helm_repository:
+    name: "{{ helm.repo_name }}"
+    repo_url: "{{ helm.repo_url }}"
+    force_update: true
+
+- name: Render ArgoCD values file
+  ansible.builtin.template:
+    src: values.yaml.jinja
+    dest: "{{ values_files.tmp_path }}"
+
+- name: Deploy ArgoCD with Helm
+  kubernetes.core.helm:
+    name: "{{ helm.release_name }}"
+    chart_ref: "{{ helm.repo_name }}/{{ helm.chart_name }}"
+    release_namespace: "{{ k8s.namespace }}"
+    create_namespace: false   # You don't have cluster-admin rights
+    values_files:
+      - "{{ values_files.tmp_path }}"
+    timeout: 10m
+    state: present
+
+- name: Remove rendered values file
+  ansible.builtin.file:
+    path: "{{ values_files.tmp_path }}"
+    state: absent
