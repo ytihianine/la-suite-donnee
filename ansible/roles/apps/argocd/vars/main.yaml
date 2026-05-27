@@ -1,0 +1,12 @@
+k8s:
+  namespace: projet-dsci
+
+helm:
+  # check official links (https://github.com/argoproj/argo-helm)
+  repo_name: argo
+  repo_url: https://argoproj.github.io/argo-helm
+  chart_name: argo-cd
+  release_name: argocd
+
+values_files:
+  tmp_path: /tmp/argocd_values.yaml
