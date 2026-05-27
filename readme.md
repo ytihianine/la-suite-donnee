@@ -1,13 +1,33 @@
-# Template projet Python
+# La Suite Donnée
 
-Ce repository est un template de projet Python. Il sert de base pour démarrer un nouveau projet avec certains standards et des outils déjà configurés (semantic-release).
-Il peut être adapté pour utiliser d'autres technologies (node, ...).
+La Suite Donnée est un ensemble d'outils qui permettent de faire du traitement de données bout en bout (récolte, traitement, documentation, dataviz ...).
+Ce repository est un guide d'installation de l'ensemble des outils qui composent la Suite Donnée.
+
+## Table des matières
+
+[TO DEFINE]
 
 ## Pré-requis
 
-- Python 3.12
+- Kubernetes*
+- Python v3.12+
 - Node v24+
 - `make`
+
+*Seul un accès à un namespace est nécessaire. Certaines ressources nécessiteront des droits d'admin du cluster.
+
+## Structure
+
+```
+.
+├── .github/
+│    ├── workflows: workflows github
+│    └── skills: skills copilot
+├── ansible/     # Playbooks Ansible
+├── argocd/      # ArgoCD application manifests
+├── tests/       # Tests unitaires (pytest)
+└── docs/        # Documentation complementaire
+```
 
 ## Installation
 
@@ -18,35 +38,6 @@ source env/bin/activate
 
 Cette commande crée l'environnement virtuel, installe les dépendances et configure pre-commit.
 
-## Variables d'environnement
-
-Copier `.env.example` en `.env` et adapter les valeurs.
-Si des variables d'environnement sont ajoutées, il faut modifier `src/utils/settings.py` pour qu'elles soient lues.
-
-## Lancer le projet
-
-```bash
-python -m src.main
-```
-
-## Tests
-
-Pour lancer les tests
-```bash
-make test
-```
-
-## Structure
-
-```
-.
-├── .github/
-│    ├── workflows: workflows github
-│    └── skills: skills copilot
-├── argocd/      # ArgoCD application manifests
-├── tests/       # Tests unitaires (pytest)
-└── docs/        # Documentation complementaire
-```
 
 ## Workflow de release
 
@@ -67,7 +58,7 @@ Les releases sont gérées automatiquement via [semantic-release](https://semant
 
 > Les deux workflows peuvent également être déclenchés manuellement depuis l'onglet **Actions** de GitHub.
 
-### Pré-requis
+### Pré-requis GitHub Actions
 
 Un secret `GH_TOKEN` doit être configuré dans le repository GitHub avec les permissions `contents: write`, `issues: write` et `pull-requests: write`.
 
