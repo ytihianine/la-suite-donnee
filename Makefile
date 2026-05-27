@@ -83,7 +83,7 @@ deploy-renovatebot: ## Déployer RenovateBot sur le cluster Kubernetes à partir
 
 deploy-db-config: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de la base de données de configuration sur le cluster Kubernetes"
-	kubectl apply -f argocd/postgres/db-config/manifest.yaml -n $(NAMESPACE)
+	kubectl apply -f argocd/postgres/config/manifest.yaml -n $(NAMESPACE)
 	@echo "La cla base de données de configuration a été déployée avec succès"
 
 init-db-config: ## Initialiser la base de données de configuration
@@ -93,7 +93,7 @@ init-db-config: ## Initialiser la base de données de configuration
 
 deploy-db-data: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de la base de données de configuration sur le cluster Kubernetes"
-	kubectl apply -f argocd/postgres/db-data/manifest.yaml -n $(NAMESPACE)
+	kubectl apply -f argocd/postgres/data/manifest.yaml -n $(NAMESPACE)
 	@echo "La cla base de données de configuration a été déployée avec succès"
 
 init-db-data: ## Initialiser la base de données de data
