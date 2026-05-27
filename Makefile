@@ -44,6 +44,11 @@ test: ## Lancer les tests pytest
 run-pre-commit: ## Lancer pre-commit sur tous les fichiers
 	$(VENV_BIN)/pre-commit run --all-files
 
+deploy-argocd: ## Déployer ArgoCD sur le cluster Kubernetes
+	@echo "Déploiement d'ArgoCD sur le cluster Kubernetes"
+	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd.yaml
+	@echo "ArgoCD a été déployé avec succès"
+
 build-trino: ## Build the custom Trino Docker image locally (TRINO_VERSION=481)
 	docker build -f images/trino/Dockerfile \
 		--no-cache \
