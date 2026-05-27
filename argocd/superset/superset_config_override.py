@@ -1,5 +1,6 @@
 # /app/docker/pythonpath/superset_config_docker.py
 from typing import Any
+import os
 
 # ------------------------
 # Application - configuration
@@ -51,6 +52,20 @@ D3_TIME_FORMAT = {
         "Sep", "Oct", "Nov", "Déc"
     ]
 }
+
+# 
+# SMPT - Mail Serveur
+#
+SMTP_HOST = os.environ.get("SUPERSET_SMTP_HOST", "localhost")
+SMTP_STARTTLS = os.environ.get("SUPERSET_SMTP_STARTTLS", True)
+SMTP_SSL = os.environ.get("SUPERSET_SMTP_SSL", False)
+SMTP_USER = os.environ.get("SUPERSET_SMTP_USER", "superset")
+SMTP_PORT = os.environ.get("SUPERSET_SMTP_PORT", 25)
+SMTP_PASSWORD = os.environ.get("SUPERSET_SMTP_PASSWORD", "superset")  # noqa: S105
+SMTP_MAIL_FROM = os.environ.get("SUPERSET_SMTP_MAIL_FROM", "superset@superset.com")
+# If True creates a default SSL context with ssl.Purpose.CLIENT_AUTH using the
+# default system root CA certificates.
+SMTP_SSL_SERVER_AUTH = os.environ.get("SUPERSET_SMTP_HOST", False)
 
 
 # ------------------------

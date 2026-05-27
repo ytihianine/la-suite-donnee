@@ -2,6 +2,9 @@
 PYTHON_VERSION=3.12
 AIRFLOW_VERSION=3.1.8
 ENV_NAME = env
+TRINO_VERSION ?= 481
+POLARIS_VERSION ?= 1.5.0
+SUPERSET_VERSION ?= 6.0.0
 
 # OS detection
 ifeq ($(OS),Windows_NT)
@@ -12,7 +15,7 @@ else
     VENV_BIN := $(ENV_NAME)/bin
 endif
 
-.PHONY: create-py-env clean install-py-packages install-pre-commit test
+.PHONY: create-py-env clean install-py-packages install-pre-commit test build-trino
 
 create-py-env: ## Créer un nouvel environnement python
 	@echo "Création d'un environnement"
@@ -37,6 +40,24 @@ setup-dev-env: create-py-env install-py-packages install-pre-commit ## Configure
 
 test: ## Lancer les tests pytest
 	$(VENV_BIN)/python -m pytest tests/
+
+build-trino: ## Build the custom Trino Docker image locally (TRINO_VERSION=481)
+	docker build -f images/trino/Dockerfile \
+		--no-cache \
+		--build-arg TRINO_VERSION=$(TRINO_VERSION) \
+		-t trino-custom:$(TRINO_VERSION) .
+
+build-superset: ## Build the custom Superset Docker image locally (SUPERSET_VERSION=6.0.0)
+	docker build -f images/superset/Dockerfile \
+		--no-cache \
+		--build-arg SUPERSET_VERSION=$(SUPERSET_VERSION) \
+		-t superset-custom:$(SUPERSET_VERSION) .
+
+build-polaris: ## Build the custom Polaris Docker image locally (POLARIS_VERSION=1.5.0)
+	docker build -f images/polaris/Dockerfile \
+		--no-cache \
+		--build-arg POLARIS_VERSION=$(POLARIS_VERSION) \
+		-t polaris-custom:$(POLARIS_VERSION) .
 
 clean: ## Nettoie les fichiers temporaires
 	@echo "Nettoyage des fichiers temporaires"

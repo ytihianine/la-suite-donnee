@@ -26,8 +26,8 @@ USER root
 WORKDIR /app
 
 # Import Superset custom folder
-COPY superset-dsfr ./superset-custom/
-# COPY customCA.crt  ./customCA.crt
+COPY images/superset/superset-dsfr ./superset-custom/
+COPY images/customCA.crt  ./customCA.crt
 
 # Download DSFR only if USE_DSFR=true
 RUN if [ "$USE_DSFR" = "true" ]; then \
@@ -55,7 +55,7 @@ FROM node:24.16.0-alpine3.23 AS frontend_translations
 WORKDIR /app
 
 # Copy translation files
-COPY superset-dsfr/translations /app/translations
+COPY --from=custom_image /app/superset-custom/translations /app/translations
 
 # Install dependencies
 RUN npm install -g po2json
