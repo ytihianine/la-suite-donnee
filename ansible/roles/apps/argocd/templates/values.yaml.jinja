@@ -23,7 +23,6 @@ applicationSet:
   replicas: 0
 createAggregateRoles: false
 createClusterRoles: false
-fullnameOverride: "argocd"
 controller:
   name: application-controller
   image:
@@ -51,9 +50,9 @@ controller:
   env:
     - name: KUBERNETES_NAMESPACE
       valueFrom:
-      fieldRef:
-        apiVersion: v1
-        fieldPath: metadata.namespace
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
   logFormat: text
   logLevel: info
   containerPort: 8082
@@ -82,12 +81,12 @@ server:
   name: server
   replicas: 1
   resources:
-  requests:
-    cpu: 100m
-    memory: 200Mi
-  limits:
-    cpu: 2000m
-    memory: 2000Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+    limits:
+      cpu: 2000m
+      memory: 2000Mi
   extraArgs:
     - --namespace
     - $(KUBERNETES_NAMESPACE)
@@ -125,10 +124,3 @@ configs:
 
 openshift:
   enabled: false
-
-secret:
-  createSecret: true
-  password:
-    changeme
-    # Password modification time defaults to current time if not set
-    # argocdServerAdminPasswordMtime: "2006-01-02T15:04:05Z"
