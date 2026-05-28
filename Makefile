@@ -1,15 +1,6 @@
 # Charger les variables d'environnement depuis le fichier .env
 -include .env
 
-# Variables
-PYTHON_VERSION=3.12
-AIRFLOW_VERSION=3.1.8
-ENV_NAME = env
-TRINO_VERSION ?= 481
-POLARIS_VERSION ?= 1.5.0
-SUPERSET_VERSION ?= 6.0.0
-NAMESPACE ?= projet-mef-sg-dsci # Update me with your actual namespace
-
 # OS detection
 ifeq ($(OS),Windows_NT)
     PYTHON := python
