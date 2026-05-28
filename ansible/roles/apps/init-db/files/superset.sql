@@ -1,0 +1,22 @@
+-- Wrapping to handle exceptions (e.g., if roles or users already exist)
+DO $$
+BEGIN
+
+-- =================
+-- Roles (NOLOGIN)
+-- =================
+CREATE ROLE superset_admin_role NOLOGIN;
+COMMENT ON ROLE superset_admin_role IS 'Role admin pour gérer la base de données de configuration de Superset';
+GRANT ALL ON DATABASE test_superset_config TO superset_admin_role WITH GRANT OPTION;
+
+
+-- =================
+-- Users (LOGIN)
+-- =================
+CREATE ROLE superset_admin_user LOGIN PASSWORD 'superset_password';
+COMMENT ON ROLE superset_admin_user IS 'Utilisateur de la base de données de configuration de Superset';
+GRANT superset_admin_role TO superset_admin_user;
+
+EXCEPTION WHEN duplicate_object THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
+END
+$$;

@@ -6,7 +6,4 @@
   hosts: localhost
 
   roles:
-    - role: apps/init-db/config
-      vars:
-        enable: false
-      when: enable | bool
+    - role: apps/init-db/

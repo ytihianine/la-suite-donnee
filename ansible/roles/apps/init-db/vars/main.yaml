@@ -1,0 +1,40 @@
+# =================
+# Values
+# =================
+dbConfig:
+  enable: true
+  auth:
+    host: localhost
+    port: 5432
+    name: postgres
+    user: postgres
+    password: postgres
+
+  databases:
+    - name: test_airflow_config
+      comment: "Contient toute la configuration d'Airflow (DAGs, connections, variables, etc.)"
+      scripts:
+        - path: airflow.sql
+          comment: "Script SQL pour initialiser la base de données Airflow"
+    - name: test_superset_config
+      comment: "Contient toute la configuration de Superset (dashboards, charts, etc.)"
+      scripts:
+        - path: superset.sql
+          comment: "Script SQL pour initialiser la base de données Superset"
+
+
+dbData:
+  enable: true
+  auth:
+    host: localhost
+    port: 5432
+    name: postgres
+    user: postgres
+    password: postgres
+
+  databases:
+    - name: testdata_store
+      comment: "Contient les données métier utilisées par les applications"
+      scripts:
+        - path: data-store.sql
+          comment: "Script SQL pour initialiser la base de données Data Store"

@@ -1,0 +1,7 @@
+---
+- name: Créer les bases de données
+  ansible.builtin.include_tasks: init_db.yaml
+  loop: "{{ [dbConfig, dbData] | selectattr('enable', 'equalto', true) | list }}"
+  loop_control:
+    loop_var: db
+    label: "{{ db.databases | map(attribute='name') | join(', ') }}"
