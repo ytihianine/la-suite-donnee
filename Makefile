@@ -85,20 +85,15 @@ deploy-db-config: ## Déployer la configuration de la base de données sur le cl
 	kubectl apply -f argocd/postgres/config/manifest.yaml -n $(NAMESPACE)
 	@echo "La cla base de données de configuration a été déployée avec succès"
 
-init-db-config: ## Initialiser la base de données de configuration
-	@echo "Initialisation de la base de données de configuration"
-	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/init-db.yaml
-	@echo "La base de données de configuration a été initialisée avec succès"
-
 deploy-db-data: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de la base de données de configuration sur le cluster Kubernetes"
 	kubectl apply -f argocd/postgres/data/manifest.yaml -n $(NAMESPACE)
 	@echo "La cla base de données de configuration a été déployée avec succès"
 
-init-db-data: ## Initialiser la base de données de data
-	@echo "Initialisation de la base de données de data"
-	@echo "Les actions doivent encore être définies dans le playbook Ansible ..."
-	@echo "La base de données de data a été initialisée avec succès"
+init-db: ## Initialiser la base de données de configuration
+	@echo "Initialisation de la base de données de configuration"
+	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/init-db.yaml
+	@echo "La base de données de configuration a été initialisée avec succès"
 
 deploy-trino: ## Déployer Trino sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de Trino sur le cluster Kubernetes"
@@ -121,7 +116,7 @@ deploy-polaris: ## Déployer Polaris sur le cluster Kubernetes à partir d'ArgoC
 	@echo "Polaris a été déployé avec succès"
 
 # Need to add deploy-trino  deploy-polaris
-deploy-all: deploy-renovatebot deploy-db-config deploy-db-data deploy-superset deploy-airflow ## Déployer toutes les applications sur le cluster Kubernetes à partir d'ArgoCD
+deploy-all: deploy-renovatebot deploy-db-config deploy-db-data init-db deploy-superset deploy-airflow ## Déployer toutes les applications sur le cluster Kubernetes à partir d'ArgoCD
 
 # =====================================================================
 # Autres commandes utiles
