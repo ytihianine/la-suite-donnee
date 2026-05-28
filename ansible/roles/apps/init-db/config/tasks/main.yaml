@@ -1,0 +1,71 @@
+---
+# Step 1 — Create databases
+- name: Créer les bases de données de configuration
+  community.postgresql.postgresql_db:
+    maintenance_db: "{{ dbConfig.auth.name }}"
+    login_host: "{{ dbConfig.auth.host }}"
+    login_port: "{{ dbConfig.auth.port }}"
+    login_user: "{{ dbConfig.auth.user }}"
+    login_password: "{{ dbConfig.auth.password }}"
+    name: "{{ item.name }}"
+    comment: "{{ item.comment }}"
+    state: present
+  loop: "{{ dbConfig.databases }}"
+
+# Step 2 — Create roles (NOLOGIN)
+- name: Créer les roles
+  community.postgresql.postgresql_user:
+    login_db: "{{ dbConfig.auth.name }}"
+    login_host: "{{ dbConfig.auth.host }}"
+    login_port: "{{ dbConfig.auth.port }}"
+    login_user: "{{ dbConfig.auth.user }}"
+    login_password: "{{ dbConfig.auth.password }}"
+    name: "{{ item.name }}"
+    comment: "{{ item.comment }}"
+    role_attr_flags: NOLOGIN
+    state: present
+  loop: "{{ dbConfig.roles }}"
+
+# Step 3 — Grant privileges to roles
+- name: Accorder les privilèges aux roles
+  community.postgresql.postgresql_privs:
+    login_db: "{{ dbConfig.auth.name }}"
+    login_host: "{{ dbConfig.auth.host }}"
+    login_port: "{{ dbConfig.auth.port }}"
+    login_user: "{{ dbConfig.auth.user }}"
+    login_password: "{{ dbConfig.auth.password }}"
+    roles: "{{ item.0.name }}"
+    privs: "{{ item.1.privs }}"
+    type: "{{ item.1.type }}"
+    objs: "{{ item.1.objs }}"
+    grant_option: "{{ item.1.grant_option | default(false) }}"
+    state: present
+  loop: "{{ dbConfig.roles | subelements('privileges') }}"
+
+# Step 4 — Create users (LOGIN)
+- name: Créer les utilisateurs
+  community.postgresql.postgresql_user:
+    login_db: "{{ dbConfig.auth.name }}"
+    login_host: "{{ dbConfig.auth.host }}"
+    login_port: "{{ dbConfig.auth.port }}"
+    login_user: "{{ dbConfig.auth.user }}"
+    login_password: "{{ dbConfig.auth.password }}"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    comment: "{{ item.comment }}"
+    role_attr_flags: LOGIN
+    state: present
+  loop: "{{ dbConfig.users }}"
+
+# Step 5 — Grant role memberships to users
+- name: Accorder les appartenances aux roles aux utilisateurs
+  community.postgresql.postgresql_membership:
+    login_db: "{{ dbConfig.auth.name }}"
+    login_host: "{{ dbConfig.auth.host }}"
+    login_port: "{{ dbConfig.auth.port }}"
+    login_user: "{{ dbConfig.auth.user }}"
+    login_password: "{{ dbConfig.auth.password }}"
+    groups: "{{ item.1 }}"
+    target_roles: "{{ item.0.name }}"
+    state: present
+  loop: "{{ dbConfig.users | subelements('member_of') }}"

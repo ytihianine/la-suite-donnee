@@ -87,7 +87,7 @@ deploy-db-config: ## Déployer la configuration de la base de données sur le cl
 
 init-db-config: ## Initialiser la base de données de configuration
 	@echo "Initialisation de la base de données de configuration"
-	@echo "Les actions doivent encore être définies dans le playbook Ansible ..."
+	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/init-db.yaml
 	@echo "La base de données de configuration a été initialisée avec succès"
 
 deploy-db-data: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
