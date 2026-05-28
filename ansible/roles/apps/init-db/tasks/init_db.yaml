@@ -1,0 +1,25 @@
+---
+# Step 1 — Create databases
+- name: Créer les bases de données
+  community.postgresql.postgresql_db:
+    maintenance_db: "{{ db.auth.name }}"
+    login_host: "{{ db.auth.host }}"
+    login_port: "{{ db.auth.port }}"
+    login_user: "{{ db.auth.user }}"
+    login_password: "{{ db.auth.password }}"
+    name: "{{ database.name }}"
+    comment: "{{ database.comment }}"
+  loop: "{{ db.databases | default([]) }}"
+  loop_control:
+    loop_var: database
+
+# Step 2 — Execute initialization scripts
+- name: Exécuter les scripts d'initialisation
+  community.postgresql.postgresql_script:
+    login_db: "{{ item.0.name }}"
+    login_host: "{{ db.auth.host }}"
+    login_port: "{{ db.auth.port }}"
+    login_user: "{{ db.auth.user }}"
+    login_password: "{{ db.auth.password }}"
+    path: "{{ role_path }}/files/{{ item.1.path }}"
+  loop: "{{ db.databases | subelements('scripts', skip_missing=True) }}"

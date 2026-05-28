@@ -1,0 +1,22 @@
+-- Wrapping to handle exceptions (e.g., if roles or users already exist)
+DO $$
+BEGIN
+
+-- =================
+-- Roles (NOLOGIN)
+-- =================
+CREATE ROLE airflow_admin_role NOLOGIN;
+COMMENT ON ROLE airflow_admin_role IS 'Role admin pour gérer la base de données de configuration d''Airflow';
+GRANT ALL ON DATABASE test_airflow_config TO airflow_admin_role WITH GRANT OPTION;
+
+
+-- =================
+-- Users (LOGIN)
+-- =================
+CREATE ROLE airflow_admin_user LOGIN PASSWORD 'airflow_password';
+COMMENT ON ROLE airflow_admin_user IS 'Utilisateur de la base de données de configuration d''Airflow';
+GRANT airflow_admin_role TO airflow_admin_user;
+
+EXCEPTION WHEN duplicate_object THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
+END
+$$;

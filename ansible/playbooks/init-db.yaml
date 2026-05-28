@@ -1,0 +1,9 @@
+---
+- name: Initialiser les bases de données
+  become: false
+  gather_facts: true
+  connection: local
+  hosts: localhost
+
+  roles:
+    - role: apps/init-db/
