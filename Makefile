@@ -97,7 +97,7 @@ deploy-db-data: ## Déployer la configuration de la base de données sur le clus
 
 deploy-databases: deploy-db-config deploy-db-data ## Déployer la configuration et les données de la base de données sur le cluster Kubernetes à partir d'ArgoCD
 
-init-db: ## Initialiser la base de données de configuration
+init-databases: ## Initialiser la base de données de configuration
 	@echo "Initialisation de la base de données de configuration"
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/init-db.yaml
 	@echo "La base de données de configuration a été initialisée avec succès"
