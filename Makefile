@@ -80,6 +80,11 @@ deploy-argocd-cli: ## Déployer ArgoCD CLI sur le cluster Kubernetes
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd-cli.yaml
 	@echo "ArgoCD CLI a été déployé avec succès"
 
+connect-argocd: ## Se connecter à ArgoCD CLI
+	@echo "Connexion à ArgoCD CLI"
+	argocd login --core
+	@echo "Connexion à ArgoCD CLI réussie"
+
 deploy-renovatebot: ## Déployer RenovateBot sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de RenovateBot sur le cluster Kubernetes"
 	kubectl apply -f argocd/renovatebot/manifest.yaml -n $(NAMESPACE)
