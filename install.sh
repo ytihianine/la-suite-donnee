@@ -7,6 +7,20 @@ set +a
 
 
 # ==============================
+# Helper functions
+# ==============================
+wait_for_argocd_app() {
+    local app_name="$1"
+    local timeout="${2:-300}"
+    echo "Waiting for ArgoCD application '$app_name' to be Healthy and Synced (timeout: ${timeout}s)..."
+    if ! argocd app wait "$app_name" --health --sync --timeout "$timeout"; then
+        echo "ERROR: ArgoCD application '$app_name' did not become healthy within ${timeout}s. Aborting."
+        exit 1
+    fi
+    echo "ArgoCD application '$app_name' is Healthy and Synced."
+}
+
+# ==============================
 # User confirmation
 # ==============================
 echo "This script will install la Suite Donnée with the following installation options:"
@@ -91,6 +105,9 @@ else
 
     # Init databases
     if [ "$LSD_INIT_DATABASES" = true ]; then
+        echo "Checking database apps health before initialization..."
+        wait_for_argocd_app "db-config-prod"
+        wait_for_argocd_app "db-data-prod"
         echo "Initializing databases..."
         make init-databases
     else
