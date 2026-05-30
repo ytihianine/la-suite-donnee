@@ -84,7 +84,7 @@ else
     # Deploy renovate bot
     if [ "$INSTALL_RENOVATE" = true ]; then
         echo "Deploying Renovate Bot..."
-        make deploy-renovate
+        make deploy-renovatebot
     else
         echo "INSTALL_RENOVATE is $INSTALL_RENOVATE. Skipping Renovate Bot deployment..."
     fi
