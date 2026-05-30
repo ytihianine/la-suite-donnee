@@ -83,6 +83,7 @@ else
     if [ "$LSD_INSTALL_ARGOCD_CLI" = true ]; then
         echo "Installing ArgoCD CLI..."
         make deploy-argocd-cli
+        make connect-argocd
     else
         echo "LSD_INSTALL_ARGOCD_CLI is $LSD_INSTALL_ARGOCD_CLI. Skipping ArgoCD CLI installation..."
     fi
