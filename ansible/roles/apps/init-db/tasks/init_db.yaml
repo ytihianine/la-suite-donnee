@@ -16,7 +16,7 @@
 # Step 2 — Render initialization scripts from templates
 - name: Générer les scripts d'initialisation depuis les templates
   ansible.builtin.template:
-    src: "{{ item.1.path }}.j2"
+    src: "{{ item.1.path }}.jinja"
     dest: "/tmp/{{ item.0.name }}_{{ item.1.path }}"
     mode: "0600"
   loop: "{{ db.databases | subelements('scripts', skip_missing=True) }}"
