@@ -1,0 +1,28 @@
+---
+- name: Install ArgoCD CLI
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Download ArgoCD CLI
+      ansible.builtin.get_url:
+        url: 'https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64'
+        dest: /tmp/argocd-linux-amd64
+        mode: '0644'
+      become: false
+
+    - name: Install ArgoCD CLI to /usr/local/bin
+      ansible.builtin.copy:
+        src: /tmp/argocd-linux-amd64
+        dest: /usr/local/bin/argocd
+        remote_src: true
+        mode: '0555'
+      become: true
+
+    - name: Remove ArgoCD CLI temp file
+      ansible.builtin.file:
+        path: /tmp/argocd-linux-amd64
+        state: absent
+      become: false
