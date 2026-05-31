@@ -6,9 +6,9 @@ dbConfig:
   auth:
     host: db-config-prod-postgresql
     port: 5432
-    name: postgres
-    user: pg_admin
-    password: pg_admin
+    name: defaultdb
+    user: postgres
+    password: config_admin
 
   databases:
     - name: test_airflow_config
@@ -28,9 +28,9 @@ dbData:
   auth:
     host: db-data-prod-postgresql
     port: 5432
-    name: postgres
-    user: pg_admin
-    password: pg_admin
+    name: defaultdb
+    user: postgres
+    password: data_admin
 
   databases:
     - name: testdata_store
