@@ -11,12 +11,12 @@ dbConfig:
     password: config_admin
 
   databases:
-    - name: test_airflow_config
+    - name: airflow_config
       comment: "Contient toute la configuration d'Airflow (DAGs, connections, variables, etc.)"
       scripts:
         - path: airflow.sql
           comment: "Script SQL pour initialiser la base de données Airflow"
-    - name: test_superset_config
+    - name: superset_config
       comment: "Contient toute la configuration de Superset (dashboards, charts, etc.)"
       scripts:
         - path: superset.sql
@@ -33,7 +33,7 @@ dbData:
     password: data_admin
 
   databases:
-    - name: testdata_store
+    - name: data_store
       comment: "Contient les données métier utilisées par les applications"
       scripts:
         - path: data-store.sql
