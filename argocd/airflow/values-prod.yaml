@@ -81,10 +81,10 @@ airflow:
   data:
     # Otherwise pass connection values in
     metadataConnection:
-      user: postgres
-      pass: postgres
+      user: airflow_admin_user
+      pass: airflow_password
       protocol: postgresql
-      host: postgresql-prod
+      host: db-config-prod-postgresql
       port: 5432
       db: airflow_config
 
