@@ -30,7 +30,7 @@ superset:
       "helm.sh/hook": post-install,post-upgrade
       "helm.sh/hook-delete-policy": "before-hook-creation"
       "argocd.argoproj.io/hook": Sync
-    loadExamples: true
+    loadExamples: false
     createAdmin: true
     adminUser:
       username: superset_admin
