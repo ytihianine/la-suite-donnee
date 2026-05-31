@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: superset-mef
+  name: superset
 spec:
   destination:
     namespace: projet-mef-sg-dsci
