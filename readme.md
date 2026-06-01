@@ -51,6 +51,7 @@ Cette commande crée l'environnement virtuel et installe les packages nécessair
 
 **Configurer Ansible**
 
+La configuration d'Ansible est disponible dans le fichier [ansible.cfg](ansible.cfg).
 L'option become_exe est à changer en fonction de la version de votre unix. Si vous utiliser sudors, vous devez utiliser `sudo.ws`.
 
 ```bash
@@ -67,9 +68,12 @@ _non-disponible pour le moment_. A installer manuellement selon vos différentes
 
 **ArgoCD CLI**
 
-
+Si vous souhaitez installer la CLI d'ArgoCD, renseigner `LSD_INSTALL_ARGOCD_CLI=true` dans votre fichier [.env](.env#24).
+Aucune configuration particulière complémentaire.
 
 **Renovatebot**
+
+Si vous souhaitez installer renovatebot, renseigner `LSD_INSTALL_RENOVATE=true` dans votre fichier [.env](.env#25).
 
 1. Configurer le secret
 
@@ -97,10 +101,18 @@ Toutes les options de configuration sont disponibles ici [https://github.com/ren
 
 Pour la configuration de renovate, toutes les options sont disponibles ici [https://docs.renovatebot.com/configuration-options/](https://docs.renovatebot.com/configuration-options/).
 
+3. Configurer le manifest
+
+Mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).
+Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
 
 **Bases de données**
 
-La Suite Donnée déploie deux clusters de base de données: un cluster dédié aux configurations des applications et un cluster dédié à l'hébergement des données.
+La Suite Donnée déploie deux clusters de base de données:
+- un cluster dédié aux configurations des applications
+- un cluster dédié à l'hébergement des données.
+
+Si vous souhaitez installer les clusters, renseigner `LSD_INSTALL_DATABASES=true` dans votre fichier [.env](.env#26).
 
 1. Configurer les secrets
 
@@ -110,11 +122,42 @@ Cluster de données: mettre à jour les valeurs du secret dans [db-data-secret.y
 2. Configurer les values
 
 Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/config/values-prod.yaml).
-Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/data/values-prod.yaml).
+Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/data/values-prod.yaml).
 
 Il n'y a pas de valeurs particulières nécessaires à mettre à jour.
 
 Toutes les options de configuration sont disponibles ici [https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml](https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml)
+
+3. Configurer le manifest
+
+Cluster de configuration: mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).
+Cluster de données: mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).
+
+Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
+
+**Initialiser les bases de données**
+
+1. Configurer les values
+
+Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/init-db/vars/main.yaml).
+A minima, il est nécessaire de modifier les sections suivantes:
+```yaml
+auth:
+    host: db-config-prod-postgresql
+    port: 5432
+    name: defaultdb
+    user: postgres          # Admin
+    password: config_admin  # Défini dans le secret db-X-secret.yaml
+```
+
+2. Configurer les fichier SQL
+
+Vous pouvez compléter les fichiers SQL pour créer des roles particuliers.
+Trois templates sont disponibles:
+- [airflow.sql.jinja](ansible/roles/apps/init-db/templates/airflow.sql.jinja)
+- [superset.sql.jinja](ansible/roles/apps/init-db/templates/superset.sql.jinja)
+- [data-store.sql.jinja](ansible/roles/apps/init-db/templates/data-store.sql.jinja)
+
 
 **Apache Superset**
 
@@ -139,6 +182,7 @@ superset:
   supersetNode:
     connections:
         # YOUR_VALUES
+        # Doit correspondre aux identifiants de l'admin superset créé dans l'étape précédente
 ```
 
 Toutes les options sont disponibles ici [https://github.com/apache/superset/blob/master/helm/superset/values.yaml](https://github.com/apache/superset/blob/master/helm/superset/values.yaml).
@@ -146,6 +190,11 @@ Toutes les options sont disponibles ici [https://github.com/apache/superset/blob
 3. Configurer la configuration de Superset
 
 Mettre à jour le fichier [superset_config_override.py](argocd/superset/superset_config_override.py).
+
+4. Configurer le manifest
+
+Mettre à jour les valeurs du [manisfest.yaml](argocd/superset/manifest.yaml).
+Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
 
 **Apache Airflow**
 
@@ -179,7 +228,23 @@ airflow:
 
 Toutes les options sont disponibles ici [https://github.com/apache/airflow/blob/main/chart/values.yaml](https://github.com/apache/airflow/blob/main/chart/values.yaml)
 
+3. Configurer le manifest
+
+Mettre à jour les valeurs du [manisfest.yaml](argocd/airflow/manifest.yaml).
+Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
+
+**Apache Polaris**
+
+_a venir_
+
+**Trino**
+
+_a venir_
+
 ### Exécution de l'installation
+
+Une fois toutes les configurations précédentes terminées, il est nécessaire de push votre code via `git push`.
+Dans chaque manifeste, les paramètres `repoURL` et `targetRevision` doivent correspondre au repo qui contient votre code.
 
 ```bash
 bash install.sh
