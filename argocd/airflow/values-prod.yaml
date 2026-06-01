@@ -45,7 +45,7 @@ airflow:
 
       # The hostnames or hosts configuration for the API Server Ingress
       hosts:
-      - name: airflow.lab.sspcloud.fr
+      - name: airflow-demo.lab.sspcloud.fr
         # configs for web Ingress TLS
         tls:
           # Enable TLS termination for the web Ingress
