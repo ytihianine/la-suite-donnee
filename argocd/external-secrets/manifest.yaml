@@ -9,7 +9,7 @@ spec:
   source:
     path: argocd/external-secrets
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
-    targetRevision: HEAD
+    targetRevision: demo-sspcloud
     helm:
       skipCRDs: true
       valueFiles:
