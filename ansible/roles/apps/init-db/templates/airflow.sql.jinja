@@ -7,7 +7,8 @@ BEGIN
 -- =================
 CREATE ROLE airflow_admin_role NOLOGIN;
 COMMENT ON ROLE airflow_admin_role IS 'Role admin pour gérer la base de données de configuration d''Airflow';
-GRANT ALL ON DATABASE test_airflow_config TO airflow_admin_role WITH GRANT OPTION;
+GRANT ALL ON DATABASE {{ item.0.name }} TO airflow_admin_role WITH GRANT OPTION;
+GRANT ALL ON SCHEMA public TO airflow_admin_role WITH GRANT OPTION;
 
 
 -- =================

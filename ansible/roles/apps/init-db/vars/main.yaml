@@ -4,19 +4,19 @@
 dbConfig:
   enable: true
   auth:
-    host: localhost
+    host: db-config-prod-postgresql
     port: 5432
-    name: postgres
+    name: defaultdb
     user: postgres
-    password: postgres
+    password: config_admin
 
   databases:
-    - name: test_airflow_config
+    - name: airflow_config
       comment: "Contient toute la configuration d'Airflow (DAGs, connections, variables, etc.)"
       scripts:
         - path: airflow.sql
           comment: "Script SQL pour initialiser la base de données Airflow"
-    - name: test_superset_config
+    - name: superset_config
       comment: "Contient toute la configuration de Superset (dashboards, charts, etc.)"
       scripts:
         - path: superset.sql
@@ -26,14 +26,14 @@ dbConfig:
 dbData:
   enable: true
   auth:
-    host: localhost
+    host: db-data-prod-postgresql
     port: 5432
-    name: postgres
+    name: defaultdb
     user: postgres
-    password: postgres
+    password: data_admin
 
   databases:
-    - name: testdata_store
+    - name: data_store
       comment: "Contient les données métier utilisées par les applications"
       scripts:
         - path: data-store.sql

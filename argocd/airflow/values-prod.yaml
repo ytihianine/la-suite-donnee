@@ -6,6 +6,8 @@ airflow:
   migrateDatabaseJob:
     jobAnnotations:
       "argocd.argoproj.io/hook": Sync
+      "argocd.argoproj.io/hook-delete-policy": HookSucceeded
+      "argocd.argoproj.io/ignore-restart-policy": "true"
     useHelmHooks: false
     applyCustomEnv: false
 
@@ -43,7 +45,7 @@ airflow:
 
       # The hostnames or hosts configuration for the API Server Ingress
       hosts:
-      - name: airflow-mef.lab.sspcloud.fr
+      - name: airflow.lab.sspcloud.fr
         # configs for web Ingress TLS
         tls:
           # Enable TLS termination for the web Ingress
@@ -81,10 +83,10 @@ airflow:
   data:
     # Otherwise pass connection values in
     metadataConnection:
-      user: postgres
-      pass: postgres
+      user: airflow_admin_user
+      pass: airflow_password
       protocol: postgresql
-      host: postgresql-prod
+      host: db-config-prod-postgresql
       port: 5432
       db: airflow_config
 
@@ -113,10 +115,10 @@ airflow:
     defaultUser:
       enabled: true
       role: Admin
-      username: airflow_admin
       email: mail@mail.fr
       firstName: admin
       lastName: test
+      username: airflow_admin
       password: airflow_admin
 
   # Airflow Worker Config

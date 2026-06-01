@@ -13,7 +13,15 @@
   loop_control:
     loop_var: database
 
-# Step 2 — Execute initialization scripts
+# Step 2 — Render initialization scripts from templates
+- name: Générer les scripts d'initialisation depuis les templates
+  ansible.builtin.template:
+    src: "{{ item.1.path }}.jinja"
+    dest: "/tmp/{{ item.0.name }}_{{ item.1.path }}"
+    mode: "0600"
+  loop: "{{ db.databases | subelements('scripts', skip_missing=True) }}"
+
+# Step 3 — Execute rendered initialization scripts
 - name: Exécuter les scripts d'initialisation
   community.postgresql.postgresql_script:
     login_db: "{{ item.0.name }}"
@@ -21,5 +29,12 @@
     login_port: "{{ db.auth.port }}"
     login_user: "{{ db.auth.user }}"
     login_password: "{{ db.auth.password }}"
-    path: "{{ role_path }}/files/{{ item.1.path }}"
+    path: "/tmp/{{ item.0.name }}_{{ item.1.path }}"
+  loop: "{{ db.databases | subelements('scripts', skip_missing=True) }}"
+
+# Step 4 — Clean up temporary rendered scripts
+- name: Supprimer les scripts temporaires
+  ansible.builtin.file:
+    path: "/tmp/{{ item.0.name }}_{{ item.1.path }}"
+    state: absent
   loop: "{{ db.databases | subelements('scripts', skip_missing=True) }}"

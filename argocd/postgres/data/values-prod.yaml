@@ -1,19 +1,12 @@
 postgresql:
-  global:
-    postgresql:
-      auth:
-        # Password for the "postgres" admin user
-        # postgresPassword: postgres
-        # User to create
-        username: pg_admin
-        # password: pg_admin
-        database: defaultdb
-        existingSecret: "db-data-secret"
-        secretKeys:
-          adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
-          userPasswordKey: "POSTGRES_USER_PASSWORD"
-          replicationPasswordKey: "POSTGRES_REPLICATION_PASSWORD"
-          metricsPasswordKey: ""
+  auth:
+    username: pg_admin
+    database: defaultdb
+    existingSecret: "db-data-secret"
+    secretKeys:
+      adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
+      userPasswordKey: "POSTGRES_USER_PASSWORD"
+      replicationPasswordKey: "POSTGRES_REPLICATION_PASSWORD"
 
   image:
     registry: docker.io

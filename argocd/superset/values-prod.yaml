@@ -11,7 +11,7 @@ superset:
     ingressClassName: nginx
     hosts:
       # The hostname for the web Ingress (templated)
-      - superset-mef.lab.sspcloud.fr
+      - superset.lab.sspcloud.fr
 
   image:
     repository: ghcr.io/ytihianine/apache-superset-custom
@@ -30,13 +30,14 @@ superset:
       "helm.sh/hook": post-install,post-upgrade
       "helm.sh/hook-delete-policy": "before-hook-creation"
       "argocd.argoproj.io/hook": Sync
-    loadExamples: true
+      "argocd.argoproj.io/hook-delete-policy": HookSucceeded
+    loadExamples: false
     createAdmin: true
     adminUser:
-      username: superset_admin
       firstname: Superset
       lastname: Admin
       email: admin@superset.com
+      username: superset_admin
       password: superset_admin
 
   extraSecretEnv:
@@ -52,10 +53,10 @@ superset:
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 80
     connections:
-      db_host: postgresql-prod
+      db_host: db-config-prod-postgresql
       db_port: 5432
-      db_user: postgres
-      db_pass: postgres
+      db_user: superset_admin_user
+      db_pass: superset_password
       db_name: superset_config
   ## Set to false if bringing your own PostgreSQL.
   postgresql:

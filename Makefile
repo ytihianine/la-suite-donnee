@@ -77,47 +77,54 @@ deploy-argocd: ## Déployer ArgoCD sur le cluster Kubernetes
 
 deploy-argocd-cli: ## Déployer ArgoCD CLI sur le cluster Kubernetes
 	@echo "Déploiement d'ArgoCD CLI sur le cluster Kubernetes"
-	$(VENV_BIN)/ansible-playbook -i localhost --ask-become-pass ansible/playbooks/argocd-cli.yaml
+	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd-cli.yaml
 	@echo "ArgoCD CLI a été déployé avec succès"
+
+connect-argocd: ## Se connecter à ArgoCD CLI
+	@echo "Connexion à ArgoCD CLI"
+	argocd login --core
+	@echo "Connexion à ArgoCD CLI réussie"
 
 deploy-renovatebot: ## Déployer RenovateBot sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de RenovateBot sur le cluster Kubernetes"
-	kubectl apply -f argocd/renovatebot/manifest.yaml -n $(NAMESPACE)
+	kubectl apply -f argocd/renovatebot/manifest.yaml
 	@echo "RenovateBot a été déployé avec succès"
 
 deploy-db-config: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de la base de données de configuration sur le cluster Kubernetes"
-	kubectl apply -f argocd/postgres/config/manifest.yaml -n $(NAMESPACE)
-	@echo "La cla base de données de configuration a été déployée avec succès"
+	kubectl apply -f argocd/postgres/config/manifest.yaml
+	@echo "La base de données de configuration a été déployée avec succès"
 
 deploy-db-data: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de la base de données de configuration sur le cluster Kubernetes"
-	kubectl apply -f argocd/postgres/data/manifest.yaml -n $(NAMESPACE)
-	@echo "La cla base de données de configuration a été déployée avec succès"
+	kubectl apply -f argocd/postgres/data/manifest.yaml
+	@echo "La base de données de configuration a été déployée avec succès"
 
-init-db: ## Initialiser la base de données de configuration
+deploy-databases: deploy-db-config deploy-db-data ## Déployer la configuration et les données de la base de données sur le cluster Kubernetes à partir d'ArgoCD
+
+init-databases: ## Initialiser la base de données de configuration
 	@echo "Initialisation de la base de données de configuration"
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/init-db.yaml
 	@echo "La base de données de configuration a été initialisée avec succès"
 
 deploy-trino: ## Déployer Trino sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de Trino sur le cluster Kubernetes"
-	kubectl apply -f argocd/trino/manifest.yaml -n $(NAMESPACE)
+	kubectl apply -f argocd/trino/manifest.yaml
 	@echo "Trino a été déployé avec succès"
 
 deploy-superset: ## Déployer Superset sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de Superset sur le cluster Kubernetes"
-	kubectl apply -f argocd/superset/manifest.yaml -n $(NAMESPACE)
+	kubectl apply -f argocd/superset/manifest.yaml
 	@echo "Superset a été déployé avec succès"
 
 deploy-airflow: ## Déployer Airflow sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement d'Airflow sur le cluster Kubernetes"
-	kubectl apply -f argocd/airflow/manifest.yaml -n $(NAMESPACE)
+	kubectl apply -f argocd/airflow/manifest.yaml
 	@echo "Airflow a été déployé avec succès"
 
 deploy-polaris: ## Déployer Polaris sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement de Polaris sur le cluster Kubernetes"
-	kubectl apply -f argocd/polaris/manifest.yaml -n $(NAMESPACE)
+	kubectl apply -f argocd/polaris/manifest.yaml
 	@echo "Polaris a été déployé avec succès"
 
 # Need to add deploy-trino  deploy-polaris

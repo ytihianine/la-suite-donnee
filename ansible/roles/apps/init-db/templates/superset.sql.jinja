@@ -7,7 +7,8 @@ BEGIN
 -- =================
 CREATE ROLE superset_admin_role NOLOGIN;
 COMMENT ON ROLE superset_admin_role IS 'Role admin pour gérer la base de données de configuration de Superset';
-GRANT ALL ON DATABASE test_superset_config TO superset_admin_role WITH GRANT OPTION;
+GRANT ALL ON DATABASE {{ item.0.name }} TO superset_admin_role WITH GRANT OPTION;
+GRANT ALL ON SCHEMA public TO superset_admin_role WITH GRANT OPTION;
 
 
 -- =================
