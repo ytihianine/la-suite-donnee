@@ -11,7 +11,7 @@ superset:
     ingressClassName: nginx
     hosts:
       # The hostname for the web Ingress (templated)
-      - superset-mef.lab.sspcloud.fr
+      - superset.lab.sspcloud.fr
 
   image:
     repository: ghcr.io/ytihianine/apache-superset-custom
@@ -34,10 +34,10 @@ superset:
     loadExamples: false
     createAdmin: true
     adminUser:
-      username: superset_admin
       firstname: Superset
       lastname: Admin
       email: admin@superset.com
+      username: superset_admin
       password: superset_admin
 
   extraSecretEnv:
