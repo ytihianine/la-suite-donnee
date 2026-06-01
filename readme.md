@@ -64,7 +64,8 @@ Les manifestes des applications se situent dans `argocd/`.
 
 **ArgoCD**
 
-_non-disponible pour le moment_. A installer manuellement selon vos différentes possibilités.
+_Indisponible pour le moment_.
+A installer manuellement selon vos différentes possibilités.
 
 **ArgoCD CLI**
 
@@ -81,7 +82,8 @@ Mettre à jour les valeurs du secret dans [renovatebot-secret.yaml](argocd/renov
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/renovatebot/values-prod.yaml). A minima, il est nécessaire de modifier les sections suivantes:
+Mettre à jour les valeurs de [values-prod.yaml](argocd/renovatebot/values-prod.yaml).
+A minima, il est nécessaire de modifier les sections suivantes:
 
 ```yaml
 renovate:
@@ -97,8 +99,7 @@ renovate:
             # YOUR_VALUES
 ```
 
-Toutes les options de configuration sont disponibles ici [https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml](https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml).
-
+Toutes les options de configuration du chart Helm sont disponibles ici [https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml](https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml).
 Pour la configuration de renovate, toutes les options sont disponibles ici [https://docs.renovatebot.com/configuration-options/](https://docs.renovatebot.com/configuration-options/).
 
 3. Configurer le manifest
@@ -126,7 +127,7 @@ Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](argocd/pos
 
 Il n'y a pas de valeurs particulières nécessaires à mettre à jour.
 
-Toutes les options de configuration sont disponibles ici [https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml](https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml)
+Toutes les options de configuration du Helm chart sont disponibles ici [https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml](https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml)
 
 3. Configurer le manifest
 
@@ -185,7 +186,7 @@ superset:
         # Doit correspondre aux identifiants de l'admin superset créé dans l'étape précédente
 ```
 
-Toutes les options sont disponibles ici [https://github.com/apache/superset/blob/master/helm/superset/values.yaml](https://github.com/apache/superset/blob/master/helm/superset/values.yaml).
+Toutes les options de configuration du Helm chart sont disponibles ici [https://github.com/apache/superset/blob/master/helm/superset/values.yaml](https://github.com/apache/superset/blob/master/helm/superset/values.yaml).
 
 3. Configurer la configuration de Superset
 
@@ -204,7 +205,8 @@ Mettre à jour les valeurs du secret dans [airflow-secret.yaml](argocd/airflow/t
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/airflow/values-prod.yaml). A minima, il est nécessaire de modifier les sections suivantes:
+Mettre à jour les valeurs de [values-prod.yaml](argocd/airflow/values-prod.yaml).
+A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 airflow:
     # Ingress configuration
@@ -226,7 +228,7 @@ airflow:
             # YOUR_VALUES
 ```
 
-Toutes les options sont disponibles ici [https://github.com/apache/airflow/blob/main/chart/values.yaml](https://github.com/apache/airflow/blob/main/chart/values.yaml)
+Toutes les options de configuration du Helm chart sont disponibles ici [https://github.com/apache/airflow/blob/main/chart/values.yaml](https://github.com/apache/airflow/blob/main/chart/values.yaml)
 
 3. Configurer le manifest
 
@@ -245,6 +247,8 @@ _a venir_
 
 Une fois toutes les configurations précédentes terminées, il est nécessaire de push votre code via `git push`.
 Dans chaque manifeste, les paramètres `repoURL` et `targetRevision` doivent correspondre au repo qui contient votre code.
+
+Exécuter la commande suivante pour lancer l'installation
 
 ```bash
 bash install.sh
