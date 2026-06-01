@@ -115,10 +115,10 @@ airflow:
     defaultUser:
       enabled: true
       role: Admin
-      username: airflow_admin
       email: mail@mail.fr
       firstName: admin
       lastName: test
+      username: airflow_admin
       password: airflow_admin
 
   # Airflow Worker Config
