@@ -4,7 +4,7 @@ metadata:
   name: superset
 spec:
   destination:
-    namespace: projet-mef-sg-dsci
+    namespace: ""
     server: https://kubernetes.default.svc
   source:
     path: argocd/superset
