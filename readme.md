@@ -31,12 +31,38 @@ Ce repository est un guide d'installation de l'ensemble des outils qui composent
 
 ## Installation
 
+### Configuration de l'installation
+**Dupliquer les variables d'environnements**
+```bash
+make duplicate-env-vars
+```
+Configurez les variables d'environnement dans le fichier `.env` en fonction de votre environnement.
+
+**Configurer l'environnement python**
+
 ```bash
 make setup-dev-env
 source env/bin/activate
 ```
+Cette commande crée l'environnement virtuel et installe les packages nécessaires.
 
-Cette commande crée l'environnement virtuel, installe les dépendances et configure pre-commit.
+**Configurer Ansible**
+
+L'option become_exe est à changer en fonction de la version de votre unix. Si vous utiliser sudors, vous devez utiliser `sudo.ws`.
+
+```bash
+# become_exe = sudo.ws
+```
+
+**Configurer les options d'installation**
+Dans le fichier install.sh, vous pouvez modifier les options d'installation.
+
+### Exécution de l'installation
+
+```bash
+bash install.sh
+```
+
 
 
 ## Workflow de release
