@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Script texte colors
+# Reset
+Color_Off='\033[0m'       # Text Reset
+
+# Regular Colors
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+Yellow='\033[0;33m'       # Yellow
+
 # Load .env file variables into the script
 set -a
 source ".env"
@@ -17,7 +26,7 @@ wait_for_argocd_app() {
         echo "ERROR: ArgoCD application '$app_name' did not become healthy within ${timeout}s. Aborting."
         exit 1
     fi
-    echo "ArgoCD application '$app_name' is Healthy and Synced."
+    echo -e "${Green}ArgoCD application '$app_name' is Healthy and Synced.${Color_Off}"
 }
 
 # ==============================
@@ -76,7 +85,7 @@ else
         echo "Installing ArgoCD..."
         make deploy-argocd
     else
-        echo "LSD_INSTALL_ARGOCD is $LSD_INSTALL_ARGOCD. Skipping ArgoCD installation..."
+        echo -e "${Yellow}LSD_INSTALL_ARGOCD is $LSD_INSTALL_ARGOCD. Skipping ArgoCD installation...${Color_Off}"
     fi
 
     # Install ArgoCD CLI
@@ -85,7 +94,7 @@ else
         make deploy-argocd-cli
         make connect-argocd
     else
-        echo "LSD_INSTALL_ARGOCD_CLI is $LSD_INSTALL_ARGOCD_CLI. Skipping ArgoCD CLI installation..."
+        echo -e "${Yellow}LSD_INSTALL_ARGOCD_CLI is $LSD_INSTALL_ARGOCD_CLI. Skipping ArgoCD CLI installation...${Color_Off}"
     fi
 
     # Deploy renovate bot
@@ -93,26 +102,39 @@ else
         echo "Deploying Renovate Bot..."
         make deploy-renovatebot
     else
-        echo "LSD_INSTALL_RENOVATE is $LSD_INSTALL_RENOVATE. Skipping Renovate Bot deployment..."
+        echo -e "${Yellow}LSD_INSTALL_RENOVATE is $LSD_INSTALL_RENOVATE. Skipping Renovate Bot deployment...${Color_Off}"
     fi
 
     # Deploy databases
     if [ "$LSD_INSTALL_DATABASES" = true ]; then
         echo "Deploying databases..."
-        make deploy-databases
+        # App config database
+        if [ "$LSD_INSTALL_CONFIG_DB" = true ]; then
+            make deploy-db-config
+            echo "Waiting for config database to be ready..."
+            wait_for_argocd_app "db-config-prod"
+        else
+            echo -e "${Yellow}LSD_INSTALL_CONFIG_DB is $LSD_INSTALL_CONFIG_DB. Skipping config database deployment...${Color_Off}"
+        fi
+        # App data database
+        if [ "$LSD_INSTALL_DATA_DB" = true ]; then
+            make deploy-db-data
+            echo "Waiting for data database to be ready..."
+            wait_for_argocd_app "db-data-prod"
+        else
+            echo -e "${Yellow}LSD_INSTALL_DATA_DB is $LSD_INSTALL_DATA_DB. Skipping data database deployment...${Color_Off}"
+        fi
     else
-        echo "LSD_INSTALL_DATABASES is $LSD_INSTALL_DATABASES. Skipping databases deployment..."
+        echo -e "${Yellow}LSD_INSTALL_DATABASES is $LSD_INSTALL_DATABASES. Skipping databases deployment...${Color_Off}"
     fi
 
     # Init databases
     if [ "$LSD_INIT_DATABASES" = true ]; then
         echo "Checking database apps health before initialization..."
-        wait_for_argocd_app "db-config-prod"
-        wait_for_argocd_app "db-data-prod"
         echo "Initializing databases..."
         make init-databases
     else
-        echo "LSD_INIT_DATABASES is $LSD_INIT_DATABASES. Skipping databases initialization..."
+        echo -e "${Yellow}LSD_INIT_DATABASES is $LSD_INIT_DATABASES. Skipping databases initialization...${Color_Off}"
     fi
 
     # Deploy Superset
@@ -120,7 +142,7 @@ else
         echo "Deploying Superset..."
         make deploy-superset
     else
-        echo "LSD_INSTALL_SUPERSET is $LSD_INSTALL_SUPERSET. Skipping Superset deployment..."
+        echo -e "${Yellow}LSD_INSTALL_SUPERSET is $LSD_INSTALL_SUPERSET. Skipping Superset deployment...${Color_Off}"
     fi
 
     # Deploy Airflow
@@ -128,7 +150,7 @@ else
         echo "Deploying Airflow..."
         make deploy-airflow
     else
-        echo "LSD_INSTALL_AIRFLOW is $LSD_INSTALL_AIRFLOW. Skipping Airflow deployment..."
+        echo -e "${Yellow}LSD_INSTALL_AIRFLOW is $LSD_INSTALL_AIRFLOW. Skipping Airflow deployment...${Color_Off}"
     fi
 
     # Deploy Trino
@@ -136,7 +158,7 @@ else
         echo "Deploying Trino..."
         make deploy-trino
     else
-        echo "LSD_INSTALL_TRINO is $LSD_INSTALL_TRINO. Skipping Trino deployment..."
+        echo -e "${Yellow}LSD_INSTALL_TRINO is $LSD_INSTALL_TRINO. Skipping Trino deployment...${Color_Off}"
     fi
 
     # Deploy Polaris
@@ -144,6 +166,6 @@ else
         echo "Deploying Polaris..."
         make deploy-polaris
     else
-        echo "LSD_INSTALL_POLARIS is $LSD_INSTALL_POLARIS. Skipping Polaris deployment..."
+        echo -e "${Yellow}LSD_INSTALL_POLARIS is $LSD_INSTALL_POLARIS. Skipping Polaris deployment...${Color_Off}"
     fi
 fi
