@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  SUPERSET_VERSION: 6.0.0
+  SUPERSET_VERSION: ${{ vars.SUPERSET_VERSION }}
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/apache-superset
 
