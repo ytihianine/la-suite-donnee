@@ -51,7 +51,7 @@ Cette commande crée l'environnement virtuel et installe les packages nécessair
 
 **Configurer Ansible**
 
-La configuration d'Ansible est disponible dans le fichier [ansible.cfg](ansible.cfg).
+La configuration d'Ansible est disponible dans le fichier [ansible.cfg](ansible.cfg).  
 L'option become_exe est à changer en fonction de la version de votre unix. Si vous utiliser sudors, vous devez utiliser `sudo.ws`.
 
 ```bash
@@ -64,12 +64,12 @@ Les manifestes des applications se situent dans `argocd/`.
 
 **ArgoCD**
 
-_Indisponible pour le moment_.
+_Indisponible pour le moment_.  
 A installer manuellement selon vos différentes possibilités.
 
 **ArgoCD CLI**
 
-Si vous souhaitez installer la CLI d'ArgoCD, renseigner `LSD_INSTALL_ARGOCD_CLI=true` dans votre fichier [.env](.env#24).
+Si vous souhaitez installer la CLI d'ArgoCD, renseigner `LSD_INSTALL_ARGOCD_CLI=true` dans votre fichier [.env](.env#24).  
 Aucune configuration particulière complémentaire.
 
 **Renovatebot**
@@ -82,7 +82,7 @@ Mettre à jour les valeurs du secret dans [renovatebot-secret.yaml](argocd/renov
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/renovatebot/values-prod.yaml).
+Mettre à jour les valeurs de [values-prod.yaml](argocd/renovatebot/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 
 ```yaml
@@ -99,12 +99,12 @@ renovate:
             # YOUR_VALUES
 ```
 
-Toutes les options de configuration du chart Helm sont disponibles ici [https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml](https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml).
+Toutes les options de configuration du chart Helm sont disponibles ici [https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml](https://github.com/renovatebot/helm-charts/blob/main/charts/renovate/values.yaml).  
 Pour la configuration de renovate, toutes les options sont disponibles ici [https://docs.renovatebot.com/configuration-options/](https://docs.renovatebot.com/configuration-options/).
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).
+Mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
 
 **Bases de données**
@@ -117,12 +117,12 @@ Si vous souhaitez installer les clusters, renseigner `LSD_INSTALL_DATABASES=true
 
 1. Configurer les secrets
 
-Cluster de configuration: mettre à jour les valeurs du secret dans [db-config-secret.yaml](argocd/postgres/config/templates/db-config-secret.yaml).
+Cluster de configuration: mettre à jour les valeurs du secret dans [db-config-secret.yaml](argocd/postgres/config/templates/db-config-secret.yaml).  
 Cluster de données: mettre à jour les valeurs du secret dans [db-data-secret.yaml](argocd/postgres/data/templates/db-data-secret.yaml).
 
 2. Configurer les values
 
-Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/config/values-prod.yaml).
+Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/config/values-prod.yaml).  
 Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/data/values-prod.yaml).
 
 Il n'y a pas de valeurs particulières nécessaires à mettre à jour.
@@ -131,7 +131,7 @@ Toutes les options de configuration du Helm chart sont disponibles ici [https://
 
 3. Configurer le manifest
 
-Cluster de configuration: mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).
+Cluster de configuration: mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).  
 Cluster de données: mettre à jour les valeurs du [manisfest.yaml](argocd/renovatebot/manifest.yaml).
 
 Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
@@ -140,7 +140,7 @@ Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
 
 1. Configurer les values
 
-Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/init-db/vars/main.yaml).
+Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/init-db/vars/main.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 auth:
@@ -153,7 +153,7 @@ auth:
 
 2. Configurer les fichier SQL
 
-Vous pouvez compléter les fichiers SQL pour créer des roles particuliers.
+Vous pouvez compléter les fichiers SQL pour créer des roles particuliers.  
 Trois templates sont disponibles:
 - [airflow.sql.jinja](ansible/roles/apps/init-db/templates/airflow.sql.jinja)
 - [superset.sql.jinja](ansible/roles/apps/init-db/templates/superset.sql.jinja)
@@ -168,7 +168,7 @@ Mettre à jour les valeurs du secret dans [superset-secret.yaml](argocd/superset
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/superset/values-prod.yaml).
+Mettre à jour les valeurs de [values-prod.yaml](argocd/superset/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 superset:
@@ -194,7 +194,7 @@ Mettre à jour le fichier [superset_config_override.py](argocd/superset/superset
 
 4. Configurer le manifest
 
-Mettre à jour les valeurs du [manisfest.yaml](argocd/superset/manifest.yaml).
+Mettre à jour les valeurs du [manisfest.yaml](argocd/superset/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
 
 **Apache Airflow**
@@ -205,7 +205,7 @@ Mettre à jour les valeurs du secret dans [airflow-secret.yaml](argocd/airflow/t
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/airflow/values-prod.yaml).
+Mettre à jour les valeurs de [values-prod.yaml](argocd/airflow/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 airflow:
@@ -232,7 +232,7 @@ Toutes les options de configuration du Helm chart sont disponibles ici [https://
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manisfest.yaml](argocd/airflow/manifest.yaml).
+Mettre à jour les valeurs du [manisfest.yaml](argocd/airflow/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
 
 **Apache Polaris**
@@ -245,8 +245,8 @@ _a venir_
 
 ### Exécution de l'installation
 
-Une fois toutes les configurations précédentes terminées, il est nécessaire de push votre code via `git push`.
-Dans chaque manifeste, les paramètres `repoURL` et `targetRevision` doivent correspondre au repo qui contient votre code.
+Une fois toutes les configurations précédentes terminées, il est nécessaire de push votre code via `git push`.  
+Dans chaque manifeste, les paramètres `repoURL` et `targetRevision` doivent correspondre au repo qui contient votre code.  
 
 Exécuter la commande suivante pour lancer l'installation
 
