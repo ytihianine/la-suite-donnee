@@ -136,6 +136,10 @@ Cluster de données: mettre à jour les valeurs du [manisfest.yaml](argocd/renov
 
 Notamment les valeurs du `namespace`, `repoURL` et `trargetRevision`.
 
+> ⚠️ Attention ⚠️  
+> Si vos bases de de données ont déjà été déployées ou si vous souhaitez changer le mot de passe de l'administrateur `postgres`, il est nécessaire de **supprimer les PVC** associés aux bases de données.  
+> Sauvegarder vos données avant toutes manipulations. 
+
 **Initialiser les bases de données**
 
 1. Configurer les values
