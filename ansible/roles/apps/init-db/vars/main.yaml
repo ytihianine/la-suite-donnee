@@ -8,7 +8,7 @@ dbConfig:
     port: 5432
     name: defaultdb
     user: postgres
-    password: config_admin
+    password: demo_config_admin
 
   databases:
     - name: airflow_config
@@ -30,7 +30,7 @@ dbData:
     port: 5432
     name: defaultdb
     user: postgres
-    password: data_admin
+    password: demo_data_admin
 
   databases:
     - name: data_store
