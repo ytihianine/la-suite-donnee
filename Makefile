@@ -67,6 +67,13 @@ build-superset: ## Build the custom Superset Docker image locally (SUPERSET_VERS
 		--build-arg SUPERSET_VERSION=$(SUPERSET_VERSION) \
 		-t superset-custom:$(SUPERSET_VERSION) .
 
+build-airflow: ## Build the custom Superset Docker image locally (SUPERSET_VERSION=6.0.0)
+	docker build -f images/airflow/Dockerfile \
+		--no-cache \
+		--build-arg AIRFLOW_VERSION=$(AIRFLOW_VERSION) \
+		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
+		-t airflow-custom:$(AIRFLOW_VERSION) .
+
 build-polaris: ## Build the custom Polaris Docker image locally (POLARIS_VERSION=1.5.0)
 	docker build -f images/polaris/Dockerfile \
 		--no-cache \
