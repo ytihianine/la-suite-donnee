@@ -97,6 +97,14 @@ else
         echo -e "${Yellow}LSD_INSTALL_ARGOCD_CLI is $LSD_INSTALL_ARGOCD_CLI. Skipping ArgoCD CLI installation...${Color_Off}"
     fi
 
+    # Install ArgoCD CLI
+    if [ "$LSD_ARGOCD_ADD_REPO" = true ]; then
+        echo "Adding repo to ArgoCD..."
+        make deploy-argocd-add-repo
+    else
+        echo -e "${Yellow}LSD_INSTALL_ARGOCD_CLI is $LSD_INSTALL_ARGOCD_CLI. Skipping ArgoCD CLI installation...${Color_Off}"
+    fi
+
     # Deploy renovate bot
     if [ "$LSD_INSTALL_RENOVATE" = true ]; then
         echo "Deploying Renovate Bot..."
