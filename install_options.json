@@ -1,22 +1,22 @@
 {
     "ARGOCD": {
         "DEPLOY_APP": false,
-        "INSTALL_CLI": false,
+        "INSTALL_CLI": true,
         "ADD_REPO": false
     },
     "RENOVATEBOT": {
-        "DEPLOY_APP": false
+        "DEPLOY_APP": true
     },
     "DATABASES": {
-        "DEPLOY_CONFIG_DB": false,
-        "DEPLOY_DATA_DB": false,
-        "INIT_DB": false
+        "DEPLOY_CONFIG_DB": true,
+        "DEPLOY_DATA_DB": true,
+        "INIT_DB": true
     },
     "SUPERSET": {
-        "DEPLOY_APP": false
+        "DEPLOY_APP": true
     },
     "AIRFLOW": {
-        "DEPLOY_APP": false
+        "DEPLOY_APP": true
     },
     "TRINO": {
         "DEPLOY_APP": false
