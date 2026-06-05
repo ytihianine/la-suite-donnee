@@ -266,7 +266,8 @@ Dans chaque manifeste, les paramètres `repoURL` et `targetRevision` doivent cor
 Exécutez la commande suivante pour lancer l'installation :
 
 ```bash
-bash install.sh
+# Depuis la racine du projet
+env/bin/python3 install.py
 ```
 
 ## Commandes disponibles

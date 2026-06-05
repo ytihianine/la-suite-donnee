@@ -94,7 +94,7 @@ deploy-argocd-cli: ## Déployer ArgoCD CLI sur le cluster Kubernetes
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd-cli.yaml
 	@echo "$(GREEN)ArgoCD CLI a été déployé avec succès$(Color_Off)"
 
-deploy-argocd-add-repo: ## Déployer ArgoCD CLI sur le cluster Kubernetes
+deploy-argocd-add-repo: ## Ajouter des repo dans ArgoCD
 	@echo "Ajout des dépôts dans ArgoCD"
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd-add-repo.yaml
 	@echo "$(GREEN)Les dépôts ont bien été ajoutés dans ArgoCD.$(Color_Off)"
