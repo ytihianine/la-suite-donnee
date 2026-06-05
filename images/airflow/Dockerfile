@@ -11,7 +11,7 @@ USER root
 WORKDIR /app
 
 # Add Nubonyxia cert
-COPY scripts/files/customCA.crt /usr/local/share/ca-certificates/customCA.crt
+COPY images/customCA.crt /usr/local/share/ca-certificates/customCA.crt
 RUN update-ca-certificates
 
 # Switch back to airflow user
