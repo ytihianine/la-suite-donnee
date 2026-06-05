@@ -1,0 +1,27 @@
+{
+    "ARGOCD": {
+        "DEPLOY_APP": false,
+        "INSTALL_CLI": false,
+        "ADD_REPO": false
+    },
+    "RENOVATEBOT": {
+        "DEPLOY_APP": false
+    },
+    "DATABASES": {
+        "DEPLOY_CONFIG_DB": false,
+        "DEPLOY_DATA_DB": false,
+        "INIT_DB": false
+    },
+    "SUPERSET": {
+        "DEPLOY_APP": false
+    },
+    "AIRFLOW": {
+        "DEPLOY_APP": false
+    },
+    "TRINO": {
+        "DEPLOY_APP": false
+    },
+    "POLARIS": {
+        "DEPLOY_APP": false
+    }
+}

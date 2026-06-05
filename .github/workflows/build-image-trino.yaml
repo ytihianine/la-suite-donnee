@@ -5,8 +5,7 @@ on:
 
 env:
   TRINO_VERSION: 481
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/trino
+  IMAGE_NAME: ghcr.io/${{ github.repository }}/trino
 
 jobs:
   build-and-push:
@@ -25,8 +24,8 @@ jobs:
       - name: Build Docker image
         run: docker build -f images/trino/Dockerfile
           --build-arg TRINO_VERSION=${{ env.TRINO_VERSION }}
-          -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TRINO_VERSION }}-${GITHUB_SHA::7} .
+          -t ${{ env.IMAGE_NAME }}:${{ env.TRINO_VERSION }}-${GITHUB_SHA::7} .
 
       - name: Push Docker image
         if: github.ref == 'refs/heads/main'
-        run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TRINO_VERSION }}-${GITHUB_SHA::7}
+        run: docker push ${{ env.IMAGE_NAME }}:${{ env.TRINO_VERSION }}-${GITHUB_SHA::7}

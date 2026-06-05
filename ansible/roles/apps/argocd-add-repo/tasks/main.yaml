@@ -1,0 +1,4 @@
+---
+- name: Add repo to ArgoCD
+  ansible.builtin.command: argocd repo add {{ item.url }} --username {{ item.username }} --password {{ item.password }}
+  loop: "{{ repo | default([]) }}"
