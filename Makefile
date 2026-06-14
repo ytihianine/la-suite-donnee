@@ -67,6 +67,13 @@ build-superset: ## Build the custom Superset Docker image locally (SUPERSET_VERS
 		--build-arg SUPERSET_VERSION=$(SUPERSET_VERSION) \
 		-t superset-custom:$(SUPERSET_VERSION) .
 
+build-airflow: ## Build the custom Superset Docker image locally (SUPERSET_VERSION=6.0.0)
+	docker build -f images/airflow/Dockerfile \
+		--no-cache \
+		--build-arg AIRFLOW_VERSION=$(AIRFLOW_VERSION) \
+		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
+		-t airflow-custom:$(AIRFLOW_VERSION) .
+
 build-polaris: ## Build the custom Polaris Docker image locally (POLARIS_VERSION=1.5.0)
 	docker build -f images/polaris/Dockerfile \
 		--no-cache \
@@ -86,6 +93,11 @@ deploy-argocd-cli: ## Déployer ArgoCD CLI sur le cluster Kubernetes
 	@echo "Déploiement d'ArgoCD CLI sur le cluster Kubernetes"
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd-cli.yaml
 	@echo "$(GREEN)ArgoCD CLI a été déployé avec succès$(Color_Off)"
+
+deploy-argocd-add-repo: ## Ajouter des repo dans ArgoCD
+	@echo "Ajout des dépôts dans ArgoCD"
+	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd-add-repo.yaml
+	@echo "$(GREEN)Les dépôts ont bien été ajoutés dans ArgoCD.$(Color_Off)"
 
 connect-argocd: ## Se connecter à ArgoCD CLI
 	@echo "Connexion à ArgoCD CLI"
