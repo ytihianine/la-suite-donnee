@@ -108,11 +108,11 @@ def prompt_choice(options: Mapping[str, Any]):
             print(f"\t {k}: {v}")
     print()
 
-    options = ["Yes", "No", "Cancel"]
+    user_options = ["Yes", "No", "Cancel"]
 
     while True:
         print("Do you wish to proceed the installation?")
-        for i, opt in enumerate(options, 1):
+        for i, opt in enumerate(user_options, 1):
             print(f"{i}) {opt}")
 
         choice = input("> ").strip()
