@@ -5,20 +5,24 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 
 ## Table des matières
 
-- [Pré-requis](#pré-requis)
-- [Structure](#structure)
-- [Installation](#installation)
-    - [Configuration de l'environnement](#configuration-de-lenvironnement)
-    - [Configuration des applications](#configuration-des-applications)
+- [La Suite Donnée](#la-suite-donnée)
+  - [Table des matières](#table-des-matières)
+  - [Pré-requis](#pré-requis)
+  - [Structure](#structure)
+  - [Installation du projet](#installation-du-projet)
+    - [Initialiser le dépôt](#initialiser-le-dépôt)
+    - [Configuration de l'installation](#configuration-de-linstallation)
+      - [Configuration de l'environnement](#configuration-de-lenvironnement)
+      - [Configuration des applications](#configuration-des-applications)
     - [Exécution de l'installation](#exécution-de-linstallation)
-- [Commandes disponibles](#commandes-disponibles)
-- [Guides complémentaires](#guides-complémentaires)
+  - [Commandes disponibles](#commandes-disponibles)
+  - [Guides complémentaires](#guides-complémentaires)
 
 ## Pré-requis
 
 - Kubernetes*
 - Python 3.12+
-- Node.js 24+
+- Node.js 24+ (optionnel, uniquement pour la CI git)
 - `make`
 
 *Seul un accès à un namespace est nécessaire. Certaines ressources nécessiteront des droits d'admin du cluster.
@@ -37,7 +41,62 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 └── docs/        # Documentation complementaire
 ```
 
-## Installation
+## Installation du projet
+
+### Initialiser le dépôt
+1. Créer et cloner votre dépôt
+
+* Créez un nouveau dépôt Git privé vide.
+* Clonez-le sur votre machine puis placez-vous dans le dossier du projet :
+
+```bash
+git clone votre_depot/
+cd votre_depot/
+```
+
+2. Ajouter le dépôt source (upstream)
+
+Ajoutez le dépôt de référence comme dépôt *upstream* :
+
+```bash
+git remote add upstream https://github.com/ytihianine/la-suite-donnee.git
+```
+
+Vérifiez que l'ajout est correct :
+
+```bash
+git remote -v
+```
+
+3. Récupérer le projet
+
+Importez le contenu du dépôt source :
+
+```bash
+git pull upstream main
+```
+
+4. Publier sur votre dépôt
+
+Envoyez le code sur votre dépôt :
+
+```bash
+git push
+# cela revient à faire git push origin main
+```
+
+5. Mettre à jour ultérieurement
+
+Pour récupérer les dernières modifications du dépôt source :
+
+```bash
+git pull upstream main
+```
+
+> L'opération met à jour le code du projet sans modifier votre configuration personnelle.  
+> Si vous venez de cloner de nouveau votre dépôt, il faudra répéter les étapes à partir de la 2ème
+
+
 
 ### Configuration de l'installation
 
