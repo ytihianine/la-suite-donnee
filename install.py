@@ -105,7 +105,11 @@ def prompt_choice(options: Mapping[str, Any]):
     for app, option in options.items():
         print(f"Options for {app}")
         for k, v in option.items():
-            print(f"\t {k}: {v}")
+            print(
+                f"\t {k}: {v} {Green}✔{Color_Off}"
+                if v
+                else f"\t {k}: {v} {Red}✖{Color_Off}"
+            )
     print()
 
     user_options = ["Yes", "No", "Cancel"]
