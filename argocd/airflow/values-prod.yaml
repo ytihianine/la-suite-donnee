@@ -3,13 +3,16 @@ airflow:
   createUserJob:
     useHelmHooks: false
     applyCustomEnv: false
+    annotations:
+      argocd.argoproj.io/hook: Sync
+      argocd.argoproj.io/hook-delete-policy: HookSucceeded
+
   migrateDatabaseJob:
-    jobAnnotations:
-      "argocd.argoproj.io/hook": Sync
-      "argocd.argoproj.io/hook-delete-policy": HookSucceeded
-      "argocd.argoproj.io/ignore-restart-policy": "true"
     useHelmHooks: false
     applyCustomEnv: false
+    annotations:
+      argocd.argoproj.io/hook: Sync
+      argocd.argoproj.io/hook-delete-policy: HookSucceeded
 
   # Default airflow repository -- overridden by all the specific images below
   defaultAirflowRepository: apache/airflow
