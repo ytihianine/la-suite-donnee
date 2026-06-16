@@ -5,14 +5,17 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 
 ## Table des matières
 
-- [Pré-requis](#pré-requis)
-- [Structure](#structure)
-- [Installation](#installation)
-    - [Configuration de l'environnement](#configuration-de-lenvironnement)
-    - [Configuration des applications](#configuration-des-applications)
+- [La Suite Donnée](#la-suite-donnée)
+  - [Table des matières](#table-des-matières)
+  - [Pré-requis](#pré-requis)
+  - [Structure](#structure)
+  - [Installation](#installation)
+    - [Configuration de l'installation](#configuration-de-linstallation)
+      - [Configuration de l'environnement](#configuration-de-lenvironnement)
+      - [Configuration des applications](#configuration-des-applications)
     - [Exécution de l'installation](#exécution-de-linstallation)
-- [Commandes disponibles](#commandes-disponibles)
-- [Guides complémentaires](#guides-complémentaires)
+  - [Commandes disponibles](#commandes-disponibles)
+  - [Guides complémentaires](#guides-complémentaires)
 
 ## Pré-requis
 
@@ -267,7 +270,7 @@ Exécutez la commande suivante pour lancer l'installation :
 
 ```bash
 # Depuis la racine du projet
-env/bin/python3 install.py
+make install-la-suite-donnee
 ```
 
 ## Commandes disponibles
