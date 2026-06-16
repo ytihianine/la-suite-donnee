@@ -42,7 +42,8 @@ airflow:
     apiServer:
       # Enable API Server ingress resource
       enabled: true
-
+      annotations:
+        argocd.argoproj.io/ignore-healthcheck: "true"
       # The hostnames or hosts configuration for the API Server Ingress
       hosts:
       - name: airflow-demo.lab.sspcloud.fr
