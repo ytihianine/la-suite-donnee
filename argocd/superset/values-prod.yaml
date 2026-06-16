@@ -44,10 +44,6 @@ superset:
     SUPERSET_SECRET_KEY: supersetSecretKey
 
   supersetNode:
-    # -- Annotations to be added to supersetNode deployment
-    deploymentAnnotations:
-      argocd.argoproj.io/ignore-healthcheck: "true"
-
     replicas:
       enabled: true
       replicaCount: 1
