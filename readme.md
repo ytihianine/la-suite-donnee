@@ -326,7 +326,7 @@ Exécutez la commande suivante pour lancer l'installation :
 
 ```bash
 # Depuis la racine du projet
-env/bin/python3 install.py
+make install-la-suite-donnee
 ```
 
 ## Commandes disponibles

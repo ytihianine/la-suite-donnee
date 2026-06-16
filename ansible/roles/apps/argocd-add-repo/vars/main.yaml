@@ -2,8 +2,10 @@
 
 # Template
 # repo:
-#   - url:
-#     username:
-#     password:
+#   - url: ""
+#     username: ""
+#     password: ""
+#     proxy: "" # Laisser vide si pas de proxy
+#     no_proxy: "" # Laisser vide si pas de no_proxy
 
 repo: []

@@ -84,6 +84,11 @@ build-polaris: ## Build the custom Polaris Docker image locally (POLARIS_VERSION
 # Déployer les applications sur le cluster Kubernetes
 # =====================================================================
 
+install-la-suite-donnee: ## Installer la suite de données sur le cluster Kubernetes
+	@echo "Installation de la suite de données sur le cluster Kubernetes"
+	$(VENV_BIN)/python3 install.py
+	@echo "$(GREEN)La suite de données a été installée avec succès$(Color_Off)"
+
 deploy-argocd: ## Déployer ArgoCD sur le cluster Kubernetes
 	@echo "Déploiement d'ArgoCD sur le cluster Kubernetes"
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd.yaml
