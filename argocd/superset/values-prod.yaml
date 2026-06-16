@@ -8,9 +8,9 @@ superset:
 
   ingress:
     enabled: true
+    ingressClassName: nginx
     annotations:
       argocd.argoproj.io/ignore-healthcheck: "true"
-    ingressClassName: onyxia
     hosts:
       # The hostname for the web Ingress (templated)
       - superset-demo.lab.sspcloud.fr
