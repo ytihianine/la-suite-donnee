@@ -8,6 +8,8 @@ superset:
 
   ingress:
     enabled: true
+    annotations:
+      argocd.argoproj.io/ignore-healthcheck: "true"
     ingressClassName: nginx
     hosts:
       # The hostname for the web Ingress (templated)
