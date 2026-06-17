@@ -1,7 +1,9 @@
 ---
 - name: Add repo to ArgoCD
-  ansible.builtin.command: |
-    argocd repo add {{ item.url }} _
-      --username {{ item.username }} --password {{ item.password }} \
-      --proxy {{ item.proxy | default('') }} --no-proxy {{ item.no_proxy | default('') }}
+  ansible.builtin.command:
+    'argocd repo add {{ item.url }}
+      --name {{ item.name | default("") }} --project {{ item.project | default("") }}
+      --username {{ item.username }} --password {{ item.password }}
+      --proxy {{ item.proxy | default("") }} --no-proxy {{ item.no_proxy | default("") }}
+    '
   loop: "{{ repo | default([]) }}"
