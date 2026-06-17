@@ -20,7 +20,7 @@
                     "types": [
                         {"type": "feat", "section": "Features"},
                         {"type": "fix", "section": "Bug Fixes"},
-                        {"type": "chore", "hidden": true},
+                        {"type": "chore", "hidden": false, "section": "Chores"},
                         {"type": "docs", "hidden": false, "section": "Documentation"},
                         {"type": "style", "hidden": true},
                         {"type": "refactor", "hidden": true},
