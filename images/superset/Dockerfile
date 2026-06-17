@@ -11,7 +11,7 @@ ARG USE_DSFR=true
 # ------------------------------------------
 # Stage 1: Download DSFR
 # ------------------------------------------
-FROM ubuntu:24.04 AS custom_image
+FROM ubuntu:26.04 AS custom_image
 
 # Must repeat ARG here to be able to use it in this stage
 ARG REPO_OWNER
