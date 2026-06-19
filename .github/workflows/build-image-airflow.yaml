@@ -28,7 +28,7 @@ jobs:
           -t $IMAGE_NAME:$AIRFLOW_VERSION-${GITHUB_SHA::7} .
 
       - name: Push Docker image
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/images'
+        if: github.ref == 'refs/heads/main'
         run: docker push $IMAGE_NAME:$AIRFLOW_VERSION-${GITHUB_SHA::7}
 
       - name: Push Docker test image
