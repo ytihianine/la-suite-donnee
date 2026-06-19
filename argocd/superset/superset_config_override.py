@@ -3,6 +3,29 @@ from typing import Any
 import os
 
 # ------------------------
+# Langues
+# ------------------------
+# Superset v6+: workaround pour s'assurer que la page d'accueil soit en français.
+# En attendant le déploiement du fix
+from superset.translations.utils import get_language_pack  # type: ignore
+
+BABEL_DEFAULT_LOCALE = "fr"
+
+LANGUAGES = {
+    "fr": {"flag": "fr", "name": "Français"},
+    "en": {"flag": "us", "name": "English"},
+}
+
+
+def bootstrap_overrides(bootstrap_data):
+    bootstrap_data["locale"] = "fr"
+    bootstrap_data["language_pack"] = get_language_pack("fr")
+    return bootstrap_data
+
+
+COMMON_BOOTSTRAP_OVERRIDES_FUNC = bootstrap_overrides
+
+# ------------------------
 # Application - configuration
 # ------------------------
 SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 6553500
@@ -11,16 +34,6 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "max_overflow": 30,  # default: 10
     "pool_timeout": 60,  # default: 30
     "pool_recycle": 1800,  # refresh every 30 minutes to avoid stale connections
-}
-
-# ------------------------
-# Langues
-# ------------------------
-BABEL_DEFAULT_LOCALE = "fr"
-
-LANGUAGES = {
-    "fr": {"flag": "fr", "name": "Français"},
-    "en": {"flag": "us", "name": "English"},
 }
 
 # ------------------------
