@@ -37,16 +37,6 @@ SQLALCHEMY_ENGINE_OPTIONS = {
 }
 
 # ------------------------
-# Langues
-# ------------------------
-BABEL_DEFAULT_LOCALE = "fr"
-
-LANGUAGES = {
-    "fr": {"flag": "fr", "name": "Français"},
-    "en": {"flag": "us", "name": "English"},
-}
-
-# ------------------------
 # Thèmes
 # ------------------------
 FAVICONS = [{"href": "/static/assets/local/images/app_icon.png"}]
