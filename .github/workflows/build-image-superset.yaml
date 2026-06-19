@@ -29,3 +29,7 @@ jobs:
       - name: Push Docker image
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/images'
         run: docker push ${{ env.IMAGE_NAME }}:${{ vars.SUPERSET_VERSION }}-${GITHUB_SHA::7}
+
+      - name: Push Docker test image
+        if: github.ref == 'refs/heads/images'
+        run: docker push ${{ env.IMAGE_NAME }}:${{ vars.SUPERSET_VERSION }}-test-${GITHUB_SHA::7}
