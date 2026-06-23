@@ -37,7 +37,9 @@ airflow:
 
   extraEnvFrom: |
     - secretRef:
-        name: 'airflow-secret'
+        name: 'airflow-custom-secret'
+
+  executor: 'CeleryExecutor'
 
   # Ingress configuration
   ingress:
@@ -99,15 +101,15 @@ airflow:
   # Fernet key settings
   # Note: fernetKey can only be set during install, not upgrade
   # If set, the secret must contain a 'fernet-key' key with a base64-encoded key value
-  fernetKeySecretName: airflow-secret
+  fernetKeySecretName: airflow-custom-secret
   # fernetKey: fernetKeyValue
 
   # Flask secret key for Airflow 3+ Api: `[api] secret_key` in airflow.cfg
-  apiSecretKeySecretName: airflow-secret
+  apiSecretKeySecretName: airflow-custom-secret
   # apiSecretKey: apiSecretKeyValue
 
   # Secret key used to encode and decode JWTs: `[api_auth] jwt_secret` in airflow.cfg
-  jwtSecret: airflow-secret
+  jwtSecret: airflow-custom-secret
   # jwtSecret: jwtSecretValue
 
 
@@ -133,7 +135,7 @@ airflow:
       # This policy determines whether PVCs should be deleted when StatefulSet is scaled down or removed.
       persistentVolumeClaimRetentionPolicy: ~
       # Volume size for triggerer StatefulSet
-      size: 30Gi
+      size: 20Gi
 
   # Airflow Triggerer Config
   triggerer:
@@ -171,12 +173,12 @@ airflow:
       enabled: false
 
     gitSync:
-      enabled: true
+      enabled: false
 
       # git repo clone url
       # ssh example: git@github.com:apache/airflow.git
       # https example: https://github.com/apache/airflow.git
-      repo: https://github.com/ytihianine/traitement-de-donnees.git
+      repo: 
       branch: main
       rev: HEAD
       # The git revision (branch, tag, or hash) to check out, v4 only
@@ -200,11 +202,20 @@ airflow:
       #       name: 'proxy-config'
 
   logs:
-    # Configuration for empty dir volume (if logs.persistence.enabled == false)
+    # Configuration for empty dir volume (if `logs.persistence.enabled` == 'false')
     # emptyDirConfig:
     #   sizeLimit: 1Gi
     #   medium: Memory
 
     persistence:
       # Enable persistent volume for storing logs
-      enabled: false
+      enabled: true
+
+      # Volume size for logs
+      size: 20Gi
+
+      # Annotations for the logs PVC
+      annotations: {}
+
+      # If using a custom storageClass, pass name here
+      # storageClassName:
