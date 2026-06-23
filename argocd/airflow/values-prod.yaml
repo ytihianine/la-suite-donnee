@@ -30,7 +30,7 @@ airflow:
   images:
     airflow:
       repository: ghcr.io/ytihianine/la-suite-donnee/apache-airflow
-      tag: 3.2.2-c6386b0 
+      tag: 3.2.2-c6386b0
       # Specifying digest takes precedence over tag.
       # digest:
       pullPolicy: Always
@@ -178,7 +178,7 @@ airflow:
       # git repo clone url
       # ssh example: git@github.com:apache/airflow.git
       # https example: https://github.com/apache/airflow.git
-      repo: 
+      repo:
       branch: main
       rev: HEAD
       # The git revision (branch, tag, or hash) to check out, v4 only
