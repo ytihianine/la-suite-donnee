@@ -15,12 +15,10 @@ CREATE ROLE analyst_superset LOGIN PASSWORD 'analyst_password';
 COMMENT ON ROLE analyst_superset IS 'Utilisateur analyste pour accéder à la base de données métier';
 GRANT pg_read_all_data TO analyst_superset;
 
-CREATE ROLE airflow_task_writer LOGIN PASSWORD 'analyst_password';
-COMMENT ON ROLE airflow_task_writer IS 'Utilisateur analyste pour accéder à la base de données métier';
-GRANT pg_read_all_data TO airflow_task_writer;
-GRANT pg_write_all_data TO airflow_task_writer;
-GRANT pg_maintain TO airflow_task_writer;
-GRANT pg_monitor TO airflow_task_writer;
+CREATE ROLE airflow_task_writer LOGIN PASSWORD 'task_password';
+COMMENT ON ROLE airflow_task_writer IS 'Pour les tâches Airflow';
+GRANT ALL ON DATABASE {{ item.0.name }} TO airflow_task_writer WITH GRANT OPTION;
+GRANT ALL ON SCHEMA public TO airflow_task_writer WITH GRANT OPTION;
 
 
 CREATE OR REPLACE FUNCTION public.manage_new_schema_privileges()
