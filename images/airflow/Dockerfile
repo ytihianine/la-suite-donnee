@@ -5,7 +5,7 @@ ARG PYTHON_VERSION=3.12
 # ------------------------------------------
 # Install apps and packages
 # ------------------------------------------
-FROM apache/airflow:${AIRFLOW_VERSION}
+FROM apache/airflow:${AIRFLOW_VERSION}-python${PYTHON_VERSION}
 
 USER root
 WORKDIR /app
