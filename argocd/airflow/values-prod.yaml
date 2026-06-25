@@ -18,19 +18,19 @@ airflow:
   defaultAirflowRepository: apache/airflow
 
   # Default airflow tag to deploy
-  defaultAirflowTag: "3.2.2"
+  defaultAirflowTag: "3.1.7"
 
   # Default airflow digest. If specified, it takes precedence over tag
   defaultAirflowDigest: ~
 
   # Airflow version (Used to make some decisions based on Airflow Version being deployed)
-  airflowVersion: "3.2.2"
+  airflowVersion: "3.1.7"
 
   # Images
   images:
     airflow:
-      repository: ghcr.io/ytihianine/la-suite-donnee/apache-airflow
-      tag: 3.2.2-c6386b0
+      repository: ghcr.io/ytihianine/traitement-de-donnees
+      tag: 3.1.7
       # Specifying digest takes precedence over tag.
       # digest:
       pullPolicy: Always
@@ -133,9 +133,11 @@ airflow:
       # Enable persistent volumes
       enabled: false
       # This policy determines whether PVCs should be deleted when StatefulSet is scaled down or removed.
-      persistentVolumeClaimRetentionPolicy: ~
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
       # Volume size for triggerer StatefulSet
-      size: 20Gi
+      size: 10Gi
 
   # Airflow Triggerer Config
   triggerer:
@@ -143,7 +145,9 @@ airflow:
       # Enable persistent volumes
       enabled: false
       # This policy determines whether PVCs should be deleted when StatefulSet is scaled down or removed.
-      persistentVolumeClaimRetentionPolicy: ~
+      persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
       # Volume size for triggerer StatefulSet
       size: 10Gi
 
