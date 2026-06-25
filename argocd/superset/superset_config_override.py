@@ -446,10 +446,66 @@ FEATURE_FLAGS: dict[str, bool] = {
 # ------------------------
 # HTML Sanitization
 # ------------------------
+THEME_FONT_URL_ALLOWED_DOMAINS: list[str] = [
+    "fonts.googleapis.com",  # Google Fonts API (serves CSS)
+    "fonts.gstatic.com",  # Google Fonts CDN (serves font files)
+    "use.typekit.net",  # Adobe Fonts (serves both CSS and fonts)
+    "use.typekit.com",  # Adobe Fonts alternate (serves both CSS and fonts)
+]
 # Pour plus d'informations: https://github.com/apache/superset/blob/886f52554539318521858fbcf493123c8c4199ef/superset/config.py#L940
 HTML_SANITIZATION = False
 HTML_SANITIZATION_SCHEMA_EXTENSIONS: dict[str, Any] = {}
-
+TALISMAN_CONFIG = {
+    "content_security_policy": {
+        "base-uri": ["'self'"],
+        "default-src": ["'self'"],
+        "img-src": [
+            "'self'",
+            "blob:",
+            "data:",
+            "https://apachesuperset.gateway.scarf.sh",
+            "https://static.scarf.sh/",
+            # "https://cdn.brandfolder.io", # Uncomment when SLACK_ENABLE_AVATARS is True  # noqa: E501
+            "ows.terrestris.de",
+            "https://cdn.document360.io",
+        ],
+        "worker-src": ["'self'", "blob:"],
+        "connect-src": [
+            "'self'",
+            "https://api.mapbox.com",
+            "https://events.mapbox.com",
+            "https://tile.openstreetmap.org",
+            "https://tile.osm.ch",
+            "https://basemaps.cartocdn.com",
+            "https://*.basemaps.cartocdn.com",
+            "https://tiles.openfreemap.org",
+            "https://*.maptiler.com",
+            "https://tiles.stadiamaps.com",
+            "https://tiles.versatiles.org",
+            "https://*.protomaps.com",
+            "https://*.maplibre.org",
+        ],
+        "object-src": "'none'",
+        "style-src": [
+            "'self'",
+            "'unsafe-inline'",
+            *[f"https://{d}" for d in THEME_FONT_URL_ALLOWED_DOMAINS],
+        ],
+        "font-src": [
+            "'self'",
+            *[f"https://{d}" for d in THEME_FONT_URL_ALLOWED_DOMAINS],
+        ],
+        "script-src": [
+            "'self'",
+            "'strict-dynamic'",
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+        ],
+    },
+    "content_security_policy_nonce_in": ["script-src"],
+    "force_https": False,
+    "session_cookie_secure": False,
+}
 
 # ------------------------
 # Couleurs & Palettes
