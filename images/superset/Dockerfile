@@ -1,6 +1,6 @@
 # Define ARGS (Defaults, overridden in GitLab CI)
 ARG SUPERSET_REPO=apache/superset
-ARG SUPERSET_VERSION=6.1.0
+ARG SUPERSET_VERSION=6.1.1
 ARG REPO_OWNER=GouvernementFR
 ARG REPO_NAME=dsfr
 ARG TAG_DSFR=1.14.4
