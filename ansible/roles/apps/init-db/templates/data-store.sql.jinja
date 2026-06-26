@@ -15,12 +15,94 @@ CREATE ROLE analyst_superset LOGIN PASSWORD 'analyst_password';
 COMMENT ON ROLE analyst_superset IS 'Utilisateur analyste pour accéder à la base de données métier';
 GRANT pg_read_all_data TO analyst_superset;
 
-CREATE ROLE airflow_task_writer LOGIN PASSWORD 'analyst_password';
-COMMENT ON ROLE airflow_task_writer IS 'Utilisateur analyste pour accéder à la base de données métier';
-GRANT pg_read_all_data TO airflow_task_writer;
-GRANT pg_write_all_data TO airflow_task_writer;
-GRANT pg_maintain TO airflow_task_writer;
-GRANT pg_monitor TO airflow_task_writer;
+CREATE ROLE airflow_task_writer LOGIN PASSWORD 'task_password';
+COMMENT ON ROLE airflow_task_writer IS 'Pour les tâches Airflow';
+GRANT ALL ON DATABASE {{ item.0.name }} TO airflow_task_writer WITH GRANT OPTION;
+GRANT ALL ON SCHEMA public TO airflow_task_writer WITH GRANT OPTION;
+
+
+CREATE OR REPLACE FUNCTION public.manage_new_schema_privileges()
+RETURNS event_trigger
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    obj RECORD;
+    schema_name TEXT;
+BEGIN
+    FOR obj IN
+        SELECT *
+        FROM pg_event_trigger_ddl_commands()
+    LOOP
+        IF obj.object_type = 'schema' THEN
+
+            -- schema name
+            schema_name := obj.object_identity;
+
+            ------------------------------------------------------------------
+            -- Airflow: full access to schema
+            ------------------------------------------------------------------
+            EXECUTE format(
+                'GRANT ALL PRIVILEGES ON SCHEMA %I TO airflow_task_writer',
+                schema_name
+            );
+
+            ------------------------------------------------------------------
+            -- Superset: read-only access to schema
+            ------------------------------------------------------------------
+            EXECUTE format(
+                'GRANT USAGE ON SCHEMA %I TO analyst_superset',
+                schema_name
+            );
+
+            ------------------------------------------------------------------
+            -- Existing objects (in case schema is created then populated)
+            ------------------------------------------------------------------
+            EXECUTE format(
+                'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA %I TO airflow_task_writer',
+                schema_name
+            );
+
+            EXECUTE format(
+                'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA %I TO airflow_task_writer',
+                schema_name
+            );
+
+            EXECUTE format(
+                'GRANT SELECT ON ALL TABLES IN SCHEMA %I TO analyst_superset',
+                schema_name
+            );
+
+            ------------------------------------------------------------------
+            -- Future tables created by postgres
+            ------------------------------------------------------------------
+            EXECUTE format(
+                'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA %I
+                 GRANT ALL PRIVILEGES ON TABLES TO airflow_task_writer',
+                schema_name
+            );
+
+            EXECUTE format(
+                'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA %I
+                 GRANT ALL PRIVILEGES ON SEQUENCES TO airflow_task_writer',
+                schema_name
+            );
+
+            EXECUTE format(
+                'ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA %I
+                 GRANT SELECT ON TABLES TO analyst_superset',
+                schema_name
+            );
+
+        END IF;
+    END LOOP;
+END;
+$$;
+
+CREATE EVENT TRIGGER trg_manage_new_schema_privileges
+ON ddl_command_end
+WHEN TAG IN ('CREATE SCHEMA')
+EXECUTE FUNCTION public.manage_new_schema_privileges();
+
 
 EXCEPTION WHEN duplicate_object THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
 END

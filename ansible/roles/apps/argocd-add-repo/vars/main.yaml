@@ -3,6 +3,8 @@
 # Template
 # repo:
 #   - url: ""
+#     name: ""
+#     project: ""
 #     username: ""
 #     password: ""
 #     proxy: "" # Laisser vide si pas de proxy

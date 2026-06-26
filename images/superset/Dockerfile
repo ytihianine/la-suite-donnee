@@ -1,6 +1,6 @@
 # Define ARGS (Defaults, overridden in GitLab CI)
 ARG SUPERSET_REPO=apache/superset
-ARG SUPERSET_VERSION=6.0.0
+ARG SUPERSET_VERSION=6.1.0
 ARG REPO_OWNER=GouvernementFR
 ARG REPO_NAME=dsfr
 ARG TAG_DSFR=1.14.4
@@ -11,7 +11,7 @@ ARG USE_DSFR=true
 # ------------------------------------------
 # Stage 1: Download DSFR
 # ------------------------------------------
-FROM ubuntu:24.04 AS custom_image
+FROM ubuntu:26.04 AS custom_image
 
 # Must repeat ARG here to be able to use it in this stage
 ARG REPO_OWNER
@@ -27,6 +27,7 @@ WORKDIR /app
 
 # Import Superset custom folder
 COPY images/superset/superset-dsfr ./superset-custom/
+COPY images/superset/requirements-local.txt ./superset-custom/requirements-local.txt
 COPY images/customCA.crt  ./customCA.crt
 
 # Download DSFR only if USE_DSFR=true
@@ -50,7 +51,7 @@ RUN if [ "$USE_DSFR" = "true" ]; then \
 # ------------------------------------------
 # Stage 2: Build frontend translations
 # ------------------------------------------
-FROM node:24.16.0-alpine3.23 AS frontend_translations
+FROM node:24.18.0-alpine3.23 AS frontend_translations
 
 WORKDIR /app
 
@@ -99,6 +100,7 @@ RUN set -eux; \
     cp /tmp/superset-custom/assets/404.html  /app/superset/static/assets/404.html; \
     cp /tmp/superset-custom/assets/500.html  /app/superset/static/assets/500.html; \
     cp /tmp/superset-custom/templates_overrides/superset/public_welcome.html  /app/superset/templates/superset/; \
+    cp /tmp/superset-custom/templates_overrides/head_custom_extra.html  /app/superset/templates/; \
     echo "Common customizations copied"
 
 # ------------------------------------------
@@ -137,13 +139,12 @@ COPY --from=frontend_translations /app/translations /app/superset/translations
 RUN set -eux; \
     echo "Installing extra packages"; \
     if command -v uv > /dev/null 2>&1; then \
-        uv pip install --no-cache-dir -r /tmp/superset-custom/docker/requirements-local.txt; \
+        uv pip install --no-cache-dir -r /tmp/superset-custom/requirements-local.txt; \
     else \
-        pip install --no-cache-dir -r /tmp/superset-custom/docker/requirements-local.txt; \
+        pip install --no-cache-dir -r /tmp/superset-custom/requirements-local.txt; \
     fi
 
 # Add custom CA certificate -- Nubonyxia context
-# COPY --from=custom_image /app/customCA.crt /usr/local/share/ca-certificates/customCA.crt
 RUN update-ca-certificates
 
 USER superset
