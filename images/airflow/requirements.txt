@@ -8,4 +8,4 @@ pydantic-settings==2.14.2
 psycopg==3.3.4
 # Version 0.11.0 has some pydantic issues
 pyiceberg[s3fs,pandas,pyarrow,sql-postgres]==0.11.1
-trino==0.337.0
+trino==0.338.0
