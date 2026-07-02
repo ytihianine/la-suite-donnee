@@ -2,6 +2,11 @@ name: Build and Push custom Apache Superset image
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'images/superset/**'
 
 env:
   SUPERSET_VERSION: ${{ vars.SUPERSET_VERSION }}
