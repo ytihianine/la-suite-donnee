@@ -152,7 +152,7 @@ deploy-polaris: ## Déployer Polaris sur le cluster Kubernetes à partir d'ArgoC
 	@echo "$(GREEN)Polaris a été déployé avec succès$(Color_Off)"
 
 # Need to add deploy-trino  deploy-polaris
-deploy-all: deploy-renovatebot deploy-db-config deploy-db-data init-db deploy-superset deploy-airflow ## Déployer toutes les applications sur le cluster Kubernetes à partir d'ArgoCD
+deploy-all: deploy-renovatebot deploy-db-config deploy-db-data init-db deploy-superset deploy-airflow deploy-trino deploy-polaris ## Déployer toutes les applications sur le cluster Kubernetes à partir d'ArgoCD
 
 # =====================================================================
 # Autres commandes utiles
