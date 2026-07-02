@@ -21,7 +21,7 @@ trino:
     annotations:
       argocd.argoproj.io/ignore-healthcheck: "true"
     hosts:
-      - host: chart.local
+      - host: trino.lab.sspcloud.fr
         paths:
           - path: /
             pathType: ImplementationSpecific
