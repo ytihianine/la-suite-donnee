@@ -2,9 +2,14 @@ name: Build and Push custom apache polaris image
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'images/polaris/**'
 
 env:
-  POLARIS_VERSION: 1.5.0
+  POLARIS_VERSION: ${{ vars.POLARIS_VERSION }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/apache-polaris
 
 jobs:

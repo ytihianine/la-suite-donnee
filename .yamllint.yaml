@@ -1,0 +1,7 @@
+---
+extends: relaxed
+
+ignores:
+  - '.ruff_cache/'
+  - '.pytest_cache/'
+  - 'env/'

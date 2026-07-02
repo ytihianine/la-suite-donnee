@@ -2,6 +2,11 @@ name: Build and Push custom airflow image
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'images/airflow/**'
 
 env:
   AIRFLOW_VERSION: ${{ vars.AIRFLOW_VERSION }}

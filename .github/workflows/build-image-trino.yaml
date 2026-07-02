@@ -2,9 +2,14 @@ name: Build and Push custom trino image
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'images/trino/**'
 
 env:
-  TRINO_VERSION: 481
+  TRINO_VERSION: ${{ vars.TRINO_VERSION }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/trino
 
 jobs:
