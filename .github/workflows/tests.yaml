@@ -23,9 +23,7 @@ jobs:
           python-version: "3.14"
 
       - name: Install dependencies
-        run: |
-          pip install uv
-          uv pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run pytest
-        run: python3 -m pytest tests/ -v
+        run: python -m pytest tests/ -v
