@@ -4,8 +4,12 @@ on:
   workflow_dispatch:
 
 env:
-  POLARIS_VERSION: 1.5.0
+  POLARIS_VERSION: ${{ vars.POLARIS_VERSION }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/apache-polaris
+  IMAGE_TAG: >-
+    ${{ vars.POLARIS_VERSION }}${{
+      github.ref != 'refs/heads/main' && '-test' || ''
+    }}-${{ github.sha }}
 
 jobs:
   build-and-push:
@@ -24,8 +28,8 @@ jobs:
       - name: Build Docker image
         run: docker build -f images/polaris/Dockerfile
           --build-arg POLARIS_VERSION=${{ env.POLARIS_VERSION }}
-          -t ${{ env.IMAGE_NAME }}:${{ env.POLARIS_VERSION }}-${GITHUB_SHA::7} .
+          -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
 
       - name: Push Docker image
         if: github.ref == 'refs/heads/main'
-        run: docker push ${{ env.IMAGE_NAME }}:${{ env.POLARIS_VERSION }}-${GITHUB_SHA::7}
+        run: docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}

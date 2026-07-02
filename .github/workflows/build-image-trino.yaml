@@ -4,8 +4,12 @@ on:
   workflow_dispatch:
 
 env:
-  TRINO_VERSION: 481
+  TRINO_VERSION: ${{ vars.TRINO_VERSION }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/trino
+  IMAGE_TAG: >-
+    ${{ vars.TRINO_VERSION }}${{
+      github.ref != 'refs/heads/main' && '-test' || ''
+    }}-${{ github.sha }}
 
 jobs:
   build-and-push:
@@ -24,8 +28,8 @@ jobs:
       - name: Build Docker image
         run: docker build -f images/trino/Dockerfile
           --build-arg TRINO_VERSION=${{ env.TRINO_VERSION }}
-          -t ${{ env.IMAGE_NAME }}:${{ env.TRINO_VERSION }}-${GITHUB_SHA::7} .
+          -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
 
       - name: Push Docker image
         if: github.ref == 'refs/heads/main'
-        run: docker push ${{ env.IMAGE_NAME }}:${{ env.TRINO_VERSION }}-${GITHUB_SHA::7}
+        run: docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
