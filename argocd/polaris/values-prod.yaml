@@ -65,7 +65,7 @@ polaris:
       -  # @schema required
         # -- The host name. Required.
         # @section -- Ingress
-        host: chart.local
+        host: polaris.lab.sspcloud.fr
         # @schema required; minItems: 1
         # A list of paths used to configure the ingress.
         paths:
