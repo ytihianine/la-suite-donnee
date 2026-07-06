@@ -1,5 +1,5 @@
 # Define ARGS (Defaults, overridden in Git CI)
-ARG AIRFLOW_VERSION=3.2.2
+ARG AIRFLOW_VERSION=3.3.0
 ARG PYTHON_VERSION=3.13
 
 # ------------------------------------------
