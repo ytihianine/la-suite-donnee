@@ -7,8 +7,6 @@ helm repo add apache https://airflow.apache.org
 helm repo add apache-superset http://apache.github.io/superset/
 helm repo add trinodb https://trinodb.github.io/charts/
 helm repo add polaris https://downloads.apache.org/polaris/helm-chart
-helm repo add external-secrets https://charts.external-secrets.io
-helm repo add hashicorp https://helm.releases.hashicorp.com
 helm repo add renovatebot https://docs.renovatebot.com/helm-charts
 helm repo update
 
@@ -19,8 +17,6 @@ charts=(
   argocd/trino
   argocd/polaris
   argocd/renovatebot
-  argocd/external-secrets
-  argocd/secret-operator
   argocd/postgres/config
   argocd/postgres/data
 )
