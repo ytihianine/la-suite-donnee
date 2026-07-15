@@ -4,7 +4,7 @@ metadata:
   name: db-config-prod
 spec:
   destination:
-    namespace: ""
+    namespace: "namespace"
     server: https://kubernetes.default.svc
   source:
     path: argocd/postgres/config

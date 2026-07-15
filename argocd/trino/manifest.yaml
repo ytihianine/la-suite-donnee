@@ -4,7 +4,7 @@ metadata:
   name: trino
 spec:
   destination:
-    namespace: ""
+    namespace: "namespace"
     server: https://kubernetes.default.svc
   source:
     path: argocd/trino
