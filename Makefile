@@ -55,26 +55,26 @@ run-pre-commit: ## Lancer pre-commit sur tous les fichiers
 # =====================================================================
 # Build les images Docker personnalisées des applications
 # =====================================================================
-build-trino: ## Build the custom Trino Docker image locally (TRINO_VERSION=481)
+build-trino: ## Build the custom Trino Docker image locally
 	docker build -f images/trino/Dockerfile \
 		--no-cache \
 		--build-arg TRINO_VERSION=$(TRINO_VERSION) \
 		-t trino-custom:$(TRINO_VERSION) .
 
-build-superset: ## Build the custom Superset Docker image locally (SUPERSET_VERSION=6.1.0)
+build-superset: ## Build the custom Superset Docker image locally
 	docker build -f images/superset/Dockerfile \
 		--no-cache \
 		--build-arg SUPERSET_VERSION=$(SUPERSET_VERSION) \
 		-t superset-custom:$(SUPERSET_VERSION) .
 
-build-airflow: ## Build the custom Airflow Docker image locally (AIRFLOW_VERSION=3.2.2)
+build-airflow: ## Build the custom Airflow Docker image locally
 	docker build -f images/airflow/Dockerfile \
 		--no-cache \
 		--build-arg AIRFLOW_VERSION=$(AIRFLOW_VERSION) \
 		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
 		-t airflow-custom:$(AIRFLOW_VERSION) .
 
-build-polaris: ## Build the custom Polaris Docker image locally (POLARIS_VERSION=1.5.0)
+build-polaris: ## Build the custom Polaris Docker image locally
 	docker build -f images/polaris/Dockerfile \
 		--no-cache \
 		--build-arg POLARIS_VERSION=$(POLARIS_VERSION) \
