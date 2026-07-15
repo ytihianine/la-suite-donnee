@@ -42,8 +42,52 @@ superset:
       username: superset_admin
       password: superset_admin
 
+  # -- Superset configuration properties
+  # Set any configuration property from superset/config.py here
+  # See https://github.com/apache/superset/blob/master/superset/config.py for all available options
+  config: {}
+    # SECRET_KEY: "supersetSecretKey"
+    # ROW_LIMIT: 50000
+    # DEBUG: false
+
+  # -- Feature flags configuration
+  # See https://github.com/apache/superset/blob/master/RESOURCES/FEATURE_FLAGS.md
+  featureFlags: {}
+    # ALERT_REPORTS: true
+    # DASHBOARD_RBAC: true
+
   extraSecretEnv:
     SUPERSET_SECRET_KEY: supersetSecretKey
+
+  # -- Database connection configuration for the Superset metadata database
+  database:
+    # -- Database driver used when uri is not set (default: postgresql+psycopg2 when unset;
+    # legacy supersetNode.connections.db_type is honored when this is unset)
+    driver: postgresql+psycopg2
+    # -- Database host (default: {{ .Release.Name }}-postgresql)
+    host: db-config-prod-postgresql
+    # -- Database port (default: 5432 when unset; legacy supersetNode.connections.db_port is honored)
+    port: 5432
+    # -- Database user (default: superset, resolved via superset.db.user)
+    user: superset_admin_user
+    # -- Database password (default: superset, resolved via superset.db.password)
+    # ⚠️ CHANGE THIS for production
+    password: superset_password
+    # -- Database name (default: superset, resolved via superset.db.name)
+    name: superset_config
+    # -- Database SSL configuration
+    ssl:
+      enabled: false
+      mode: require
+
+  # -- Redis cache configuration for Superset
+  # Redis is optional but recommended for caching and Celery.
+  # If redis.enabled (chart dependency) is true, defaults point to the chart's Redis instance.
+  cache:
+    # -- Enable Redis-based features (cache, Celery). Set to false to disable Redis usage entirely.
+    enabled: true
+
+
   supersetNode:
     replicas:
       enabled: true
@@ -54,12 +98,6 @@ superset:
       maxReplicas: 10
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 80
-    connections:
-      db_host: db-config-prod-postgresql
-      db_port: 5432
-      db_user: superset_admin_user
-      db_pass: superset_password
-      db_name: superset_config
   ## Set to false if bringing your own PostgreSQL.
   postgresql:
     enabled: false
@@ -75,10 +113,4 @@ superset:
       targetCPUUtilizationPercentage: 80
       # targetMemoryUtilizationPercentage: 80
     # -- Sets the [pod disruption budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) for supersetWorker pods
-    resources:
-      limits:
-        cpu: 4000m
-        memory: 12288Mi
-      requests:
-        cpu: 2000m
-        memory: 6144Mi
+    resources: {}
