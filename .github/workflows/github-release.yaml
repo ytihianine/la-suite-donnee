@@ -32,6 +32,7 @@ jobs:
         run: npx
           --package semantic-release
           --package @semantic-release/commit-analyzer
-          --package @semantic-release/git
+          --package @semantic-release/release-notes-generator
+          --package @semantic-release/github
           --package @semantic-release/changelog
           semantic-release
