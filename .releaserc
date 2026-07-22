@@ -5,11 +5,7 @@
     "plugins": [
         [
             "@semantic-release/commit-analyzer", {
-                "preset": "conventionalcommits",
-                "releaseRules": [
-                    {"type": "custom", "release": "patch"},
-                    {"type": "release", "release": "major"}
-                ]
+                "preset": "conventionalcommits"
             }
         ],
         [
@@ -18,16 +14,14 @@
                 "preset": "conventionalcommits",
                 "presetConfig": {
                     "types": [
-                        {"type": "feat", "section": "Features"},
-                        {"type": "fix", "section": "Bug Fixes"},
-                        {"type": "chore", "hidden": false, "section": "Chores"},
-                        {"type": "docs", "hidden": false, "section": "Documentation"},
-                        {"type": "style", "hidden": true},
-                        {"type": "refactor", "hidden": true},
-                        {"type": "perf", "hidden": true},
-                        {"type": "test", "hidden": true},
-                        {"type": "custom", "hidden": false, "section": "Custom"},
-                        {"type": "release", "hidden": true}
+                        {"type": "feat", "effect": "bump", "section": "Features"},
+                        {"type": "fix", "effect": "bump", "section": "Bug Fixes"},
+                        {"type": "chore", "effect": "changelog", "section": "Chores"},
+                        {"type": "docs", "effect": "changelog", "section": "Documentation"},
+                        {"type": "style", "effect": "changelog", "section": "Chores"},
+                        {"type": "refactor", "effect": "changelog", "section": "Chores"},
+                        {"type": "perf", "effect": "changelog", "section": "Chores"},
+                        {"type": "test", "effect": "changelog", "section": "Chores"}
                     ]
                 }
             }
