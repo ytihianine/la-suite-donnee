@@ -29,8 +29,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
-        run: npx \
-          --package semantic-release \
-          --package @semantic-release/git \
-          --package @semantic-release/changelog \
+        run: npx
+          --package semantic-release
+          --package @semantic-release/git
+          --package @semantic-release/changelog
           semantic-release
