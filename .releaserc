@@ -26,6 +26,6 @@
                 }
             }
         ],
-        "@semantic-release/github"
+        "@semantic-release/git"
     ]
 }
