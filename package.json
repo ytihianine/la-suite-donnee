@@ -3,6 +3,6 @@
     "semantic-release": "^25.0.8"
   },
   "devDependencies": {
-    "conventional-changelog-conventionalcommits": "^10.2.1"
+    "conventional-changelog-conventionalcommits": "^9.0.0"
   }
 }
