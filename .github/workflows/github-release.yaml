@@ -30,4 +30,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          npx --package semantic-release semantic-release
+          npx --package semantic-release \
+          --package @semantic-release/commit-analyzer \
+          --package @semantic-release/release-notes-generator \
+          --package @semantic-release/github \
+          --package @semantic-release/changelog \
+          --package @semantic-release/changelog \
+          semantic-release
