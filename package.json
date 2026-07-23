@@ -1,7 +1,8 @@
 {
   "dependencies": {
-    "conventional-changelog": "^8.1.0",
-    "conventional-changelog-angular": "^9.2.1",
     "semantic-release": "^25.0.8"
+  },
+  "devDependencies": {
+    "conventional-changelog-conventionalcommits": "^10.2.1"
   }
 }
