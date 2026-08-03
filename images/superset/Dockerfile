@@ -51,7 +51,7 @@ RUN if [ "$USE_DSFR" = "true" ]; then \
 # ------------------------------------------
 # Stage 2: Build frontend translations
 # ------------------------------------------
-FROM node:24.18.0-alpine3.23 AS frontend_translations
+FROM node:24.19.0-alpine3.23 AS frontend_translations
 
 WORKDIR /app
 
