@@ -2,6 +2,11 @@ name: Build and Push custom apache polaris image
 
 on:
   workflow_dispatch:
+    inputs:
+      polaris_version:
+        description: 'Polaris version to build (leave empty to use Dockerfile default)'
+        required: false
+        type: string
   push:
     branches:
       - 'main'
@@ -9,12 +14,7 @@ on:
       - 'images/polaris/**'
 
 env:
-  POLARIS_VERSION: ${{ vars.POLARIS_VERSION }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/apache-polaris
-  IMAGE_TAG: >-
-    ${{ vars.POLARIS_VERSION }}${{
-      github.ref != 'refs/heads/main' && '-test' || ''
-    }}-${{ github.sha }}
 
 jobs:
   build-and-push:
@@ -30,12 +30,37 @@ jobs:
       - name: Log in to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Get Polaris version
+        id: version
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.polaris_version }}" ]; then
+            VERSION="${{ inputs.polaris_version }}"
+          else
+            VERSION=$(grep -E '^ARG POLARIS_VERSION=' images/polaris/Dockerfile | cut -d= -f2)
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Polaris version: $VERSION"
+
+      - name: Set image tag
+        id: tag
+        shell: bash
+        run: |
+          SUFFIX=""
+
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            SUFFIX="-test"
+          fi
+
+          echo "suffix=$SUFFIX" >> "$GITHUB_OUTPUT"
+          echo "Image suffix: $SUFFIX"
+
       - name: Build Docker image
         run: docker build -f images/polaris/Dockerfile \
-          --build-arg POLARIS_VERSION=${{ env.POLARIS_VERSION }} \
-          -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+          --build-arg POLARIS_VERSION=${{ steps.version.outputs.version }} \
+          -t ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }} .
 
       - name: Push Docker image
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/images'
         run: |
-          docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }}
