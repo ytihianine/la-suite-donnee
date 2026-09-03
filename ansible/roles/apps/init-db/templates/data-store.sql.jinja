@@ -1,30 +1,30 @@
--- Wrapping to handle exceptions (e.g., if roles or users already exist)
-DO $$
+-- Idempotent initialisation de la base de données métier.
+-- Tags dollar-quote distincts ($init$ / $body$) pour éviter le conflit entre le
+-- bloc DO externe et le corps de la fonction imbriquée.
+DO $init$
 BEGIN
-
--- =================
--- Roles (NOLOGIN)
--- =================
--- (none)
-
 
 -- =================
 -- Users (LOGIN)
 -- =================
-CREATE ROLE analyst_superset LOGIN PASSWORD 'analyst_password';
-COMMENT ON ROLE analyst_superset IS 'Utilisateur analyste pour accéder à la base de données métier';
-GRANT pg_read_all_data TO analyst_superset;
+IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'analyst_superset') THEN
+    CREATE ROLE analyst_superset LOGIN PASSWORD 'analyst_password';
+    COMMENT ON ROLE analyst_superset IS 'Utilisateur analyste pour accéder à la base de données métier';
+    GRANT pg_read_all_data TO analyst_superset;
+END IF;
 
-CREATE ROLE airflow_task_writer LOGIN PASSWORD 'task_password';
-COMMENT ON ROLE airflow_task_writer IS 'Pour les tâches Airflow';
-GRANT ALL ON DATABASE {{ item.0.name }} TO airflow_task_writer WITH GRANT OPTION;
-GRANT ALL ON SCHEMA public TO airflow_task_writer WITH GRANT OPTION;
+IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'airflow_task_writer') THEN
+    CREATE ROLE airflow_task_writer LOGIN PASSWORD 'task_password';
+    COMMENT ON ROLE airflow_task_writer IS 'Pour les tâches Airflow';
+    GRANT ALL ON DATABASE {{ item.0.name }} TO airflow_task_writer WITH GRANT OPTION;
+    GRANT ALL ON SCHEMA public TO airflow_task_writer WITH GRANT OPTION;
+END IF;
 
 
 CREATE OR REPLACE FUNCTION public.manage_new_schema_privileges()
 RETURNS event_trigger
 LANGUAGE plpgsql
-AS $$
+AS $body$
 DECLARE
     obj RECORD;
     schema_name TEXT;
@@ -96,14 +96,14 @@ BEGIN
         END IF;
     END LOOP;
 END;
-$$;
+$body$;
 
+
+DROP EVENT TRIGGER IF EXISTS trg_manage_new_schema_privileges;
 CREATE EVENT TRIGGER trg_manage_new_schema_privileges
 ON ddl_command_end
 WHEN TAG IN ('CREATE SCHEMA')
 EXECUTE FUNCTION public.manage_new_schema_privileges();
 
-
-EXCEPTION WHEN duplicate_object THEN RAISE NOTICE '%, skipping', SQLERRM USING ERRCODE = SQLSTATE;
 END
-$$;
+$init$;
