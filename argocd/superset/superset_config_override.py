@@ -30,8 +30,8 @@ COMMON_BOOTSTRAP_OVERRIDES_FUNC = bootstrap_overrides
 # ------------------------
 SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 6553500
 SQLALCHEMY_ENGINE_OPTIONS = {
-    "pool_size": 20,  # default: 5
-    "max_overflow": 30,  # default: 10
+    "pool_size": 10,  # default: 5
+    "max_overflow": 5,  # default: 10
     "pool_timeout": 60,  # default: 30
     "pool_recycle": 1800,  # refresh every 30 minutes to avoid stale connections
 }
