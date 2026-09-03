@@ -35,5 +35,4 @@ jobs:
           --package @semantic-release/release-notes-generator \
           --package @semantic-release/github \
           --package @semantic-release/changelog \
-          --package @semantic-release/changelog \
           semantic-release
