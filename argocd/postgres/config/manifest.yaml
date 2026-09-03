@@ -9,7 +9,7 @@ spec:
   source:
     path: argocd/postgres/config
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
-    targetRevision: HEAD
+    targetRevision: main
     helm:
       valueFiles:
         - values-prod.yaml
