@@ -26,7 +26,7 @@ airflow:
   images:
     airflow:
       repository: ghcr.io/ytihianine/la-suite-donnee/apache-airflow:3.2.2-test-89161e51959d9872c8bde5835db5537c181b2758
-      tag: 3.2.2-6494ad8
+      tag: 3.3.1-299b7e2ce46545fa5eed83d64b41ed952830828e
       # Specifying digest takes precedence over tag.
       # digest:
       pullPolicy: Always
