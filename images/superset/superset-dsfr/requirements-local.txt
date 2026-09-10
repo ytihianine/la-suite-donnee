@@ -1,5 +1,5 @@
 flask-cors
-psycopg2-binary==2.9.12
+psycopg2-binary==2.9.13
 openpyxl==3.1.5
 trino==0.339.0
 shillelagh==1.4.5
