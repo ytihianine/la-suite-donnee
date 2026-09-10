@@ -13,7 +13,7 @@ superset:
       argocd.argoproj.io/ignore-healthcheck: "true"
     hosts:
       # The hostname for the web Ingress (templated)
-      - superset.lab.sspcloud.fr
+      - superset-demo.lab.sspcloud.fr
 
   image:
     repository: ghcr.io/ytihianine/apache-superset
