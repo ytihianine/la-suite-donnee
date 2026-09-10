@@ -34,7 +34,7 @@ openmetadata:
         idleThreadTimeout: "1 minute"
       elasticsearch:
         enabled: true
-        host: opensearch
+        host: elastic-682099-elasticsearch
         searchType: opensearch
         port: 9200
         scheme: http
@@ -48,19 +48,15 @@ openmetadata:
         keepAliveTimeoutSecs: 600
         trustStore:
           enabled: false
-          path: ""
-          password:
-            secretRef: "elasticsearch-truststore-secrets"
-            secretKey: "openmetadata-elasticsearch-truststore-password"
         auth:
-          enabled: false
-          username: "elasticsearch"
+          enabled: true
+          username: "elastic"
           password:
-            secretRef: elasticsearch-secrets
-            secretKey: openmetadata-elasticsearch-password
+            secretRef: openmetadata-secret
+            secretKey: elasticsearch-password
       database:
         enabled: true
-        host: mysql
+        host: db-config-prod-postgresql
         port: 3306
         driverClass: org.postgresql.Driver
         dbScheme: postgresql
@@ -68,8 +64,8 @@ openmetadata:
         auth:
           username: openmetadata_user
           password:
-            secretRef: mysql-secrets
-            secretKey: openmetadata-mysql-password
+            secretRef: openmetadata-secret
+            secretKey: sql-password
         dbParams: "allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"
         maxSize: 50
         minSize: 10
@@ -102,74 +98,10 @@ openmetadata:
           sslCertificatePath: "/no/path"
           auth:
             enabled: true
-            username: admin
+            username: airflow_admin_user
             password:
-              secretRef: airflow-secrets
-              secretKey: openmetadata-airflow-password
-            trustStorePath: ""
-            trustStorePassword:
-              secretRef: ""
-              secretKey: ""
-
-        # Kubernetes Jobs configuration (used when type: "k8s")
-        k8s:
-          # Namespace for ingestion jobs (defaults to Helm release namespace if empty)
-          namespace: ""
-          className: "org.openmetadata.service.clients.pipeline.k8s.K8sPipelineClient"
-          # Container image for ingestion jobs
-          ingestionImage: "docker.getcollate.io/openmetadata/ingestion-base:latest"
-          # Image pull policy
-          imagePullPolicy: "IfNotPresent"
-          # Image pull secrets (comma-separated)
-          imagePullSecrets: ""
-          # Service account name for ingestion jobs
-          serviceAccountName: "openmetadata-ingestion"
-          # Time to keep completed jobs (seconds)
-          ttlSecondsAfterFinished: 86400
-          # Maximum job runtime (seconds)
-          activeDeadlineSeconds: 7200
-          # Maximum retry attempts
-          backoffLimit: 3
-          # Job history limits
-          successfulJobsHistoryLimit: 3
-          failedJobsHistoryLimit: 3
-          # Node selector (comma-separated key=value pairs)
-          nodeSelector: ""
-          # Tolerations for ingestion pod scheduling (list of toleration objects)
-          # Example:
-          # tolerations:
-          #   - key: "dedicated"
-          #     operator: "Equal"
-          #     value: "ingestion"
-          #     effect: "NoSchedule"
-          tolerations: []
-          # Pod security context
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
-            runAsNonRoot: true
-          # Resource limits and requests
-          resources:
-            limits:
-              cpu: "2"
-              memory: "4Gi"
-            requests:
-              cpu: "500m"
-              memory: "1Gi"
-          # Pod annotations (comma-separated key=value pairs)
-          podAnnotations: ""
-          # Extra environment variables (list of key:value pairs)
-          extraEnvVars: []
-          # Enable failure diagnostics
-          enableFailureDiagnostics: true
-          # Use OMJob operator for guaranteed exit handler execution
-          # Requires omjobOperator.enabled: true
-          useOMJobOperator: false
-          # RBAC configuration
-          rbac:
-            # Set to false if RBAC is managed externally
-            enabled: true
+              secretRef: openmetadata-secret
+              secretKey: airflow-password
       authorizer:
         enabled: true
         className: "org.openmetadata.service.security.DefaultAuthorizer"
@@ -303,7 +235,6 @@ openmetadata:
             keyStorePassword:
               secretRef: ""
               secretKey: ""
-
       jwtTokenConfiguration:
         enabled: true
         # File Path on Airflow Container
@@ -439,8 +370,8 @@ openmetadata:
   image:
     repository: docker.getcollate.io/openmetadata/server
     # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
-    pullPolicy: "Always"
+    tag: "2.0.1"
+    pullPolicy: "IfNotPresent"
 
   sidecars: []
   # - name: "busybox"
@@ -492,7 +423,7 @@ openmetadata:
     enabled: true
     className: "nginx"
     hosts:
-      - host: open-metadata.local
+      - host: openmetadata-demo.lab.sspcloud.fr
         paths:
           - path: /
             pathType: ImplementationSpecific
