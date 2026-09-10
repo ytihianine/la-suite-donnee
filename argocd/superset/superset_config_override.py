@@ -30,8 +30,8 @@ COMMON_BOOTSTRAP_OVERRIDES_FUNC = bootstrap_overrides
 # ------------------------
 SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 6553500
 SQLALCHEMY_ENGINE_OPTIONS = {
-    "pool_size": 20,  # default: 5
-    "max_overflow": 30,  # default: 10
+    "pool_size": 10,  # default: 5
+    "max_overflow": 5,  # default: 10
     "pool_timeout": 60,  # default: 30
     "pool_recycle": 1800,  # refresh every 30 minutes to avoid stale connections
 }
@@ -328,7 +328,7 @@ SMTP_PASSWORD = os.environ.get("SUPERSET_SMTP_PASSWORD", "superset")  # noqa: S1
 SMTP_MAIL_FROM = os.environ.get("SUPERSET_SMTP_MAIL_FROM", "superset@superset.com")
 # If True creates a default SSL context with ssl.Purpose.CLIENT_AUTH using the
 # default system root CA certificates.
-SMTP_SSL_SERVER_AUTH = os.environ.get("SUPERSET_SMTP_HOST", False)
+SMTP_SSL_SERVER_AUTH = os.environ.get("SUPERSET_SMTP_SSL_SERVER_AUTH", False)
 
 
 # ------------------------

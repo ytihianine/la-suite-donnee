@@ -1,4 +1,4 @@
-pre-commit==4.6.0
-ansible==14.1.0
-psycopg2-binary==2.9.12
+pre-commit==4.6.2
+ansible==14.4.0
+psycopg2-binary==2.9.13
 pytest==9.1.1

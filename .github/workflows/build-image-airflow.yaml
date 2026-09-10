@@ -2,23 +2,25 @@ name: Build and Push custom airflow image
 
 on:
   workflow_dispatch:
+    inputs:
+      airflow_version:
+        description: 'Airflow version to build (leave empty to use Dockerfile default)'
+        required: false
+        type: string
+
   push:
     branches:
-      - 'main'
+      - main
     paths:
       - 'images/airflow/**'
 
 env:
-  AIRFLOW_VERSION: ${{ vars.AIRFLOW_VERSION }}
   IMAGE_NAME: ghcr.io/${{ github.repository }}/apache-airflow
-  IMAGE_TAG: >-
-    ${{ vars.AIRFLOW_VERSION }}${{
-      github.ref != 'refs/heads/main' && '-test' || ''
-    }}-${{ github.sha }}
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
@@ -27,16 +29,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Get Airflow version
+        id: version
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.airflow_version }}" ]; then
+            VERSION="${{ inputs.airflow_version }}"
+          else
+            VERSION=$(grep -E '^ARG AIRFLOW_VERSION=' images/airflow/Dockerfile | cut -d= -f2)
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Airflow version: $VERSION"
+
+      - name: Set image tag
+        id: tag
+        shell: bash
+        run: |
+          SUFFIX=""
+
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            SUFFIX="-test"
+          fi
+
+          echo "suffix=$SUFFIX" >> "$GITHUB_OUTPUT"
+          echo "Image suffix: $SUFFIX"
+
       - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" |
+            docker login ghcr.io \
+              -u "${{ github.actor }}" \
+              --password-stdin
 
       - name: Build Docker image
         run: |
-          docker build -f images/airflow/Dockerfile \
-            --build-arg AIRFLOW_VERSION=${{ env.AIRFLOW_VERSION }} \
-            -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+          docker build \
+            -f images/airflow/Dockerfile \
+            --build-arg AIRFLOW_VERSION=${{ steps.version.outputs.version }} \
+            -t ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }} \
+            .
 
       - name: Push Docker image
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/images'
         run: |
-          docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push \
+            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }}
