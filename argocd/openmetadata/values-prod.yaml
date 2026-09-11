@@ -57,12 +57,12 @@ openmetadata:
       database:
         enabled: true
         host: db-config-prod-postgresql
-        port: 3306
+        port: 5432
         driverClass: org.postgresql.Driver
         dbScheme: postgresql
         databaseName: openmetadata_db
         auth:
-          username: openmetadata_user
+          username: openmetadata_admin_user
           password:
             secretRef: openmetadata-secret
             secretKey: sql-password
