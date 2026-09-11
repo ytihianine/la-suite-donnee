@@ -7,6 +7,10 @@ installation_steps:
     enabled: true
     command: make deploy-argocd-cli
     dry_run: false
+  - step_name: ArgoCD-connect
+    enabled: true
+    command: make connect-argocd
+    dry_run: false
   - step_name: ArgoCD-Add-Repo
     enabled: true
     command: make deploy-argocd-add-repo
