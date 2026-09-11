@@ -16,6 +16,11 @@ dbConfig:
       scripts:
         - path: airflow.sql
           comment: "Script SQL pour initialiser la base de données Airflow"
+    - name: openmetadata_config
+      comment: "Contient toute la configuration d'OpenMetadata (connections, metadata, etc.)"
+      scripts:
+        - path: openmetadata.sql
+          comment: "Script SQL pour initialiser la base de données OpenMetadata"
     - name: superset_config
       comment: "Contient toute la configuration de Superset (dashboards, charts, etc.)"
       scripts:
