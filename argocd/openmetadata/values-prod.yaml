@@ -34,7 +34,7 @@ openmetadata:
         idleThreadTimeout: "1 minute"
       elasticsearch:
         enabled: true
-        host: projet-mef-sg-dsci-elasticsearch-311654.user.lab.sspcloud.fr
+        host: elastic-311654-elasticsearch
         searchType: opensearch
         port: 9200
         scheme: http
