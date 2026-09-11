@@ -9,7 +9,7 @@ spec:
   source:
     path: argocd/openmetadata
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
-    targetRevision: main
+    targetRevision: demo-sspcloud
     helm:
       valueFiles:
         - values-prod.yaml
