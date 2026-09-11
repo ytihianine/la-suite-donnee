@@ -4,7 +4,7 @@ metadata:
   name: openmetadata
 spec:
   destination:
-    namespace: "namespace"
+    namespace: "projet-mef-sg-dsci"
     server: https://kubernetes.default.svc
   source:
     path: argocd/openmetadata
