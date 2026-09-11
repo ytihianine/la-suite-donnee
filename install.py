@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
 import os
-import json
 import subprocess
 import sys
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict, Mapping, Any
+from subprocess import CompletedProcess
+
+import yaml
 
 # ==============================
 # Variables
@@ -17,66 +18,79 @@ Yellow = "\033[0;33m"
 
 # Options
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
-OPTIONS_PATH = Path(CURR_DIR, "install_options.json")
+CONFIG_PATH = Path(CURR_DIR, "install_config.yaml")
 
 
-class ArgoCDConfig(TypedDict):
-    DEPLOY_APP: bool
-    INSTALL_CLI: bool
-    ADD_REPO: bool
+@dataclass(frozen=True)
+class InstallationStep:
+    step_name: str
+    enabled: bool
+    command: str
+    wait_for_completion: bool = False
+    app_name: str | None = None
+    dry_run: bool = True
 
+    @property
+    def cmd_list(self) -> list[str]:
+        return self.command.split()
 
-class RenovateBotConfig(TypedDict):
-    DEPLOY_APP: bool
+    @property
+    def enable_icon(self) -> str:
+        return f"{Green}✔{Color_Off}" if self.enabled else f"{Red}✖{Color_Off}"
 
+    @property
+    def dry_run_icon(self) -> str:
+        return f"{Green}✔{Color_Off}" if self.dry_run else f"{Red}✖{Color_Off}"
 
-class DatabaseConfig(TypedDict):
-    DEPLOY_CONFIG_DB: bool
-    DEPLOY_DATA_DB: bool
-    INIT_DB: bool
+    @property
+    def dry_run_msg(self) -> str:
+        return (
+            f"{Yellow}(Command will not be executed){Color_Off}"
+            if self.dry_run
+            else f"{Yellow}(Command will execute){Color_Off}"
+        )
 
-
-class AppConfig(TypedDict):
-    DEPLOY_APP: bool
-
-
-class InstallOptions(TypedDict):
-    ARGOCD: ArgoCDConfig
-    RENOVATEBOT: RenovateBotConfig
-    DATABASES: DatabaseConfig
-    SUPERSET: AppConfig
-    AIRFLOW: AppConfig
-    TRINO: AppConfig
-    POLARIS: AppConfig
+    def log_step(self) -> None:
+        print(f"➤  {self.step_name}")
+        print(f"\t Enabled: {self.enabled} {self.enable_icon}")
+        print(f"\t Dry run: {self.dry_run} {self.dry_run_icon} {self.dry_run_msg}")
+        print(f"\t Command: {self.command}")
+        if self.wait_for_completion:
+            print(f"\t Wait for completion: {self.wait_for_completion}")
+        if self.app_name:
+            print(f"\t App name: {self.app_name}")
 
 
 # ==============================
 # Helpers
 # ==============================
-def load_options(options_path: Path) -> InstallOptions:
-    with options_path.open("r") as f:
-        return json.load(f)
+def load_options(config_path: Path) -> list[InstallationStep]:
+    with open(file=config_path, mode="r") as f:
+        steps_yaml = yaml.safe_load(stream=f)
+        steps = steps_yaml.get("installation_steps", [])
+        return [InstallationStep(**step) for step in steps]
 
 
-def run(cmd, check=True):
-    print(f"$ {' '.join(cmd)}")
+def run_cmd(cmd: list[str], check: bool = True) -> CompletedProcess[str]:
+    print(f"$ {cmd}")
     result = subprocess.run(
         cmd,
         cwd=CURR_DIR,  # Force execution from current py script location
         text=True,
+        check=False,  # We handle errors manually to provide better error messages
     )
     if check and result.returncode != 0:
         sys.exit(result.returncode)
     return result
 
 
-def wait_for_argocd_app(app_name, timeout=300):
+def wait_for_argocd_app(app_name: str, timeout: int = 300) -> None:
     print(
-        f"Waiting for ArgoCD application '{app_name}' to be Healthy and Synced (timeout: {timeout}s)..."
-    )  # noqa
+        f"Waiting for application '{app_name}' to be Healthy and Synced (timeout: {timeout}s)..."
+    )
 
-    result = run(
-        [
+    result = run_cmd(
+        cmd=[
             "argocd",
             "app",
             "wait",
@@ -91,25 +105,19 @@ def wait_for_argocd_app(app_name, timeout=300):
 
     if result.returncode != 0:
         print(
-            f"{Red}ERROR: ArgoCD application '{app_name}' did not become healthy within {timeout}s. Aborting.{Color_Off}"
-        )  # noqa
+            f"{Red}ERROR: application '{app_name}' did not become healthy within {timeout}s. Aborting.{Color_Off}"
+        )
         sys.exit(1)
 
-    print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
+    print(f"{Green}Application '{app_name}' is Healthy and Synced.{Color_Off}")
 
 
-def prompt_choice(options: Mapping[str, Any]):
+def prompt_choice(steps: list[InstallationStep]) -> str:
     print(
-        "This script will install la Suite Donnée with the following installation options:"
+        "This script will install la Suite Donnée with the following installation steps:"
     )
-    for app, option in options.items():
-        print(f"Options for {app}")
-        for k, v in option.items():
-            print(
-                f"\t {k}: {v} {Green}✔{Color_Off}"
-                if v
-                else f"\t {k}: {v} {Red}✖{Color_Off}"
-            )
+    for step in steps:
+        step.log_step()
     print()
 
     user_options = ["Yes", "No", "Cancel"]
@@ -131,13 +139,30 @@ def prompt_choice(options: Mapping[str, Any]):
             print("Invalid option. Please select 1, 2, or 3.")
 
 
+def execute_installation_step(step: InstallationStep) -> None:
+    if step.enabled:
+        print(f"Executing step: {step.step_name}")
+        if step.dry_run:
+            print(
+                f"{Yellow}Dry run enabled. Command to be executed: {step.command}{Color_Off}"
+            )
+        else:
+            run_cmd(cmd=step.cmd_list)
+            if step.wait_for_completion and step.app_name:
+                wait_for_argocd_app(step.app_name)
+    else:
+        print(f"{Yellow}Skipping step: {step.step_name}{Color_Off}")
+
+
 # ==============================
 # Main
 # ==============================
-def main():
-    user_options = load_options(options_path=OPTIONS_PATH)
+def main() -> None:
+    print(f"Loading installation steps from {CONFIG_PATH} ...")
+    installation_steps = load_options(config_path=CONFIG_PATH)
+    print("Installation steps loaded.")
 
-    choice = prompt_choice(options=user_options)
+    choice = prompt_choice(steps=installation_steps)
 
     if choice == "Yes":
         print("Proceeding with the installation...")
@@ -156,82 +181,8 @@ def main():
     # ==============================
     print("Install la Suite Donnée using the modular method...")
 
-    # ArgoCD
-    if user_options["ARGOCD"]["DEPLOY_APP"] is True:
-        print("Installing ArgoCD...")
-        run(["make", "deploy-argocd"])
-    else:
-        print(f"{Yellow}Skipping ArgoCD installation...{Color_Off}")
-
-    # ArgoCD CLI
-    if user_options["ARGOCD"]["INSTALL_CLI"] is True:
-        print("Installing ArgoCD CLI...")
-        run(["make", "deploy-argocd-cli"])
-        run(["make", "connect-argocd"])
-    else:
-        print(f"{Yellow}Skipping ArgoCD CLI installation...{Color_Off}")
-
-    # Add repo
-    if user_options["ARGOCD"]["ADD_REPO"] is True:
-        print("Adding repo to ArgoCD...")
-        run(["make", "deploy-argocd-add-repo"])
-    else:
-        print(f"{Yellow}Skipping ArgoCD repo addition...{Color_Off}")
-
-    # Renovate
-    if user_options["RENOVATEBOT"]["DEPLOY_APP"] is True:
-        print("Deploying Renovate Bot...")
-        run(["make", "deploy-renovatebot"])
-    else:
-        print(f"{Yellow}Skipping Renovate Bot...{Color_Off}")
-
-    # Databases
-    if user_options["DATABASES"]["DEPLOY_CONFIG_DB"] is True:
-        run(["make", "deploy-db-config"])
-        wait_for_argocd_app("db-config-prod")
-    else:
-        print(f"{Yellow}Skipping config database...{Color_Off}")
-
-    if user_options["DATABASES"]["DEPLOY_DATA_DB"] is True:
-        run(["make", "deploy-db-data"])
-        wait_for_argocd_app("db-data-prod")
-    else:
-        print(f"{Yellow}Skipping data database...{Color_Off}")
-
-    # Init DB
-    if user_options["DATABASES"]["INIT_DB"] is True:
-        print("Initializing databases...")
-        run(["make", "init-databases"])
-    else:
-        print(f"{Yellow}Skipping database initialization...{Color_Off}")
-
-    # Superset
-    if user_options["SUPERSET"]["DEPLOY_APP"] is True:
-        print("Deploying Superset...")
-        run(["make", "deploy-superset"])
-    else:
-        print(f"{Yellow}Skipping Superset...{Color_Off}")
-
-    # Airflow
-    if user_options["AIRFLOW"]["DEPLOY_APP"] is True:
-        print("Deploying Airflow...")
-        run(["make", "deploy-airflow"])
-    else:
-        print(f"{Yellow}Skipping Airflow...{Color_Off}")
-
-    # Trino
-    if user_options["TRINO"]["DEPLOY_APP"] is True:
-        print("Deploying Trino...")
-        run(["make", "deploy-trino"])
-    else:
-        print(f"{Yellow}Skipping Trino...{Color_Off}")
-
-    # Polaris
-    if user_options["POLARIS"]["DEPLOY_APP"] is True:
-        print("Deploying Polaris...")
-        run(["make", "deploy-polaris"])
-    else:
-        print(f"{Yellow}Skipping Polaris...{Color_Off}")
+    for step in installation_steps:
+        execute_installation_step(step=step)
 
 
 if __name__ == "__main__":

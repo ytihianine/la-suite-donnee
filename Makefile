@@ -87,7 +87,7 @@ build-polaris: ## Build the custom Polaris Docker image locally
 install-la-suite-donnee: ## Installer la suite de données sur le cluster Kubernetes
 	@echo "Installation de la suite de données sur le cluster Kubernetes"
 	$(VENV_BIN)/python3 install.py
-	@echo "$(GREEN)La suite de données a été installée avec succès$(Color_Off)"
+	@echo "$(GREEN)Commande d'installation terminée.$(Color_Off)"
 
 deploy-argocd: ## Déployer ArgoCD sur le cluster Kubernetes
 	@echo "Déploiement d'ArgoCD sur le cluster Kubernetes"

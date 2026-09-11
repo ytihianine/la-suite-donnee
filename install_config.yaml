@@ -1,0 +1,52 @@
+installation_steps:
+  # ArgoCD Setup
+  - step_name: ArgoCD
+    enabled: false
+    command: make deploy-argocd
+  - step_name: ArgoCD-cli
+    enabled: true
+    command: make deploy-argocd-cli
+    dry_run: false
+  - step_name: ArgoCD-Add-Repo
+    enabled: true
+    command: make deploy-argocd-add-repo
+    dry_run: false
+  # Renovate
+  - step_name: Renovate
+    enabled: true
+    command: make deploy-renovatebot
+  # Databases
+  - step_name: Config DB
+    enabled: true
+    command: make deploy-db-config
+    wait_for_completion: true
+    app_name: db-config-prod
+  - step_name: Data DB
+    enabled: true
+    command: make deploy-db-data
+    wait_for_completion: true
+    app_name: db-data-prod
+  - step_name: Init databases
+    enabled: true
+    command: make deploy-db-init
+  # Superset
+  - step_name: Superset
+    enabled: true
+    command: make deploy-superset
+  # Airflow
+  - step_name: Airflow
+    enabled: true
+    command: make deploy-airflow
+  # OpenMetadata
+  - step_name: OpenMetaData
+    enabled: true
+    command: make deploy-openmetadata
+    dry_run: false
+  # Polaris
+  - step_name: Polaris
+    enabled: true
+    command: make deploy-polaris
+  # Trino
+  - step_name: TRINO
+    enabled: true
+    command: make deploy-trino
