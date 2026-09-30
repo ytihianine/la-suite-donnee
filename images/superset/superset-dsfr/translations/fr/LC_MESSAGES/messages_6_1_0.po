@@ -2519,7 +2519,7 @@ msgid "Bucket break points"
 msgstr "Points de rupture du seau"
 
 msgid "Bulk select"
-msgstr "Sélectionner plusieurs"
+msgstr "Sélection multiple"
 
 msgid "Bulk tag"
 msgstr "Étiquetage en lot"
@@ -5568,7 +5568,7 @@ msgstr "Dupliquer"
 
 #, python-format
 msgid "Duplicate role %(name)s"
-msgstr "Nom(s) de colonne dupliqué : %(columns)s"
+msgstr "Nom(s) de colonne dupliqué : %(name)s"
 
 msgid "Duplicate tab"
 msgstr "Dupliquer l'onglet"
@@ -5678,7 +5678,7 @@ msgstr "Modifier"
 
 #, python-format
 msgid "Edit %s in modal"
-msgstr "dans modal"
+msgstr "Modifier %s dans la modal"
 
 msgid "Edit CSS template properties"
 msgstr "Modifier les propriétés du modèle CSS"
@@ -6212,7 +6212,7 @@ msgstr "Erreur : %(msg)s"
 
 #, python-format
 msgid "Error: %s"
-msgstr "erreur"
+msgstr "Erreur: %s"
 
 #,
 msgid "Error: permalink state not found"
@@ -6369,14 +6369,14 @@ msgstr "Échec du téléchargement de l’image, veuillez actualiser et réessay
 
 #, python-format
 msgid "Export failed: %s"
-msgstr "Rapport échoué"
+msgstr "Rapport échoué : %s"
 
 msgid "Export screenshot (jpeg)"
 msgstr ""
 
 #, python-format
 msgid "Export successful: %s"
-msgstr "Exporter en CSV intégralement"
+msgstr "Export réussi : %s"
 
 msgid "Export to .CSV"
 msgstr "Exporter en .CSV"
@@ -6522,7 +6522,7 @@ msgstr "Échec du chargement des données du graphique."
 
 #, python-format
 msgid "Failed to load columns for dataset %s"
-msgstr "Échec du chargement des données du graphique"
+msgstr "Échec du chargement des colonnes du jeu de données %s"
 
 #,
 msgid "Failed to load top values"
@@ -6534,11 +6534,11 @@ msgstr "Échec de la validation de l'expression. Veuillez réessayer."
 
 #, python-format
 msgid "Failed to remove system dark theme: %s"
-msgstr "Supprimer le thème sombre du système"
+msgstr "Echec pour supprimer le thème sombre du système : %s"
 
 #, python-format
 msgid "Failed to remove system default theme: %s"
-msgstr "Supprimer le thème par défaut du système"
+msgstr "Supprimer le thème par défaut du système : %s"
 
 #,
 msgid "Failed to retrieve advanced type"
@@ -6561,11 +6561,11 @@ msgstr "Échec de la définition du thème local : configuration JSON invalide"
 
 #, python-format
 msgid "Failed to set system dark theme: %s"
-msgstr "Définir le thème sombre du système"
+msgstr "Echec pour définir le thème sombre du système : %s"
 
 #, python-format
 msgid "Failed to set system default theme: %s"
-msgstr "Définir le thème par défaut du système"
+msgstr "Echec pour définir le thème par défaut du système : %s"
 
 msgid "Failed to start remote query on a worker."
 msgstr "Échec du lancement d'une requête à distance sur un travailleur."
@@ -7501,7 +7501,7 @@ msgstr "Inclure une description qui sera envoyée avec votre rapport"
 
 #, python-format
 msgid "Include description to be sent with %s"
-msgstr "Inclure une description qui sera envoyée avec votre rapport"
+msgstr "Inclure une description qui sera envoyée avec %s"
 
 msgid "Include series name as an axis"
 msgstr "Inclure le nom de la série comme axe"
@@ -7765,7 +7765,7 @@ msgstr "Le rolling_type est invalide: %(type)s"
 
 #, python-format
 msgid "Invalid spatial point encountered: %(latlong)s"
-msgstr "Point géographique invalide : %s"
+msgstr "Point géographique invalide rencontré : %(latlong)s"
 
 #,
 msgid "Invalid state."
@@ -8932,7 +8932,7 @@ msgstr "Dernière modification par %s"
 
 #, python-format
 msgid "Modified from \"%s\" template"
-msgstr "Ajouter un modèle CSS"
+msgstr "Modifier depuis le model \"%s\""
 
 msgid "Monday"
 msgstr "Lundi"
@@ -11663,7 +11663,7 @@ msgstr "Rechercher"
 
 #, python-format
 msgid "Search %s records"
-msgstr "Registres bruts"
+msgstr "Rechercher %s lignes"
 
 msgid "Search / Filter"
 msgstr "Rechercher / Filtrer"
@@ -12412,7 +12412,7 @@ msgstr "Afficher"
 
 #, python-format
 msgid "Show %s entries"
-msgstr "Afficher la mesure"
+msgstr "Afficher %s lignes"
 
 #,
 msgid "Show Bubbles"
@@ -12426,7 +12426,7 @@ msgstr "Afficher le tableau de bord"
 
 #,
 msgid "Show Labels"
-msgstr "Afficher les tables"
+msgstr "Afficher les étiquettes"
 
 msgid "Show Log"
 msgstr "Afficher les journaux"
@@ -13349,8 +13349,8 @@ msgid ""
 "Table [%(table)s] could not be found, please double check your database "
 "connection, schema, and table name"
 msgstr ""
-"La tableau [%(table_name)s] n'a pu être trouvé, vérifiez à nouveau votre "
-"connexion à votre base de données, le schéma et le nom du tableau"
+"La table [%(table)s] n'a pu être trouvée, vérifiez à nouveau votre "
+"connexion à votre base de données, le schéma et le nom de la table"
 
 msgid ""
 "Table already exists. You can change your 'if table already exists' "
@@ -13361,22 +13361,22 @@ msgstr ""
 " à utiliser."
 
 msgid "Table cache timeout"
-msgstr "Délai d'attente du cache du tableau dépassé"
+msgstr "Délai d'attente du cache de la table dépassée"
 
 #,
 msgid "Table columns"
-msgstr "Colonnex du tableau"
+msgstr "Colonnes du tableau"
 
 #,
 msgid "Table name"
-msgstr "Nom du tableau"
+msgstr "Nom de la table"
 
 #,
 msgid "Table name is required"
 msgstr "Le nom est obligatoire"
 
 msgid "Table name undefined"
-msgstr "Nom du tableau non défini"
+msgstr "Nom de la table est non-défini"
 
 #, python-format
 msgid "Table or View \"%(table)s\" does not exist."
@@ -13485,7 +13485,7 @@ msgstr "Erreur : %(error)s"
 
 #, python-format
 msgid "Template processing failed: %(ex)s"
-msgstr "Erreur : %(error)s"
+msgstr "Erreur : %(ex)s"
 
 msgid ""
 "Templated link, it's possible to include {{ metric }} or other values "
@@ -13496,7 +13496,7 @@ msgstr ""
 
 #,
 msgid "Temporal X-Axis"
-msgstr "Est temporel"
+msgstr "Axe X temporel"
 
 msgid ""
 "Terminate running queries when browser window closed or navigated to "
@@ -14552,7 +14552,7 @@ msgstr "Il y a des alertes ou des rapports associés"
 
 #, python-format
 msgid "There are associated alerts or reports: %(report_names)s"
-msgstr "Il y a des alertes ou des rapports associés : %s,"
+msgstr "Il y a des alertes ou des rapports associés : %(report_names)s"
 
 msgid "There are no charts added to this dashboard"
 msgstr "Il n'y a pas de graphiques ajouté dans ce tableau de bord"
@@ -15834,7 +15834,7 @@ msgstr "Aucune expression sauvegardée n'a été trouvée"
 
 #, python-format
 msgid "Unexpected time range: %(error)s"
-msgstr "Intervalle de temps inattendu: %s"
+msgstr "Intervalle de temps inattendu : %(error)s"
 
 #,
 msgid "Ungroup By"
@@ -15842,14 +15842,14 @@ msgstr "Grouper par"
 
 #,
 msgid "Unhide"
-msgstr "annuler"
+msgstr "Afficher"
 
 msgid "Unknown"
 msgstr "Inconnu"
 
 #, python-format
 msgid "Unknown Doris server host \"%(hostname)s\"."
-msgstr "Hôte MySQL \"%(hostname)s\" inconnu."
+msgstr "Hôte Doris \"%(hostname)s\" inconnu."
 
 #,
 msgid "Unknown Error"
@@ -17953,7 +17953,7 @@ msgid ""
 " Lab tabs using this database open. Are you sure you want to continue? "
 "Deleting the database will break those objects."
 msgstr ""
-"La base de données %s est liée à %s graphiques qui apparaissent sur %s "
+"est liée à %s graphiques qui apparaissent sur %s "
 "tableaux de bord et les utilisateurs ont des onglets %s SQL Lab ouverts "
 "qui utilisent cette base de données. Êtes-vous sûr de vouloir continuer? "
 "Supprimer la base de données brisera ces objets."
@@ -17963,7 +17963,7 @@ msgid ""
 "is linked to %s charts that appear on %s dashboards. Are you sure you "
 "want to continue? Deleting the dataset will break those objects."
 msgstr ""
-"L'jeu de données %s est lié aux graphiques %s qui apparaissent dans "
+"est lié aux graphiques %s qui apparaissent dans "
 "%s tableaux de bord. Êtes-vous sûr de vouloir continuer? La suppression "
 "de l'jeu de données brisera ces objets."
 

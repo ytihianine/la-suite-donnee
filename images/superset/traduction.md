@@ -27,5 +27,6 @@ I suggest to define a single "admited" translation from now on and future evolut
 | `table` (in contexte of database) | `table` | 
 | `rows` | `lignes` | 
 | `X-axis` | `axe X`| 
-| `Y-axis` | `axe Y` | 
+| `Y-axis` | `axe Y` |
+| `folder` | `dossier` |
 | `Genderify user terms` | `Non` | 
