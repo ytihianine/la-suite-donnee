@@ -3580,7 +3580,7 @@ msgstr ""
 
 #, python-format
 msgid "Columns missing in dataset: %(invalid_columns)s"
-msgstr "Colonnes absentes de l’jeu de données : %(invalid_columns)s"
+msgstr "Colonnes absentes du jeu de données : %(invalid_columns)s"
 
 #, python-format
 msgid "Columns missing in datasource: %(invalid_columns)s"
@@ -4551,16 +4551,16 @@ msgstr "Jeu de données"
 
 #, python-format
 msgid "Dataset %(table)s already exists"
-msgstr "Le jeu de données %(name)s existe déjà"
+msgstr "Le jeu de données %(table)s existe déjà"
 
 msgid "Dataset Name"
-msgstr "Nom de l’jeu de données"
+msgstr "Nom du jeu de données"
 
 msgid "Dataset column delete failed."
-msgstr "La suppression de l’jeu de données a échoué."
+msgstr "La suppression du jeu de données a échoué."
 
 msgid "Dataset column not found."
-msgstr "Colonne de l’jeu de données introuvable."
+msgstr "Colonne du jeu de données introuvable."
 
 msgid "Dataset could not be created."
 msgstr "L’jeu de données n'a pas pu être créé."
@@ -4581,13 +4581,13 @@ msgid "Dataset is required"
 msgstr "Un jeu de données est requis"
 
 msgid "Dataset metric delete failed."
-msgstr "La suppression de l’jeu de données a échoué."
+msgstr "La suppression du jeu de données a échoué."
 
 msgid "Dataset metric not found."
 msgstr "Mesure de l'jeu de données non trouvée."
 
 msgid "Dataset name"
-msgstr "Nom de l’jeu de données"
+msgstr "Nom du jeu de données"
 
 msgid "Dataset parameters are invalid."
 msgstr "Les paramètres de l'jeu de données ne sont pas valides."
@@ -5316,7 +5316,7 @@ msgstr "Configuration d'affichage (%d)"
 
 #, python-format
 msgid "Display controls (%s)"
-msgstr "Configuration d'affichage"
+msgstr "Configuration d'affichage (%s)"
 
 #,
 msgid "Display cumulative total at end"
@@ -5560,7 +5560,7 @@ msgstr "Éditer l’jeu de données"
 
 #, python-format
 msgid "Duplicate folder name: %s"
-msgstr "Nom(s) de colonne dupliqué : %(columns)s"
+msgstr "Nom(s) de colonne dupliqué : %s"
 
 #,
 msgid "Duplicate role"
@@ -5595,7 +5595,7 @@ msgid ""
 msgstr ""
 "Durée (en secondes) du délai de mise en cache pour ce graphique. "
 "Définissez -1 pour contourner le cache. Notez que cette valeur correspond"
-" par défaut au délai d'attente de l’jeu de données s'il n'est pas "
+" par défaut au délai d'attente du jeu de données s'il n'est pas "
 "défini."
 
 msgid ""
@@ -6199,7 +6199,7 @@ msgstr "Une erreur s'est produite durant la récupération des graphiques"
 #, python-format
 msgid "Error while rendering virtual dataset query: %(msg)s"
 msgstr ""
-"Erreur durant le rendu de la requête de l’jeu de données virtuel : "
+"Erreur durant le rendu de la requête du jeu de données virtuel : "
 "%(msg)s"
 
 #, python-format
@@ -7457,7 +7457,7 @@ msgid "Import database from file"
 msgstr "Importer la base de données depuis un fichier"
 
 msgid "Import dataset failed for an unknown reason"
-msgstr "L'import de l’jeu de données a échoué pour une raison inconnue"
+msgstr "L'import du jeu de données a échoué pour une raison inconnue"
 
 msgid "Import datasets"
 msgstr "Importer des jeux de données"
@@ -8040,7 +8040,7 @@ msgstr "Dernier"
 
 #,
 msgid "Last Name"
-msgstr "nom de l’jeu de données"
+msgstr "nom du jeu de données"
 
 #, python-format
 msgid "Last Updated %s"
@@ -8071,7 +8071,7 @@ msgstr "mois dernier"
 
 #,
 msgid "Last name"
-msgstr "nom de l’jeu de données"
+msgstr "nom du jeu de données"
 
 #,
 msgid "Last name is required"
@@ -9110,7 +9110,7 @@ msgstr "Nouvel jeu de données"
 
 #,
 msgid "New dataset name"
-msgstr "Nom de l’jeu de données"
+msgstr "Nom du jeu de données"
 
 #,
 msgid "New header"
@@ -11981,7 +11981,7 @@ msgstr ""
 
 #,
 msgid "Select dataset source"
-msgstr "Sélectionner la source de l’jeu de données"
+msgstr "Sélectionner la source du jeu de données"
 
 #,
 msgid "Select datetime column"
@@ -12068,7 +12068,7 @@ msgstr "Sélectionner ou renseigner une valeur"
 
 #,
 msgid "Select or type dataset name"
-msgstr "Sélectionner la base de données ou taper le nom de l’jeu de données"
+msgstr "Sélectionner la base de données ou taper le nom du jeu de données"
 
 msgid "Select owners"
 msgstr "Sélectionner les propriétaires"
@@ -17706,7 +17706,7 @@ msgid "dataset"
 msgstr "jeu de données"
 
 msgid "dataset name"
-msgstr "nom de l’jeu de données"
+msgstr "nom du jeu de données"
 
 msgid "date"
 msgstr "date"
