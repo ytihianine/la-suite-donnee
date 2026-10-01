@@ -1469,7 +1469,7 @@ msgstr ""
 "quartiles extérieurs."
 
 msgid "Altered"
-msgstr "Modifié"
+msgstr "Modifié par"
 
 msgid "Always filter main datetime column"
 msgstr "Toujours filtrer sur la colonne temporelle principale"
@@ -1960,7 +1960,7 @@ msgstr "Appliquer les filtres"
 
 
 msgid "Apply another dashboard filter"
-msgstr "Impossible de charger le filtre"
+msgstr "Appliquer une autre filtre du tableau de bord"
 
 
 msgid "Apply conditional color formatting to metric"
@@ -2261,7 +2261,7 @@ msgid "Back to all"
 msgstr "Retour à tout"
 
 msgid "Backend"
-msgstr "Programme dorsal"
+msgstr "Backend"
 
 
 msgid "Background Color"
@@ -3114,11 +3114,11 @@ msgid "Choose a database..."
 msgstr "Sélectionner une base de donnée"
 
 msgid "Choose a dataset"
-msgstr "Sélectionner un ensemble de donnée"
+msgstr "Sélectionner un jeu de donnée"
 
 
 msgid "Choose a delimiter"
-msgstr "Sélectionner un ensemble de donnée"
+msgstr "Sélectionner un délimiteur"
 
 msgid "Choose a metric for right axis"
 msgstr "Sélectionner une mesure pour l'axe de droite"
@@ -4426,7 +4426,7 @@ msgid ""
 "format might have changed, rendering the old data stake. You need to re-"
 "run the original query."
 msgstr ""
-"Les données n'ont pas pu être désérialisées à partir du programme dorsal "
+"Les données n'ont pas pu être désérialisées à partir du backend "
 "des résultats. Le format de stockage peut avoir changé, rendant les "
 "anciennes données inutilisables. Vous devez réexécuter la requête "
 "initiale."
@@ -4435,8 +4435,8 @@ msgid ""
 "Data could not be retrieved from the results backend. You need to re-run "
 "the original query."
 msgstr ""
-"Les données n'ont pas pu être extraites du programme dorsal des "
-"résultats. Vous devez réexécuter la requête initiale."
+"Les données n'ont pas pu être extraites des "
+"résultats de la base. Vous devez réexécuter la requête initiale."
 
  python-format
 msgid "Data for %s"
@@ -5437,7 +5437,7 @@ msgstr ""
 "voulez l'ensemble complet des résultats, vous devez ajuster la LIMIT."
 
 msgid "Draft"
-msgstr "VERSION PRÉLIMINAIRE"
+msgstr "Brouillon"
 
 msgid "Drag and drop components and charts to the dashboard"
 msgstr "Glisser-déposer des composants et des graphiques dans le tableau de bord"
@@ -6072,7 +6072,7 @@ msgstr "Saisir le nom de l'utilisateur"
 
 
 msgid "Enter theme name"
-msgstr "Saisir le nom de l'alerte"
+msgstr "Saisir le nom du thème"
 
 msgid "Enter your login and password below:"
 msgstr "Saisir votre identifiant et votre mot de passe ci-dessous :"
@@ -6509,7 +6509,7 @@ msgid "Failed to execute %(query)s"
 msgstr "Échec de l’exécution de %(query)s"
 
 msgid "Failed to fetch user info:"
-msgstr ""
+msgstr "Échec lors de récupération des informations de l'utilisateur"
 
 msgid "Failed to generate chart edit URL"
 msgstr "Échec de la génération de l'URL de modification du graphique"
@@ -6786,15 +6786,15 @@ msgstr "Premier"
 
 
 msgid "First Name"
-msgstr "Nom du graphique"
+msgstr "Prénom"
 
 
 msgid "First name"
-msgstr "Nom du graphique"
+msgstr "Prénom"
 
 
 msgid "First name is required"
-msgstr "Le nom est obligatoire"
+msgstr "Le prénom est obligatoire"
 
 
 msgid "Fit columns dynamically"
@@ -7388,8 +7388,7 @@ msgid ""
 "If enabled, this control sorts the results/values descending, otherwise "
 "it sorts the results ascending."
 msgstr ""
-"Si activé, ce contrôle trie les résultats/valeurs par ordre décroissant, "
-"sinon il les trie par ordre croissant."
+"Trier par ordre croissant ou décroissant les mesures."
 
 msgid ""
 "If it stays empty, it won't be saved and will be removed from the list. "
@@ -7539,7 +7538,7 @@ msgid "Indexes (%s)"
 msgstr "Vue des clefs et index (%s)"
 
 msgid "Info"
-msgstr "Info"
+msgstr "Mes informations"
 
 msgid "Inherit range from time filter"
 msgstr "Hériter de la plage du filtre temporel"
@@ -8040,7 +8039,7 @@ msgstr "Dernier"
 
 
 msgid "Last Name"
-msgstr "nom du jeu de données"
+msgstr "Nom de famille"
 
  python-format
 msgid "Last Updated %s"
@@ -8056,11 +8055,11 @@ msgstr "Dernière valeur disponible vue sur %s"
 
 
 msgid "Last day"
-msgstr "dernier jour"
+msgstr "Dernier jour"
 
 
 msgid "Last login"
-msgstr "mois dernier"
+msgstr "Dernière connexion"
 
 msgid "Last modified"
 msgstr "Dernière modification"
@@ -8071,34 +8070,34 @@ msgstr "mois dernier"
 
 
 msgid "Last name"
-msgstr "nom du jeu de données"
+msgstr "Nom de famille"
 
 
 msgid "Last name is required"
-msgstr "Le nom est obligatoire"
+msgstr "Le nom de famille est obligatoire"
 
 
 msgid "Last quarter"
-msgstr "trimestre dernier"
+msgstr "Trimestre dernier"
 
 
 msgid "Last queried at"
-msgstr "trimestre dernier"
+msgstr "Dernière requête le"
 
 msgid "Last run"
 msgstr "Dernière exécution"
 
 
 msgid "Last week"
-msgstr "semaine dernière"
+msgstr "Semaine dernière"
 
 
 msgid "Last year"
-msgstr "an dernier "
+msgstr "Année dernière"
 
 
 msgid "Lat"
-msgstr "plat"
+msgstr "Lat"
 
 msgid "Latitude"
 msgstr "Latitude"
@@ -8108,29 +8107,29 @@ msgstr "Latitude de la fenêtre d'affichage par défaut"
 
 
 msgid "Layer"
-msgstr "année"
+msgstr "Couche"
 
 
 msgid "Layer Name"
-msgstr "Nom de l'alerte"
+msgstr "Nom de la couche"
 
 msgid "Layer URL"
 msgstr "URL de la couche"
 
 msgid "Layer configuration"
-msgstr "Configuration de filtre"
+msgstr "Configuration de la couche"
 
 
 msgid "Layer title"
-msgstr "Titre du graphique"
+msgstr "Titre de la couche"
 
 
 msgid "Layer type"
-msgstr "Type de filtre"
+msgstr "Type de couche"
 
 
 msgid "Layers"
-msgstr "alertes"
+msgstr "Couches"
 
 msgid "Layout"
 msgstr "Disposition"
@@ -8886,7 +8885,7 @@ msgstr "Ligne de séparation mineure"
 
 
 msgid "Minor ticks"
-msgstr "Trier les métriques"
+msgstr "Graduations mineures"
 
 msgid "Minute"
 msgstr "Minute"
@@ -9098,7 +9097,7 @@ msgstr "Erreur de réseau."
 
 
 msgid "New"
-msgstr "Maintenant"
+msgstr "Nouveau"
 
 msgid "New chart"
 msgstr "Nouveau graphique"
@@ -9450,10 +9449,10 @@ msgstr "Pas à jour"
 
 
 msgid "Nothing here yet"
-msgstr "Rien déclenché"
+msgstr "Aucune information"
 
 msgid "Nothing triggered"
-msgstr "Rien déclenché"
+msgstr "Aucun déclenchement"
 
 
 msgid "Notification Method"
@@ -9795,7 +9794,7 @@ msgstr ""
 
 
 msgid "Orientation"
-msgstr "Documentation"
+msgstr "Orientation"
 
 
 msgid "Orientation of bar chart"
@@ -10100,7 +10099,7 @@ msgstr "Les périodes doivent être un nombre entier"
 
 
 msgid "Permissions"
-msgstr "Version"
+msgstr "Permissions"
 
  python-format
 msgid "Permissions successfully synced for %s"
@@ -10118,7 +10117,7 @@ msgid "Person or group that has certified this metric"
 msgstr "Personne ou groupe qui a certifié cette mesure"
 
 msgid "Personal info"
-msgstr ""
+msgstr "Informations personnelles"
 
 msgid "Physical"
 msgstr "Physique"
@@ -10410,7 +10409,7 @@ msgstr ""
 
 
 msgid "Polygon Column"
-msgstr "Colonne polygonale"
+msgstr "Colonne polygonale (ex: geojson)"
 
 
 msgid "Polygon Encoding"
@@ -10483,7 +10482,7 @@ msgstr "Prévisualisation"
 
 
 msgid "Preview uploaded file"
-msgstr "Charger un fichier Excel"
+msgstr "Prévisualiser le fichier importé"
 
 msgid "Previous"
 msgstr "Précédent"
@@ -10646,7 +10645,7 @@ msgstr "La requête a été arrêtée."
 
 
 msgid "Queued"
-msgstr "requêtes"
+msgstr "Mis en queue"
 
 
 msgid "RGB Color"
@@ -11071,33 +11070,33 @@ msgstr "Réinitialiser"
 
 
 msgid "Reset Columns"
-msgstr "Sélectionner une colonne"
+msgstr "Réinitialiser les colonnes"
 
 msgid "Reset all folders to default"
-msgstr ""
+msgstr "Réinitialiser les dossiers par défaut"
 
 
 msgid "Reset columns"
-msgstr "Sélectionner une colonne"
+msgstr "Réinitialiser les colonne"
 
 
 msgid "Reset my password"
-msgstr "Veuillez confirmer"
+msgstr "Réinitialiser mon mot de passe"
 
 
 msgid "Reset password"
-msgstr "Masquer le mot de passe."
+msgstr "Réinitialiser mot de passe."
 
 msgid "Reset state"
 msgstr "Réinitialiser l'état"
 
 
 msgid "Reset to default folders?"
-msgstr "Actualiser les valeurs par défaut"
+msgstr "Réinitialiser aux dossiers par défaut ?"
 
 
 msgid "Resize"
-msgstr "Réinitialiser"
+msgstr "Redimensionner"
 
 msgid "Resource already has an attached report."
 msgstr "La ressource a déjà un rapport joint."
@@ -11183,7 +11182,7 @@ msgstr "Rôle"
 
 
 msgid "Role Name"
-msgstr "Nom de l'alerte"
+msgstr "Nom du rôle"
 
 
 msgid "Role name is required"
@@ -11239,13 +11238,13 @@ msgid "Rose Type"
 msgstr "Type du filtre"
 
 msgid "Rotate x axis label"
-msgstr "Faire pivoter l’étiquette de l’axe des absisses"
+msgstr "Pivoter l’étiquette de l’axe X"
 
 msgid "Rotate y axis label"
-msgstr "Faire pivoter l'étiquette de l'axe Y"
+msgstr "Pivoter l'étiquette de l'axe Y"
 
 msgid "Rotation to apply to words in the cloud"
-msgstr "Faire pivoter pour appliquer aux mots dans le nuage"
+msgstr "Pivoter pour appliquer aux mots dans le nuage"
 
 
 msgid "Round cap"
@@ -11888,7 +11887,7 @@ msgstr "Sélectionner les options d’agrégat"
 
 
 msgid "Select all"
-msgstr "Désélectionner tout"
+msgstr "Tout sélectionner"
 
 
 msgid "Select all data"
@@ -11965,8 +11964,7 @@ msgstr "Supprimer la base de données"
 
 msgid "Select database or type to search databases"
 msgstr ""
-"Sélectionner une base de données ou un type de base de données pour "
-"effectuer une recherche"
+"Sélectionner ou renseigner une base de données pour rechercher"
 
 msgid ""
 "Select databases require additional fields to be completed in the "
@@ -12067,14 +12065,14 @@ msgstr "Sélectionner ou renseigner une valeur"
 
 
 msgid "Select or type dataset name"
-msgstr "Sélectionner la base de données ou taper le nom du jeu de données"
+msgstr "Sélectionner ou renseigner le nom du jeu de données"
 
 msgid "Select owners"
 msgstr "Sélectionner les propriétaires"
 
 
 msgid "Select page size"
-msgstr "Tout Dé-Sélectionner"
+msgstr "Sélectionner la taille de la page"
 
 
 msgid "Select roles"
@@ -12085,7 +12083,7 @@ msgstr "Sélectionner les mesures sauvegardées"
 
 
 msgid "Select saved queries"
-msgstr "Sélectionner les métriques sauvegardées"
+msgstr "Sélectionner les requêtes sauvegardées"
 
 
 msgid "Select schema or type to search schemas"
@@ -12110,7 +12108,7 @@ msgstr "Sélectionner un objet"
 
 
 msgid "Select tab"
-msgstr "Désélectionner tout"
+msgstr "Sélectionner l'onglet"
 
 
 msgid "Select table or type to search tables"
@@ -12275,7 +12273,7 @@ msgstr "Compte de service"
 
 
 msgid "Service version"
-msgstr "Compte de service"
+msgstr "Version"
 
 msgid "Set System Dark Theme"
 msgstr "Définir le thème sombre du système"
@@ -12661,7 +12659,7 @@ msgstr ""
 
  python-format
 msgid "Showing %s of %s items"
-msgstr "Affichage de %s sur %s éléments"
+msgstr "%s sur %s éléments affichés"
 
 msgid "Shows a list of all series available at that point in time"
 msgstr "Affiche une liste de toutes les séries disponibles à ce moment"
@@ -12868,7 +12866,7 @@ msgid "Sort Series By"
 msgstr "Trier les séries par"
 
 msgid "Sort X Axis"
-msgstr "Trier l’axe des absisses"
+msgstr "Trier l’axe X"
 
 msgid "Sort Y Axis"
 msgstr "Trier l’axe Y"
@@ -12920,7 +12918,7 @@ msgstr "Ordre de tri"
 
 
 msgid "Sort query by"
-msgstr "Exporter la requête"
+msgstr "Trier par"
 
 
 msgid "Sort rows by"
@@ -13053,8 +13051,8 @@ msgid ""
 "Start y-axis at zero. Uncheck to start y-axis at minimum value in the "
 "data."
 msgstr ""
-"Commencer l’axe Y à zéro. Décochez pour démarrer l’axe des "
-"ordonnées à la valeur minimale dans les données."
+"Commencer l’axe Y à zéro. Décochez pour démarrer l’axe "
+"Y à la valeur minimale dans les données."
 
 
 msgid "Started"
@@ -13165,7 +13163,7 @@ msgstr "Soumettre"
 
 
 msgid "Subtitle"
-msgstr "Titre de l’onglet"
+msgstr "Sous-titres"
 
 msgid "Subtotal"
 msgstr "Sous-total"
@@ -13571,7 +13569,7 @@ msgid "The URL is missing the dataset_id or slice_id parameters."
 msgstr "Il manque à l'URL les paramètres dataset_id ou slice_id."
 
 msgid "The X-axis is not on the filters list"
-msgstr "L’axe des absisses ne figure pas dans la liste des filtres"
+msgstr "L’axe X ne figure pas dans la liste des filtres"
 
 
 msgid ""
@@ -13579,7 +13577,7 @@ msgid ""
 "used in time range filters in dashboards. Would you like to add it to the"
 " filters list?"
 msgstr ""
-"L’axe des absisses ne figure pas dans la liste des filtres, ce qui "
+"L’axe X ne figure pas dans la liste des filtres, ce qui "
 "l’empêchera d’être utilisé dans les filtres de plage de temps dans les "
 "tableaux de bord. Voulez-vous l’ajouter à la liste des filtres?"
 
@@ -14512,7 +14510,7 @@ msgid "The visible title of the layer"
 msgstr "Afficher la valeur en haut de la barre"
 
 msgid "The way the ticks are laid out on the X-axis"
-msgstr "La façon dont les points de repères sont disposés sur l’axe des absisses"
+msgstr "La façon dont les points de repères sont disposés sur l’axe X"
 
 
 msgid "The width of the Isoline in pixels"
@@ -15256,7 +15254,7 @@ msgstr "Colonne de temps"
 
 
 msgid "Time Comparison"
-msgstr "Comparaison de temps"
+msgstr "Comparaison temporelle"
 
 
 msgid "Time Format"
@@ -15270,7 +15268,7 @@ msgstr "Fragment de temps"
 msgid "Time Grain must be specified when using Time Shift."
 msgstr ""
 "Une période délimitée (à la fois début et fin) doit être spécifiée quand "
-"on utilise une Comparaison de temps."
+"on utilise une Comparaison temporelle."
 
 
 msgid "Time Granularity"
@@ -15630,7 +15628,7 @@ msgstr ""
 "max. Seulement applicable sur les axes X numériques."
 
 msgid "Truncate Y Axis"
-msgstr "Tronquer l’axe des absisses"
+msgstr "Tronquer l’axe Y"
 
 msgid "Truncate Y Axis. Can be overridden by specifying a min or max bound."
 msgstr ""
@@ -15952,53 +15950,53 @@ msgstr "Chargement"
 
 
 msgid "Upload CSV"
-msgstr "Charger un fichier CSV"
+msgstr "Importer un fichier CSV"
 
 msgid "Upload CSV to database"
-msgstr "Charger un fichier CSV dans la base de données"
+msgstr "Importer un fichier CSV"
 
 
 msgid "Upload Columnar"
-msgstr "Charger un fichier en colonnes"
+msgstr "Importer un fichier parquet"
 
 
 msgid "Upload Columnar file to database"
-msgstr "Charger un fichier en colonnes vers la base de données"
+msgstr "Importer un fichier parquet"
 
 
 msgid "Upload Enabled"
-msgstr "Chargement activé"
+msgstr "Import autorisé"
 
 
 msgid "Upload Excel"
-msgstr "Charger un fichier Excel"
+msgstr "Importer un fichier Excel"
 
 
 msgid "Upload Excel to database"
-msgstr "Charger un fichier Excel vers la base de données"
+msgstr "Importer un fichier Excel"
 
 msgid "Upload JSON file"
-msgstr "Charger un fichier JSON"
+msgstr "Importer un fichier JSON"
 
  python-format
 msgid "Upload a file with a valid extension. Valid: [%s]"
-msgstr "Charger un fichier avec une extension valide. Valide: [%s]"
+msgstr "Importer un fichier avec une extension valide. Valide: [%s]"
 
 
 msgid "Upload credentials"
-msgstr "Charger les informations de connexion"
+msgstr "Importer les informations de connexion"
 
 
 msgid "Upload file to database"
-msgstr "Charger un fichier vers la base de données"
+msgstr "Importer un fichier"
 
 
 msgid "Upload file to preview columns"
-msgstr "Charger un fichier pour prévisualiser les colonnes"
+msgstr "Importer un fichier pour prévisualiser les colonnes"
 
 
 msgid "Uploading a file is required"
-msgstr "Charger un fichier est obligatoire"
+msgstr "Importer un fichier est obligatoire"
 
 
 msgid "Upper Threshold"
@@ -16029,7 +16027,7 @@ msgid "Use a log scale"
 msgstr "Utiliser une échelle de journalisation"
 
 msgid "Use a log scale for the X-axis"
-msgstr "Utiliser une échelle de journalisation pour l’axe des absisses"
+msgstr "Utiliser une échelle de journalisation pour l’axe X"
 
 msgid "Use a log scale for the Y-axis"
 msgstr "Utiliser une échelle de journalisation pour l’axe Y"
@@ -16111,7 +16109,7 @@ msgstr "Utilisateur"
 
 
 msgid "User Name"
-msgstr "Nom de la requête"
+msgstr "Nom de l'utilisateur"
 
 
 msgid "User Registrations"
@@ -16122,7 +16120,7 @@ msgstr "L'utilisateur n'a pas les droits."
 
 
 msgid "User info"
-msgstr "Nom de la requête"
+msgstr "Informations de l'utilisateur"
 
 
 msgid "User must select a value before applying the chart customization"
@@ -16422,7 +16420,7 @@ msgid ""
 "showcased using bubble color."
 msgstr ""
 "Visualise une mesure sur trois dimensions de données dans un seul "
-"graphique (axe des absisses, axe Y et taille des bulles). Les"
+"graphique (axe X, axe Y et taille des bulles). Les"
 " bulles du même groupe peuvent être présentées en utilisant la couleur "
 "des bulles."
 
@@ -16824,7 +16822,7 @@ msgid "Whether to display the metric name as a title"
 msgstr "Affichage ou non du nom de la mesure sous forme de titre"
 
 msgid "Whether to display the min and max values of the X-axis"
-msgstr "Affichage ou non des valeurs min et max de l’axe des absisses"
+msgstr "Affichage ou non des valeurs min et max de l’axe X"
 
 msgid "Whether to display the min and max values of the Y-axis"
 msgstr "Affichage ou non des valeurs min et max de l’axe Y"
@@ -17011,14 +17009,14 @@ msgstr "Étiquette de l’axe X"
 
 
 msgid "X Axis Label Interval"
-msgstr "Intervalle YScale"
+msgstr "Intervalle des étiquettes de l'axe X"
 
 
 msgid "X Axis Number Format"
 msgstr "Format de l'axe X"
 
 msgid "X Axis Title"
-msgstr "Titre de l’axe des absisses"
+msgstr "Titre de l’axe X"
 
 
 msgid "X Axis Title Margin"
@@ -17052,7 +17050,7 @@ msgid "XYZ"
 msgstr "XYZ"
 
 msgid "Y 2 bounds"
-msgstr "Limites ordonnées 2"
+msgstr "Limites Y 2"
 
 msgid "Y Axis"
 msgstr "Axe Y"
@@ -17076,13 +17074,13 @@ msgid "Y Axis Title Margin"
 msgstr "Marge du titre de l'axe Y"
 
 msgid "Y Axis Title Position"
-msgstr "Position du titre de l'axe des ordonées"
+msgstr "Position du titre de l'axe Y"
 
 msgid "Y Log Scale"
 msgstr "Échelle logarithmique Y"
 
 msgid "Y axis title margin"
-msgstr "MARGE DU TITRE DE L'AXE DES ORDONNÉES"
+msgstr "MARGE DU TITRE DE L'AXE Y"
 
 msgid "Y bounds"
 msgstr "Limites Y"
@@ -17491,7 +17489,7 @@ msgstr ""
 " la couleur est catégorique et basée sur des étiquettes"
 
 msgid "[untitled customization]"
-msgstr ""
+msgstr "[personnalisation sans titre]"
 
 msgid "`compare_columns` must have the same length as `source_columns`."
 msgstr "« compare_columns » doit être de même longueur que « source_columns »."
