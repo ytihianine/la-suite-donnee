@@ -19,6 +19,11 @@ on:
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}/apache-airflow
 
+
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     uses: ./.github/workflows/reusable-build-image.yaml
