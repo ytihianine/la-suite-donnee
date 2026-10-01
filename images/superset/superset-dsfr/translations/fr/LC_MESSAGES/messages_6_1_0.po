@@ -885,7 +885,7 @@ msgid "Action"
 msgstr "Action"
 
 msgid "Action Log"
-msgstr "Journaux d'actions"
+msgstr "Journal d'action"
 
 
 msgid "Action Logs"
@@ -3104,41 +3104,41 @@ msgstr "Le choix de [Rayon du point] doit être présent dans [Grouper par]"
 
 
 msgid "Choose a chart for displaying on the map"
-msgstr "Choisissez un graphique ou un tableau de bord, pas les deux"
+msgstr "Sélectionner un graphique ou un tableau de bord, pas les deux"
 
 msgid "Choose a chart or dashboard not both"
-msgstr "Choisissez un graphique ou un tableau de bord, pas les deux"
+msgstr "Sélectionner un graphique ou un tableau de bord, pas les deux"
 
 
 msgid "Choose a database..."
-msgstr "Choisissez une base de donnée"
+msgstr "Sélectionner une base de donnée"
 
 msgid "Choose a dataset"
-msgstr "Choisissez un ensemble de donnée"
+msgstr "Sélectionner un ensemble de donnée"
 
 
 msgid "Choose a delimiter"
-msgstr "Choisissez un ensemble de donnée"
+msgstr "Sélectionner un ensemble de donnée"
 
 msgid "Choose a metric for right axis"
-msgstr "Choisissez une mesure pour l'axe de droite"
+msgstr "Sélectionner une mesure pour l'axe de droite"
 
 
 msgid "Choose a number format"
-msgstr "Choisissez une mesure pour l'axe de droite"
+msgstr "Sélectionner une mesure pour l'axe de droite"
 
 msgid "Choose a source"
-msgstr "Choisissez une source"
+msgstr "Sélectionner une source"
 
 msgid "Choose a target"
-msgstr "Choisissez une cible"
+msgstr "Sélectionner une cible"
 
 
 msgid "Choose already exists"
 msgstr "Cet ensemble de filtre existe déjà"
 
 msgid "Choose chart type"
-msgstr "Choisissez un type de graphique"
+msgstr "Sélectionner un type de graphique"
 
 
 msgid "Choose columns to be parsed as dates"
@@ -3177,13 +3177,13 @@ msgstr ""
 
 msgid "Choose one of the available databases from the panel on the left."
 msgstr ""
-"Choisissez l’une des bases de données disponibles dans le panneau de "
+"Sélectionner l’une des bases de données disponibles dans le panneau de "
 "gauche."
 
 
 msgid "Choose one of the available databases on the left panel."
 msgstr ""
-"Choisissez l’une des bases de données disponibles dans le panneau de "
+"Sélectionner l’une des bases de données disponibles dans le panneau de "
 "gauche."
 
 
@@ -3191,18 +3191,18 @@ msgid "Choose sheet name"
 msgstr "Nom de feuille"
 
 msgid "Choose the annotation layer type"
-msgstr "Choisissez le type de couche d'annotation"
+msgstr "Sélectionner le type de couche d'annotation"
 
 
 msgid "Choose the format for legend values"
-msgstr "Choisissez une mesure pour l'axe de droite"
+msgstr "Sélectionner une mesure pour l'axe de droite"
 
 
 msgid "Choose the position of the legend"
-msgstr "Choisissez la contribution au total"
+msgstr "Sélectionner la contribution au total"
 
 msgid "Choose the source of your annotations"
-msgstr "Choisissez la source de vos annotations"
+msgstr "Sélectionner la source de vos annotations"
 
 
 msgid ""
@@ -3218,7 +3218,7 @@ msgid ""
 "Choose whether a country should be shaded by the metric, or assigned a "
 "color based on a categorical color palette"
 msgstr ""
-"Choisissez si un pays doit être ombré par la mesure ou si une couleur "
+"Sélectionner si un pays doit être ombré par la mesure ou si une couleur "
 "doit lui être attribuée sur la base d'une palette de couleurs "
 "catégorielles"
 
@@ -5260,7 +5260,7 @@ msgstr "Aucun échantillon n'a été renvoyé pour cet jeu de données"
 
 
 msgid "Discard"
-msgstr "Rejeter"
+msgstr "Annuler"
 
 msgid "Display Name"
 msgstr "Nom d'affichage"
@@ -8310,7 +8310,7 @@ msgstr "Interpolation linéaire"
 
 
 msgid "Linear palette"
-msgstr "Effacer tout"
+msgstr "Palette linéaire"
 
 
 msgid "Lines column"
@@ -8318,11 +8318,10 @@ msgstr "Colonne des lignes"
 
 
 msgid "Lines encoding"
-msgstr "Codage des lignes"
-
+msgstr "Encodage des lignes"
 
 msgid "List"
-msgstr "Dernier"
+msgstr "Lister"
 
 msgid "List Groups"
 msgstr "Liste des groupes"
@@ -9773,7 +9772,7 @@ msgstr "Options"
 
 msgid "Or choose from a list of other databases we support:"
 msgstr ""
-"Ou choisissez parmi une liste d'autres bases de données que nous prenons "
+"Ou Sélectionner parmi une liste d'autres bases de données que nous prenons "
 "en charge :"
 
 msgid "Order results by selected columns"
@@ -10129,38 +10128,38 @@ msgstr "Physique (table ou vue)"
 
 msgid "Pick a dimension from which categorical colors are defined"
 msgstr ""
-"Choisissez une dimension à partir de laquelle les couleurs catégorielles "
+"Sélectionner une dimension à partir de laquelle les couleurs catégorielles "
 "sont définies"
 
 msgid "Pick a metric for x, y and size"
-msgstr "Choisissez une mesure pour x, y et la taille"
+msgstr "Sélectionner une mesure pour x, y et la taille"
 
 msgid "Pick a metric to display"
-msgstr "Choisissez une mesure à afficher"
+msgstr "Sélectionner une mesure à afficher"
 
 msgid "Pick a name to help you identify this database."
-msgstr "Choisissez un nom pour vous aider à identifier cette base de données."
+msgstr "Sélectionner un nom pour vous aider à identifier cette base de données."
 
 
 msgid "Pick a nickname for how the database will display in Superset."
-msgstr "Choisissez un surnom pour l'affichage de la base de données dans Superset."
+msgstr "Sélectionner un surnom pour l'affichage de la base de données dans Superset."
 
 msgid "Pick a title for you annotation."
-msgstr "Choisissez un titre pour votre annotation."
+msgstr "Sélectionner un titre pour votre annotation."
 
 msgid "Pick at least one metric"
-msgstr "Choisissez au moins une mesure"
+msgstr "Sélectionner au moins une mesure"
 
 msgid ""
 "Pick one or more columns that should be shown in the annotation. If you "
 "don't select a column all of them will be shown."
 msgstr ""
-"Choisissez une ou plusieurs colonnes qui doivent être affichées dans "
+"Sélectionner une ou plusieurs colonnes qui doivent être affichées dans "
 "l'annotation. Si vous ne sélectionnez pas de colonne, toutes les colonnes"
 " seront affichées."
 
 msgid "Pick your favorite markup language"
-msgstr "Choisissez votre langage de balisage préféré"
+msgstr "Sélectionner votre langage de balisage préféré"
 
 
 msgid "Pie Chart"
@@ -10537,7 +10536,7 @@ msgid "Processing export for %s"
 msgstr ""
 
 
-msgid "Processing export..."
+msgid "Exportent en CSV"
 msgstr "Export CSV"
 
 msgid "Progress"
@@ -11681,7 +11680,7 @@ msgid "Search box"
 msgstr "Zone de recherche"
 
 msgid "Search by query text"
-msgstr "Recherche par texte d'interrogation"
+msgstr "Recherche par texte"
 
 
 msgid "Search columns"
@@ -11767,11 +11766,11 @@ msgstr "Sélectionner…"
 
 
 msgid "Select All"
-msgstr "Désélectionner tout"
+msgstr "Tout sélectionner"
 
 
 msgid "Select Database and Schema"
-msgstr "Supprimer la base de données"
+msgstr "Sélectionner la base de données et le schéma"
 
 msgid "Select Delivery Method"
 msgstr "Sélectionner la méthode de livraison"
@@ -11782,11 +11781,11 @@ msgstr "Selectionner un filtre"
 
 
 msgid "Select Tags"
-msgstr "Tout Dé-Sélectionner"
+msgstr "Sélectionner les étiquettes"
 
 
 msgid "Select Value"
-msgstr "Exclure les valeurs sélectionnées"
+msgstr "Sélectionner la valeur"
 
 
 msgid "Select a CSS template"
@@ -11800,7 +11799,7 @@ msgstr "Sélectionner un tableau de bord"
 
 
 msgid "Select a database"
-msgstr "Supprimer la base de données"
+msgstr "Sélectionner la base de données"
 
 
 msgid "Select a database table and create dataset"
@@ -14240,7 +14239,7 @@ msgid ""
 "will cause lag."
 msgstr ""
 "Rayon (en pixels) utilisé par l’algorithme pour définir une grappe. "
-"Choisissez 0 pour désactiver la mise en grappe, mais faites attention, "
+"Sélectionner 0 pour désactiver la mise en grappe, mais faites attention, "
 "car un grand nombre de points (>1 000) causera un décalage."
 
 msgid ""
@@ -14506,7 +14505,7 @@ msgstr "Les valeurs se chevauchent avec d'autres valeurs de points d'arrêt"
 
 
 msgid "The version of the service"
-msgstr "Choisissez la contribution au total"
+msgstr "Sélectionner la contribution au total"
 
 
 msgid "The visible title of the layer"
@@ -15904,7 +15903,7 @@ msgid "Unsupported clause type: %(clause)s"
 msgstr "Type de clause non pris en charge : %(clause)s"
 
 msgid "Unsupported file type. Please use CSV, Excel, or Columnar files."
-msgstr ""
+msgstr "Format du fichier non supporté. Merci d'utiliser du CSV, Excel ou parquet"
 
  python-format
 msgid "Unsupported post processing operation: %(operation)s"
@@ -15956,7 +15955,7 @@ msgid "Upload CSV"
 msgstr "Charger un fichier CSV"
 
 msgid "Upload CSV to database"
-msgstr "Charger un fichier CSV vers la base de données"
+msgstr "Charger un fichier CSV dans la base de données"
 
 
 msgid "Upload Columnar"
@@ -17456,7 +17455,7 @@ msgid "Zoom level of the map"
 msgstr "Niveau de zoom de la carte"
 
 msgid "[ untitled dashboard ]"
-msgstr "[ tableau de bord sans titre ]"
+msgstr "[ sans titre ]"
 
 msgid "[Longitude] and [Latitude] columns must be present in [Group By]"
 msgstr ""
