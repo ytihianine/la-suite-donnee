@@ -13,64 +13,19 @@ on:
       - 'main'
     paths:
       - 'images/superset/**'
+  release:
+    types: [published]
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}/apache-superset
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Get Superset version
-        id: version
-        shell: bash
-        run: |
-          if [ -n "${{ inputs.superset_version }}" ]; then
-            VERSION="${{ inputs.superset_version }}"
-          else
-            VERSION=$(grep -E '^ARG SUPERSET_VERSION=' images/superset/Dockerfile | cut -d= -f2)
-          fi
-
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Superset version: $VERSION"
-
-      - name: Set image tag
-        id: tag
-        shell: bash
-        run: |
-          SUFFIX=""
-
-          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
-            SUFFIX="-test"
-          fi
-
-          echo "suffix=$SUFFIX" >> "$GITHUB_OUTPUT"
-          echo "Image suffix: $SUFFIX"
-
-      - name: Log in to GHCR
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" \
-            | docker login ghcr.io \
-              -u "${{ github.actor }}" \
-              --password-stdin
-
-      - name: Build Docker image
-        run: |
-          docker build \
-            -f images/superset/Dockerfile \
-            --build-arg SUPERSET_VERSION=${{ steps.version.outputs.version }} \
-            -t ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }} \
-            .
-
-      - name: Push Docker image
-        run: |
-          docker push \
-            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }}
+  build:
+    uses: ./.github/workflows/reusable-build-image.yaml
+    with:
+      image: apache-superset
+      dockerfile: images/superset/Dockerfile
+      version_arg: SUPERSET_VERSION
+      version: ${{ inputs.superset_version }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}

@@ -12,55 +12,19 @@ on:
       - 'main'
     paths:
       - 'images/polaris/**'
+  release:
+    types: [published]
 
 env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}/apache-polaris
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Get Polaris version
-        id: version
-        shell: bash
-        run: |
-          if [ -n "${{ inputs.polaris_version }}" ]; then
-            VERSION="${{ inputs.polaris_version }}"
-          else
-            VERSION=$(grep -E '^ARG POLARIS_VERSION=' images/polaris/Dockerfile | cut -d= -f2)
-          fi
-
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Polaris version: $VERSION"
-
-      - name: Set image tag
-        id: tag
-        shell: bash
-        run: |
-          SUFFIX=""
-
-          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
-            SUFFIX="-test"
-          fi
-
-          echo "suffix=$SUFFIX" >> "$GITHUB_OUTPUT"
-          echo "Image suffix: $SUFFIX"
-
-      - name: Build Docker image
-        run: docker build -f images/polaris/Dockerfile \
-          --build-arg POLARIS_VERSION=${{ steps.version.outputs.version }} \
-          -t ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }} .
-
-      - name: Push Docker image
-        run: |
-          docker push ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }}
+  build:
+    uses: ./.github/workflows/reusable-build-image.yaml
+    with:
+      image: apache-polaris
+      dockerfile: images/polaris/Dockerfile
+      version_arg: POLARIS_VERSION
+      version: ${{ inputs.polaris_version }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}

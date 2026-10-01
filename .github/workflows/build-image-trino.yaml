@@ -7,61 +7,23 @@ on:
         description: 'Trino version to build (leave empty to use Dockerfile default)'
         required: false
         type: string
+
   push:
     branches:
-      - 'main'
+      - main
     paths:
       - 'images/trino/**'
 
-env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}/trino
+  release:
+    types: [published]
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Get trino version
-        id: version
-        shell: bash
-        run: |
-          if [ -n "${{ inputs.trino_version }}" ]; then
-            VERSION="${{ inputs.trino_version }}"
-          else
-            VERSION=$(grep -E '^ARG TRINO_VERSION=' images/trino/Dockerfile | cut -d= -f2)
-          fi
-
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Trino version: $VERSION"
-
-      - name: Set image tag
-        id: tag
-        shell: bash
-        run: |
-          SUFFIX=""
-
-          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
-            SUFFIX="-test"
-          fi
-
-          echo "suffix=$SUFFIX" >> "$GITHUB_OUTPUT"
-          echo "Image suffix: $SUFFIX"
-
-      - name: Build Docker image
-        run: docker build -f images/trino/Dockerfile \
-          --build-arg TRINO_VERSION=${{ steps.version.outputs.version }} \
-          -t ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }} .
-
-      - name: Push Docker image
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker push ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}${{ steps.tag.outputs.suffix }}-${{ github.sha }}
+  build:
+    uses: ./.github/workflows/reusable-build-image.yaml
+    with:
+      image: trino
+      dockerfile: images/trino/Dockerfile
+      version_arg: TRINO_VERSION
+      version: ${{ inputs.trino_version }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}

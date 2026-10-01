@@ -1,0 +1,115 @@
+name: Build and Push Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: 'Docker image name'
+        required: true
+        type: string
+
+      dockerfile:
+        description: 'Path to the Dockerfile'
+        required: true
+        type: string
+
+      context:
+        description: 'Docker build context'
+        required: false
+        type: string
+        default: '.'
+
+      version_arg:
+        description: 'Dockerfile ARG containing the application version'
+        required: true
+        type: string
+
+      version:
+        description: 'Optional version override'
+        required: false
+        type: string
+
+    secrets:
+      token:
+        description: 'GitHub token used to authenticate to GHCR'
+        required: true
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Log in to GHCR
+        run: |
+          echo "${{ secrets.token }}" |
+            docker login ghcr.io \
+              -u "${{ github.actor }}" \
+              --password-stdin
+
+      - name: Get application version
+        id: version
+        shell: bash
+        env:
+          VERSION_OVERRIDE: ${{ inputs.version }}
+          VERSION_ARG: ${{ inputs.version_arg }}
+          DOCKERFILE: ${{ inputs.dockerfile }}
+        run: |
+          if [ -n "$VERSION_OVERRIDE" ]; then
+            VERSION="$VERSION_OVERRIDE"
+          else
+            VERSION=$(grep -E "^ARG ${VERSION_ARG}=" "$DOCKERFILE" | head -n1 | cut -d= -f2)
+          fi
+
+          if [ -z "$VERSION" ]; then
+            echo "Unable to determine application version"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Application version: $VERSION"
+
+      - name: Set image tag
+        id: tag
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "release" ]]; then
+            TAG="$RELEASE_TAG"
+          else
+            TAG="latest"
+          fi
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Image tag: $TAG"
+
+      - name: Build Docker image
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}/${{ inputs.image }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          DOCKERFILE: ${{ inputs.dockerfile }}
+          CONTEXT: ${{ inputs.context }}
+        run: |
+          docker build \
+            -f "$DOCKERFILE" \
+            -t "$IMAGE_NAME:$VERSION-$TAG" \
+            "$CONTEXT"
+
+      - name: Push Docker image
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}/${{ inputs.image }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          docker push "$IMAGE_NAME:$VERSION-$TAG"
