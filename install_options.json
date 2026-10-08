@@ -1,8 +1,8 @@
 {
     "ARGOCD": {
         "DEPLOY_APP": false,
-        "INSTALL_CLI": false,
-        "ADD_REPO": false
+        "INSTALL_CLI": true,
+        "ADD_REPO": true
     },
     "RENOVATEBOT": {
         "DEPLOY_APP": false
