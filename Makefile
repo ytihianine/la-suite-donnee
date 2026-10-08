@@ -28,7 +28,7 @@ create-py-env: ## Créer un nouvel environnement python
 # =====================================================================
 # Environnement de développement Python
 # =====================================================================
-duplicate-env-vars: ## Dupliquer les variables d'environnement du système dans le nouvel environnement virtuel
+duplicate-env-vars: ## Créer le fichier .env à partir du template .env.example
 	@echo "Création du fichier .env à partir du template .env.example"
 	cp .env.example .env
 	@echo "$(GREEN)Les variables d'environnement ont été dupliquées dans le fichier .env$(Color_Off)"
