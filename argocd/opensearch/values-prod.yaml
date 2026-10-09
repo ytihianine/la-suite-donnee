@@ -1,0 +1,14 @@
+opensearch:
+  image:
+    tag: "2.19.1"
+
+  replicaCount: 1
+
+  ingress:
+    enabled: true
+    className: "nginx"
+    hosts:
+      - host: opensearch.lab.sspcloud.fr
+        paths:
+          - path: /
+            pathType: ImplementationSpecific

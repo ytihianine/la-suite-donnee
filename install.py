@@ -48,6 +48,7 @@ class InstallOptions(TypedDict):
     AIRFLOW: AppConfig
     TRINO: AppConfig
     POLARIS: AppConfig
+    OPENSEARCH: AppConfig
 
 
 # ==============================
@@ -72,8 +73,8 @@ def run(cmd, check=True):
 
 def wait_for_argocd_app(app_name, timeout=300):
     print(
-        f"Waiting for ArgoCD application '{app_name}' to be Healthy and Synced (timeout: {timeout}s)..."
-    )  # noqa
+        f"Waiting for ArgoCD application '{app_name}' to be Healthy and Synced (timeout: {timeout}s)..."  # noqa
+    )
 
     result = run(
         [
@@ -91,8 +92,8 @@ def wait_for_argocd_app(app_name, timeout=300):
 
     if result.returncode != 0:
         print(
-            f"{Red}ERROR: ArgoCD application '{app_name}' did not become healthy within {timeout}s. Aborting.{Color_Off}"
-        )  # noqa
+            f"{Red}ERROR: ArgoCD application '{app_name}' did not become healthy within {timeout}s. Aborting.{Color_Off}" # noqa
+        )
         sys.exit(1)
 
     print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
@@ -232,6 +233,13 @@ def main():
         run(["make", "deploy-polaris"])
     else:
         print(f"{Yellow}Skipping Polaris...{Color_Off}")
+
+    # OpenSearch
+    if user_options["OPENSEARCH"]["DEPLOY_APP"] is True:
+        print("Deploying OpenSearch...")
+        run(["make", "deploy-opensearch"])
+    else:
+        print(f"{Yellow}Skipping OpenSearch...{Color_Off}")
 
 
 if __name__ == "__main__":

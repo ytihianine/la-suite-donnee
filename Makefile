@@ -151,7 +151,12 @@ deploy-polaris: ## Déployer Polaris sur le cluster Kubernetes à partir d'ArgoC
 	kubectl apply -f argocd/polaris/manifest.yaml
 	@echo "$(GREEN)Polaris a été déployé avec succès$(Color_Off)"
 
-deploy-all: deploy-renovatebot deploy-db-config deploy-db-data init-databases deploy-superset deploy-airflow deploy-trino deploy-polaris ## Déployer toutes les applications sur le cluster Kubernetes à partir d'ArgoCD
+deploy-opensearch: ## Déployer OpenSearch sur le cluster Kubernetes à partir d'ArgoCD
+	@echo "Déploiement d'OpenSearch sur le cluster Kubernetes"
+	kubectl apply -f argocd/opensearch/manifest.yaml
+	@echo "$(GREEN)OpenSearch a été déployé avec succès$(Color_Off)"
+
+deploy-all: deploy-renovatebot deploy-db-config deploy-db-data init-databases deploy-superset deploy-airflow deploy-trino deploy-polaris deploy-opensearch ## Déployer toutes les applications sur le cluster Kubernetes à partir d'ArgoCD
 
 # =====================================================================
 # Autres commandes utiles
