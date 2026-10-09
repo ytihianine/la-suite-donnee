@@ -1,27 +1,56 @@
-ARGOCD:
-  DEPLOY_APP: false
-  INSTALL_CLI: false
-  ADD_REPO: false
-
-RENOVATEBOT:
-  DEPLOY_APP: false
-
-DATABASES:
-  DEPLOY_CONFIG_DB: false
-  DEPLOY_DATA_DB: false
-  INIT_DB: false
-
-SUPERSET:
-  DEPLOY_APP: false
-
-AIRFLOW:
-  DEPLOY_APP: false
-
-TRINO:
-  DEPLOY_APP: false
-
-POLARIS:
-  DEPLOY_APP: false
-
-OPENSEARCH:
-  DEPLOY_APP: false
+# Must be ordered to respect app dependencies
+steps:
+  # ArgoCD
+  - name: argocd
+    enable: false
+    cmd:
+      - "make deploy-argocd"
+  - name: argocd-cli
+    enable: false
+    cmd:
+      - "make deploy-argocd-cli"
+      - "make connect-argocd"
+  - name: argocd-add-repo
+    enable: false
+    cmd:
+      - "make deploy-argocd-add-repo"
+  # Renovate Bot
+  - name: renovatebot
+    enable: false
+    cmd:
+      - "make deploy-renovatebot"
+  # Postgres
+  - name: db-config
+    enable: false
+    cmd:
+      - "make deploy-db-config"
+    wait_app: db-config-prod
+  - name: db-data
+    enable: false
+    cmd:
+      - "make deploy-db-data"
+    wait_app: db-data-prod
+  - name: init-postgres-db
+    enable: false
+    cmd:
+      - "make init-databases"
+  # Superset
+  - name: superset
+    enable: false
+    cmd:
+      - "make deploy-superset"
+  # Airflow
+  - name: airflow
+    enable: false
+    cmd:
+      - "make deploy-airflow"
+  # Trino
+  - name: trino
+    enable: false
+    cmd:
+      - "make deploy-trino"
+  # Polaris
+  - name: polaris
+    enable: false
+    cmd:
+      - "make deploy-polaris"
