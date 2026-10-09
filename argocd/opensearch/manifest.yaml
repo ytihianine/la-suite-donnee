@@ -4,12 +4,12 @@ metadata:
   name: opensearch
 spec:
   destination:
-    namespace: "namespace"
+    namespace: "user-ytihianine"
     server: https://kubernetes.default.svc
   source:
     path: argocd/opensearch
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
-    targetRevision: main
+    targetRevision: openmetadata
     helm:
       valueFiles:
         - values-prod.yaml

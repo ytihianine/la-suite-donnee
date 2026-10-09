@@ -4,12 +4,12 @@ metadata:
   name: airflow
 spec:
   destination:
-    namespace: "namespace"
+    namespace: "user-ytihianine"
     server: https://kubernetes.default.svc
   source:
     path: argocd/airflow
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
-    targetRevision: main
+    targetRevision: openmetadata
     helm:
       valueFiles:
         - values-prod.yaml
