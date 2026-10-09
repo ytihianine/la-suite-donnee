@@ -1,10 +1,13 @@
-#!/usr/bin/env python3
-import os
-import yaml
+import shlex
 import subprocess
 import sys
+from collections.abc import Sequence
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict, Mapping, Any
+from subprocess import CompletedProcess
+from typing import Literal
+
+import yaml
 
 # ==============================
 # Variables
@@ -16,62 +19,56 @@ Green = "\033[0;32m"
 Yellow = "\033[0;33m"
 
 # Options
-CURR_DIR = os.path.dirname(os.path.realpath(__file__))
-OPTIONS_PATH = Path(CURR_DIR, "install_options.yaml")
+CURR_DIR = Path(__file__).resolve().parent
+OPTIONS_PATH = CURR_DIR / "install_options.yaml"
 
 
-class ArgoCDConfig(TypedDict):
-    DEPLOY_APP: bool
-    INSTALL_CLI: bool
-    ADD_REPO: bool
+@dataclass(frozen=True)
+class Options:
+    name: str
+    enable: bool
+    cmd: tuple[str, ...]
+    wait_app: str | None = None
 
 
-class RenovateBotConfig(TypedDict):
-    DEPLOY_APP: bool
+@dataclass(frozen=True)
+class InstallOptions:
+    steps: list[Options]
 
 
-class DatabaseConfig(TypedDict):
-    DEPLOY_CONFIG_DB: bool
-    DEPLOY_DATA_DB: bool
-    INIT_DB: bool
+def load_from_yaml(options_path: Path) -> InstallOptions:
+    with options_path.open("r") as f:
+        _options = yaml.safe_load(stream=f)
 
+    steps = [
+        Options(
+            name=step["name"],
+            enable=step["enable"],
+            cmd=tuple(step["cmd"]),
+            wait_app=step.get("wait_app"),
+        )
+        for step in _options["steps"]
+    ]
 
-class AppConfig(TypedDict):
-    DEPLOY_APP: bool
-
-
-class InstallOptions(TypedDict):
-    ARGOCD: ArgoCDConfig
-    RENOVATEBOT: RenovateBotConfig
-    DATABASES: DatabaseConfig
-    SUPERSET: AppConfig
-    AIRFLOW: AppConfig
-    TRINO: AppConfig
-    POLARIS: AppConfig
+    return InstallOptions(steps=steps)
 
 
 # ==============================
 # Helpers
 # ==============================
-def load_options(options_path: Path) -> InstallOptions:
-    with options_path.open("r") as f:
-        return yaml.safe_load(f)
-
-
-def run(cmd, check=True):
+def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
     print(f"$ {' '.join(cmd)}")
-    result = subprocess.run(
+    result = subprocess.run(  # noqa: PLW1510
         cmd,
         cwd=CURR_DIR,  # Force execution from current py script location
         text=True,
-        check=True,
     )
     if check and result.returncode != 0:
         sys.exit(result.returncode)
     return result
 
 
-def wait_for_argocd_app(app_name, timeout=300):
+def wait_for_argocd_app(app_name: str, timeout: int = 300) -> None:
     print(
         f"Waiting for ArgoCD application '{app_name}' ",
         f"to be Healthy and Synced (timeout: {timeout}s)",
@@ -101,18 +98,14 @@ def wait_for_argocd_app(app_name, timeout=300):
     print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
 
 
-def prompt_choice(options: Mapping[str, Any]):
+def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
     print(
         "This script will install la Suite Donnée with the following installation options:"
     )
-    for app, option in options.items():
-        print(f"Options for {app}")
-        for k, v in option.items():
-            print(
-                f"\t {k}: {v} {Green}✔{Color_Off}"
-                if v
-                else f"\t {k}: {v} {Red}✖{Color_Off}"
-            )
+    for step in options.steps:
+        state = "enabled" if step.enable else "disabled"
+        marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
+        print(f"\t {step.name}: {state} {marker}")
     print()
 
     user_options = ["Yes", "No", "Cancel"]
@@ -137,8 +130,8 @@ def prompt_choice(options: Mapping[str, Any]):
 # ==============================
 # Main
 # ==============================
-def main():
-    user_options = load_options(options_path=OPTIONS_PATH)
+def main() -> None:
+    user_options = load_from_yaml(options_path=OPTIONS_PATH)
 
     choice = prompt_choice(options=user_options)
 
@@ -159,82 +152,17 @@ def main():
     # ==============================
     print("Install la Suite Donnée using the modular method...")
 
-    # ArgoCD
-    if user_options["ARGOCD"]["DEPLOY_APP"] is True:
-        print("Installing ArgoCD...")
-        run(["make", "deploy-argocd"])
-    else:
-        print(f"{Yellow}Skipping ArgoCD installation...{Color_Off}")
-
-    # ArgoCD CLI
-    if user_options["ARGOCD"]["INSTALL_CLI"] is True:
-        print("Installing ArgoCD CLI...")
-        run(["make", "deploy-argocd-cli"])
-        run(["make", "connect-argocd"])
-    else:
-        print(f"{Yellow}Skipping ArgoCD CLI installation...{Color_Off}")
-
-    # Add repo
-    if user_options["ARGOCD"]["ADD_REPO"] is True:
-        print("Adding repo to ArgoCD...")
-        run(["make", "deploy-argocd-add-repo"])
-    else:
-        print(f"{Yellow}Skipping ArgoCD repo addition...{Color_Off}")
-
-    # Renovate
-    if user_options["RENOVATEBOT"]["DEPLOY_APP"] is True:
-        print("Deploying Renovate Bot...")
-        run(["make", "deploy-renovatebot"])
-    else:
-        print(f"{Yellow}Skipping Renovate Bot...{Color_Off}")
-
-    # Databases
-    if user_options["DATABASES"]["DEPLOY_CONFIG_DB"] is True:
-        run(["make", "deploy-db-config"])
-        wait_for_argocd_app("db-config-prod")
-    else:
-        print(f"{Yellow}Skipping config database...{Color_Off}")
-
-    if user_options["DATABASES"]["DEPLOY_DATA_DB"] is True:
-        run(["make", "deploy-db-data"])
-        wait_for_argocd_app("db-data-prod")
-    else:
-        print(f"{Yellow}Skipping data database...{Color_Off}")
-
-    # Init DB
-    if user_options["DATABASES"]["INIT_DB"] is True:
-        print("Initializing databases...")
-        run(["make", "init-databases"])
-    else:
-        print(f"{Yellow}Skipping database initialization...{Color_Off}")
-
-    # Superset
-    if user_options["SUPERSET"]["DEPLOY_APP"] is True:
-        print("Deploying Superset...")
-        run(["make", "deploy-superset"])
-    else:
-        print(f"{Yellow}Skipping Superset...{Color_Off}")
-
-    # Airflow
-    if user_options["AIRFLOW"]["DEPLOY_APP"] is True:
-        print("Deploying Airflow...")
-        run(["make", "deploy-airflow"])
-    else:
-        print(f"{Yellow}Skipping Airflow...{Color_Off}")
-
-    # Trino
-    if user_options["TRINO"]["DEPLOY_APP"] is True:
-        print("Deploying Trino...")
-        run(["make", "deploy-trino"])
-    else:
-        print(f"{Yellow}Skipping Trino...{Color_Off}")
-
-    # Polaris
-    if user_options["POLARIS"]["DEPLOY_APP"] is True:
-        print("Deploying Polaris...")
-        run(["make", "deploy-polaris"])
-    else:
-        print(f"{Yellow}Skipping Polaris...{Color_Off}")
+    total = len(user_options.steps)
+    for i, step in enumerate(user_options.steps, start=1):
+        print(f"[Etape {i}/{total}]")
+        if step.enable:
+            print(f"{step.name} is enabled. Running commands...")
+            for command in step.cmd:
+                run(shlex.split(command))
+            if step.wait_app:
+                wait_for_argocd_app(step.wait_app)
+        else:
+            print(f"{Yellow}{step.name} is disabled... Skipping{Color_Off}")
 
 
 if __name__ == "__main__":
