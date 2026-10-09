@@ -6,7 +6,7 @@ steps:
     cmd:
       - "make deploy-argocd"
   - name: argocd-cli
-    enable: false
+    enable: true
     cmd:
       - "make deploy-argocd-cli"
       - "make connect-argocd"
@@ -21,7 +21,7 @@ steps:
       - "make deploy-renovatebot"
   # Postgres
   - name: db-config
-    enable: false
+    enable: true
     cmd:
       - "make deploy-db-config"
     wait_app: db-config-prod
@@ -31,7 +31,7 @@ steps:
       - "make deploy-db-data"
     wait_app: db-data-prod
   - name: init-postgres-db
-    enable: false
+    enable: true
     cmd:
       - "make init-databases"
   # Superset
@@ -41,7 +41,7 @@ steps:
       - "make deploy-superset"
   # Airflow
   - name: airflow
-    enable: false
+    enable: true
     cmd:
       - "make deploy-airflow"
   # Trino
@@ -54,3 +54,8 @@ steps:
     enable: false
     cmd:
       - "make deploy-polaris"
+  # OpenMetada
+  - name: opensearch
+    enable: true
+    cmd:
+    - make deploy-opensearch
