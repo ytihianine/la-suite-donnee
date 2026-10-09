@@ -105,7 +105,7 @@ def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
     for step in options.steps:
         state = "enabled" if step.enable else "disabled"
         marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
-        print(f"\t {step.name}: {state} {marker}")
+        print(f"\t {marker} {step.name}: {state} {marker}")
     print()
 
     user_options = ["Yes", "No", "Cancel"]
