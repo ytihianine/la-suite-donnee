@@ -30,7 +30,7 @@ airflow:
   images:
     airflow:
       repository: ghcr.io/ytihianine/la-suite-donnee/apache-airflow
-      tag: 3.2.2-latest
+      tag: 3.3.2-latest
       # Specifying digest takes precedence over tag.
       # digest:
       pullPolicy: Always
