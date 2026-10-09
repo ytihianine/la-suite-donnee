@@ -8,4 +8,4 @@ appVersion: "1.0"
 dependencies:
   - name: opensearch
     version: 2.35.1
-    repository: https://opensearch-project.github.io/opensearch-helm
+    repository: https://opensearch-project.github.io/helm-charts/
