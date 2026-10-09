@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import os
-import json
+import yaml
 import subprocess
 import sys
 from pathlib import Path
@@ -17,7 +17,7 @@ Yellow = "\033[0;33m"
 
 # Options
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
-OPTIONS_PATH = Path(CURR_DIR, "install_options.json")
+OPTIONS_PATH = Path(CURR_DIR, "install_options.yaml")
 
 
 class ArgoCDConfig(TypedDict):
@@ -55,7 +55,7 @@ class InstallOptions(TypedDict):
 # ==============================
 def load_options(options_path: Path) -> InstallOptions:
     with options_path.open("r") as f:
-        return json.load(f)
+        return yaml.safe_load(f)
 
 
 def run(cmd, check=True):
@@ -64,6 +64,7 @@ def run(cmd, check=True):
         cmd,
         cwd=CURR_DIR,  # Force execution from current py script location
         text=True,
+        check=True,
     )
     if check and result.returncode != 0:
         sys.exit(result.returncode)
@@ -72,8 +73,9 @@ def run(cmd, check=True):
 
 def wait_for_argocd_app(app_name, timeout=300):
     print(
-        f"Waiting for ArgoCD application '{app_name}' to be Healthy and Synced (timeout: {timeout}s)..."
-    )  # noqa
+        f"Waiting for ArgoCD application '{app_name}' ",
+        f"to be Healthy and Synced (timeout: {timeout}s)",
+    )
 
     result = run(
         [
@@ -91,8 +93,9 @@ def wait_for_argocd_app(app_name, timeout=300):
 
     if result.returncode != 0:
         print(
-            f"{Red}ERROR: ArgoCD application '{app_name}' did not become healthy within {timeout}s. Aborting.{Color_Off}"
-        )  # noqa
+            f"{Red}ERROR: ArgoCD application '{app_name}' ",
+            f"did not become healthy within {timeout}s. Aborting.{Color_Off}",
+        )
         sys.exit(1)
 
     print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
