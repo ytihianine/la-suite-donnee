@@ -22,3 +22,6 @@ TRINO:
 
 POLARIS:
   DEPLOY_APP: false
+
+OPENSEARCH:
+  DEPLOY_APP: false
