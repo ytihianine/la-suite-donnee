@@ -300,9 +300,8 @@ opensearch:
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
     # ingressClassName: nginx
 
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    annotations:
+      argocd.argoproj.io/ignore-healthcheck: "true"
     ingressLabels: {}
     path: /
     hosts:
