@@ -952,10 +952,8 @@ msgstr ""
 "Ajouter les identifiants des requêtes A et B aux infobulles pour mieux "
 "différencier les séries"
 
-
 msgid "Add Role"
-msgstr "Rôles exclus"
-
+msgstr "Ajouter un rôle"
 
 msgid "Add Rule"
 msgstr "Ajouter une règle"
@@ -5403,7 +5401,7 @@ msgstr "Forcer l'actualisation"
 
 
 msgid "Donut"
-msgstr "Beigne"
+msgstr "Donut"
 
 
 msgid "Dotted"
@@ -5687,7 +5685,7 @@ msgid "Edit Dashboard"
 msgstr "Modifier le tableau de bord"
 
 msgid "Edit Dataset "
-msgstr "Modifier l’jeu de données "
+msgstr "Modifier le jeu de données "
 
 
 msgid "Edit Group"
@@ -5742,7 +5740,7 @@ msgid "Edit database"
 msgstr "Modifier la base de données"
 
 msgid "Edit dataset"
-msgstr "Modifier l’jeu de données"
+msgstr "Modifier le jeu de données"
 
 msgid "Edit mail report"
 msgstr "Modifier le rapport par mail"
@@ -6477,7 +6475,7 @@ msgstr "FEB"
 
 
 msgid "FIT DATA"
-msgstr "Modifier l’jeu de données"
+msgstr "Ajuster les données"
 
 msgid "FRI"
 msgstr "FRI"
@@ -7788,11 +7786,11 @@ msgstr "Inverser la page actuelle"
 
 
 msgid "Is Active?"
-msgstr "Alerte actives"
+msgstr "Est actif ?"
 
 
 msgid "Is active?"
-msgstr "Alerte actives"
+msgstr "Est actif ?"
 
 
 msgid "Is certified"
@@ -8427,14 +8425,13 @@ msgid "Login with"
 msgstr "Se connecter avec"
 
 msgid "Logout"
-msgstr "Déconnexion"
+msgstr "Se déconnecter"
 
 msgid "Logs"
 msgstr "Journaux"
 
-
 msgid "Lon"
-msgstr "sur"
+msgstr "Lon"
 
 msgid "Long dashed"
 msgstr "Long tiret"
@@ -12517,7 +12514,7 @@ msgstr ""
 
 
 msgid "Show empty columns"
-msgstr "Afficher les colonnes libres"
+msgstr "Afficher les colonnes vides"
 
 
 msgid "Show entries per page"
@@ -13877,7 +13874,7 @@ msgstr "La fonction à utiliser lors de l’agrégation de points en groupes"
 
 
 msgid "The group has been created successfully."
-msgstr "Le rapport a été créé"
+msgstr "Le groupe a été créé avec succès"
 
 msgid "The group has been updated successfully."
 msgstr "Le groupe a été mis à jour avec succès."
@@ -14285,7 +14282,7 @@ msgstr ""
 
 
 msgid "The role has been created successfully."
-msgstr "Le rapport a été créé"
+msgstr "Le rôle a été créé avec succès"
 
 msgid "The role has been duplicated successfully."
 msgstr "Le rôle a été dupliqué avec succès."
@@ -14330,7 +14327,7 @@ msgstr ""
 
 
 msgid "The screenshot has been downloaded."
-msgstr "Le rapport a été créé"
+msgstr "La capture d'écran a été téléchargée"
 
 msgid "The screenshot is being generated. Please, do not leave the page."
 msgstr ""
