@@ -35,6 +35,10 @@ steps:
     cmd:
       - "make init-databases"
   # Superset
+  - name: superset-operator
+    enable: false
+    cmd:
+      - "make deploy-superset-operator"
   - name: superset
     enable: false
     cmd:

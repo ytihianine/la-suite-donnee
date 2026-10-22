@@ -136,6 +136,11 @@ deploy-superset: ## Déployer Superset sur le cluster Kubernetes à partir d'Arg
 	kubectl apply -f argocd/superset/manifest.yaml
 	@echo "$(GREEN)Superset a été déployé avec succès$(Color_Off)"
 
+deploy-superset-operator: ## Déployer l'opérateur Superset sur le cluster Kubernetes à partir d'ArgoCD
+	@echo "Déploiement de l'opérateur Superset sur le cluster Kubernetes"
+	kubectl apply -f argocd/superset/operator/manifest.yaml
+	@echo "$(GREEN)L'opérateur Superset a été déployé avec succès$(Color_Off)"
+
 deploy-airflow: ## Déployer Airflow sur le cluster Kubernetes à partir d'ArgoCD
 	@echo "Déploiement d'Airflow sur le cluster Kubernetes"
 	kubectl apply -f argocd/airflow/manifest.yaml
