@@ -9,14 +9,14 @@ polaris:
   image:
     # -- The image repository to pull from.
     # @section -- Image
-    repository: ghcr.io/ytihianine/apache-polaris-custom
+    repository: ghcr.io/ytihianine/apache-polaris
     # @schema enum: [Always, IfNotPresent, Never]
     # -- The image pull policy.
     # @section -- Image
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     # -- The image tag.
     # @section -- Image
-    tag: "latest"  # This tag will be replaced with the chart version at release time.
+    tag: "1.8.0-v1.6.0"  # This tag will be replaced with the chart version at release time.
     # -- The path to the directory where the application.properties file, and other configuration
     # files, if any, should be mounted.
     # @section -- Image

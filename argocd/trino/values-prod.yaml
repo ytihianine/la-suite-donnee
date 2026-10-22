@@ -6,14 +6,14 @@ trino:
     # -- Image registry, defaults to empty, which results in DockerHub usage
     registry: ""
     # -- Repository location of the Trino image, typically `organization/imagename`
-    repository: ghcr.io/ytihianine/trino-custom
+    repository: ghcr.io/ytihianine/trino
     # -- Image tag, defaults to the Trino release version specified as `appVersion` from Chart.yaml
-    tag: "latest"
+    tag: "483-v1.6.0"
     # -- Optional digest value of the image specified as `sha256:abcd...`. A specified value overrides `tag`.
     digest: ""
     # -- When true, only the content in `repository` is used as image reference
     useRepositoryAsSoleImageReference: false
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
   ingress:
     enabled: true
