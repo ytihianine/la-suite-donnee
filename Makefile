@@ -1,5 +1,5 @@
-# Charger les variables d'environnement depuis le fichier .env
--include .env
+# Nom du dossier pour l'environnement python
+ENV_NAME := env
 
 # OS detection
 ifeq ($(OS),Windows_NT)
@@ -28,13 +28,8 @@ create-py-env: ## Créer un nouvel environnement python
 # =====================================================================
 # Environnement de développement Python
 # =====================================================================
-duplicate-env-vars: ## Dupliquer les variables d'environnement du système dans le nouvel environnement virtuel
-	@echo "Création du fichier .env à partir du template .env.example"
-	cp .env.example .env
-	@echo "$(GREEN)Les variables d'environnement ont été dupliquées dans le fichier .env$(Color_Off)"
-
 install-py-packages: ## Installer les packages python
-	@echo "Installation/Mise à jour de pip"
+	@echo "Installation / Mise à jour de pip"
 	$(VENV_BIN)/python -m pip install --upgrade pip
 	@echo "Installation de uv"
 	$(VENV_BIN)/python -m pip install uv
