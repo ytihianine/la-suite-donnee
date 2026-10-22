@@ -33,7 +33,7 @@ airflow:
 
   extraEnvFrom: |
     - secretRef:
-        name: 'airflow-secret'
+        name: 'airflow-custom-secret'
 
   executor: 'CeleryExecutor'
 
