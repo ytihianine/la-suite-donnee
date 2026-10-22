@@ -8,4 +8,4 @@ appVersion: "1.0"
 dependencies:
 - name: superset-operator
   version: 0.3.0
-  repository: oci://ghcr.io/apache/superset-kubernetes-operator/charts/superset-operator
+  repository: oci://ghcr.io/apache/superset-kubernetes-operator/charts
