@@ -17,8 +17,8 @@ superset:
 
   image:
     repository: ghcr.io/ytihianine/apache-superset
-    tag: 6.1.0-1c2092a3f244a9756cdd4f058c44252225755dce
-    pullPolicy: IfNotPresent
+    tag:  6.1.0-v1.6.0
+    pullPolicy: Always
 
   # -- Same as above but the values are files
   configOverridesFiles: {}

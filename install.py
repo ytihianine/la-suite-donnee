@@ -1,9 +1,11 @@
-import os
+import shlex
 import subprocess
 import sys
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CompletedProcess
+from typing import Literal
 
 import yaml
 
@@ -17,67 +19,49 @@ Green = "\033[0;32m"
 Yellow = "\033[0;33m"
 
 # Options
-CURR_DIR = os.path.dirname(os.path.realpath(__file__))
-CONFIG_PATH = Path(CURR_DIR, "install_config.yaml")
+CURR_DIR = Path(__file__).resolve().parent
+OPTIONS_PATH = CURR_DIR / "install_options.yaml"
 
 
 @dataclass(frozen=True)
-class InstallationStep:
-    step_name: str
-    enabled: bool
-    command: str
-    wait_for_completion: bool = False
-    app_name: str | None = None
-    dry_run: bool = True
+class Options:
+    name: str
+    enable: bool
+    cmd: tuple[str, ...]
+    wait_app: str | None = None
 
-    @property
-    def cmd_list(self) -> list[str]:
-        return self.command.split()
 
-    @property
-    def enable_icon(self) -> str:
-        return f"{Green}✔{Color_Off}" if self.enabled else f"{Red}✖{Color_Off}"
+@dataclass(frozen=True)
+class InstallOptions:
+    steps: list[Options]
 
-    @property
-    def dry_run_icon(self) -> str:
-        return f"{Green}✔{Color_Off}" if self.dry_run else f"{Red}✖{Color_Off}"
 
-    @property
-    def dry_run_msg(self) -> str:
-        return (
-            f"{Yellow}(Command will not be executed){Color_Off}"
-            if self.dry_run
-            else f"{Yellow}(Command will execute){Color_Off}"
+def load_from_yaml(options_path: Path) -> InstallOptions:
+    with options_path.open("r") as f:
+        _options = yaml.safe_load(stream=f)
+
+    steps = [
+        Options(
+            name=step["name"],
+            enable=step["enable"],
+            cmd=tuple(step["cmd"]),
+            wait_app=step.get("wait_app"),
         )
+        for step in _options["steps"]
+    ]
 
-    def log_step(self) -> None:
-        print(f"➤  {self.step_name}")
-        print(f"\t Enabled: {self.enabled} {self.enable_icon}")
-        print(f"\t Dry run: {self.dry_run} {self.dry_run_icon} {self.dry_run_msg}")
-        print(f"\t Command: {self.command}")
-        if self.wait_for_completion:
-            print(f"\t Wait for completion: {self.wait_for_completion}")
-        if self.app_name:
-            print(f"\t App name: {self.app_name}")
+    return InstallOptions(steps=steps)
 
 
 # ==============================
 # Helpers
 # ==============================
-def load_options(config_path: Path) -> list[InstallationStep]:
-    with open(file=config_path, mode="r") as f:
-        steps_yaml = yaml.safe_load(stream=f)
-        steps = steps_yaml.get("installation_steps", [])
-        return [InstallationStep(**step) for step in steps]
-
-
-def run_cmd(cmd: list[str], check: bool = True) -> CompletedProcess[str]:
-    print(f"$ {cmd}")
-    result = subprocess.run(
+def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
+    print(f"$ {' '.join(cmd)}")
+    result = subprocess.run(  # noqa: PLW1510
         cmd,
         cwd=CURR_DIR,  # Force execution from current py script location
         text=True,
-        check=False,  # We handle errors manually to provide better error messages
     )
     if check and result.returncode != 0:
         sys.exit(result.returncode)
@@ -86,11 +70,12 @@ def run_cmd(cmd: list[str], check: bool = True) -> CompletedProcess[str]:
 
 def wait_for_argocd_app(app_name: str, timeout: int = 300) -> None:
     print(
-        f"Waiting for application '{app_name}' to be Healthy and Synced (timeout: {timeout}s)..."
+        f"Waiting for ArgoCD application '{app_name}' ",
+        f"to be Healthy and Synced (timeout: {timeout}s)",
     )
 
-    result = run_cmd(
-        cmd=[
+    result = run(
+        [
             "argocd",
             "app",
             "wait",
@@ -105,19 +90,22 @@ def wait_for_argocd_app(app_name: str, timeout: int = 300) -> None:
 
     if result.returncode != 0:
         print(
-            f"{Red}ERROR: application '{app_name}' did not become healthy within {timeout}s. Aborting.{Color_Off}"
+            f"{Red}ERROR: ArgoCD application '{app_name}' ",
+            f"did not become healthy within {timeout}s. Aborting.{Color_Off}",
         )
         sys.exit(1)
 
-    print(f"{Green}Application '{app_name}' is Healthy and Synced.{Color_Off}")
+    print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
 
 
-def prompt_choice(steps: list[InstallationStep]) -> str:
+def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
     print(
-        "This script will install la Suite Donnée with the following installation steps:"
+        "This script will install la Suite Donnée with the following installation options:"
     )
-    for step in steps:
-        step.log_step()
+    for step in options.steps:
+        state = "enabled" if step.enable else "disabled"
+        marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
+        print(f"\t {step.name}: {state} {marker}")
     print()
 
     user_options = ["Yes", "No", "Cancel"]
@@ -139,30 +127,13 @@ def prompt_choice(steps: list[InstallationStep]) -> str:
             print("Invalid option. Please select 1, 2, or 3.")
 
 
-def execute_installation_step(step: InstallationStep) -> None:
-    if step.enabled:
-        print(f"Executing step: {step.step_name}")
-        if step.dry_run:
-            print(
-                f"{Yellow}Dry run enabled. Command to be executed: {step.command}{Color_Off}"
-            )
-        else:
-            run_cmd(cmd=step.cmd_list)
-            if step.wait_for_completion and step.app_name:
-                wait_for_argocd_app(step.app_name)
-    else:
-        print(f"{Yellow}Skipping step: {step.step_name}{Color_Off}")
-
-
 # ==============================
 # Main
 # ==============================
 def main() -> None:
-    print(f"Loading installation steps from {CONFIG_PATH} ...")
-    installation_steps = load_options(config_path=CONFIG_PATH)
-    print("Installation steps loaded.")
+    user_options = load_from_yaml(options_path=OPTIONS_PATH)
 
-    choice = prompt_choice(steps=installation_steps)
+    choice = prompt_choice(options=user_options)
 
     if choice == "Yes":
         print("Proceeding with the installation...")
@@ -181,8 +152,17 @@ def main() -> None:
     # ==============================
     print("Install la Suite Donnée using the modular method...")
 
-    for step in installation_steps:
-        execute_installation_step(step=step)
+    total = len(user_options.steps)
+    for i, step in enumerate(user_options.steps, start=1):
+        print(f"[Etape {i}/{total}]")
+        if step.enable:
+            print(f"{step.name} is enabled. Running commands...")
+            for command in step.cmd:
+                run(shlex.split(command))
+            if step.wait_app:
+                wait_for_argocd_app(step.wait_app)
+        else:
+            print(f"{Yellow}{step.name} is disabled... Skipping{Color_Off}")
 
 
 if __name__ == "__main__":
