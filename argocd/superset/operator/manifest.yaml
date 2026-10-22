@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: superset-operator
+spec:
+  destination:
+    namespace: "namespace"
+    server: https://kubernetes.default.svc
+  source:
+    path: argocd/superset/operator
+    repoURL: https://github.com/ytihianine/la-suite-donnee.git
+    targetRevision: migrate/superset-helm
+    helm:
+      valueFiles:
+        - values-prod.yaml
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
