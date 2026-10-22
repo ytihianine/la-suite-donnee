@@ -53,7 +53,7 @@ logLevel: ~
 
 metrics:
   # -- Enable the metrics endpoint.
-  enabled: true
+  enabled: false
   service:
     # -- Port the metrics Service listens on.
     port: 8443
