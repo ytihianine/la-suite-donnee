@@ -1,8 +1,6 @@
 # Define ARGS (Defaults, overridden in GitLab CI)
 ARG SUPERSET_REPO=apache/superset
 ARG SUPERSET_VERSION=6.1.0
-ARG REPO_OWNER=GouvernementFR
-ARG REPO_NAME=dsfr
 ARG DSFR_VERSION=1.15.2
 ARG DSFR_CHART_VERSION=2.1.1
 ARG USE_DSFR=true
@@ -10,7 +8,7 @@ ARG USE_DSFR=true
 # ------------------------------------------
 # Stage 1: Build frontend translations
 # ------------------------------------------
-FROM node:24-bookworm-slim AS frontend_translations
+FROM node:26.12.1-bookworm-slim AS frontend_translations
 
 ARG USE_DSFR
 ARG DSFR_VERSION
