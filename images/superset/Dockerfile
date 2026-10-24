@@ -52,7 +52,34 @@ RUN set -eux; \
     po2json "$PO_FILE" "/app/out/fr/LC_MESSAGES/messages.json" --format=jed1.x --domain=superset;
 
 # ------------------------------------------
-# Stage 2: Build Superset Custom img
+# Stage 2: Build Superset extensions (.supx bundles)
+# ------------------------------------------
+FROM node:26.12.1-bookworm-slim AS extensions_build
+
+WORKDIR /app
+
+# The bundler CLI (superset-extensions) is a Python tool: install Python
+# and the CLI in a dedicated venv
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3 python3-venv \
+    && rm -rf /var/lib/apt/lists/* \
+    && python3 -m venv /opt/ext-venv \
+    && /opt/ext-venv/bin/pip install --no-cache-dir --upgrade pip \
+    && /opt/ext-venv/bin/pip install --no-cache-dir apache-superset-extensions-cli \
+    && ln -sf /opt/ext-venv/bin/superset-extensions /usr/local/bin/superset-extensions
+
+# Copy the build script and the extension sources, keeping the relative
+# layout the script expects (the script sits next to superset-dsfr/)
+COPY images/superset/build-extensions.sh /app/images/superset/build-extensions.sh
+COPY images/superset/superset-dsfr/extensions /app/images/superset/superset-dsfr/extensions
+
+# Build all extensions, then gather the bundles into a clean output dir
+RUN bash /app/images/superset/build-extensions.sh \
+    && mkdir -p /app/bundles \
+    && cp /app/images/superset/superset-dsfr/extensions/*.supx /app/bundles/
+
+# ------------------------------------------
+# Stage 3: Build Superset Custom img
 # ------------------------------------------
 ARG SUPERSET_VERSION
 ARG SUPERSET_REPO
@@ -82,6 +109,13 @@ RUN set -eux; \
     cp /tmp/superset-custom/templates_overrides/superset/public_welcome.html  /app/superset/templates/superset/; \
     cp /tmp/superset-custom/templates_overrides/head_custom_extra.html  /app/superset/templates/; \
     echo "Common customizations copied"
+
+# ------------------------------------------
+# Extensions (.supx bundles, auto-loaded from EXTENSIONS_PATH at startup)
+# ------------------------------------------
+COPY --from=extensions_build /app/bundles/ /app/custom/extensions/
+# The superset user (999) loads the extensions
+RUN chown -R 999:999 /app/custom/extensions
 
 # ------------------------------------------
 # French translation & DSFR integrations
