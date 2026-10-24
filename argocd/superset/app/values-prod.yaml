@@ -1,0 +1,74 @@
+superset:
+
+  # Development or Production
+  environment: Development
+  secretKeyFrom:
+    name: superset-secret
+    key: SUPERSET_SECRET_KEY
+
+  onyxia:
+    friendlyName: superset
+    owner: custom
+    share: true
+    userDefinedValues: ""
+
+  image:
+    repository: ghcr.io/ytihianine/apache-superset
+    tag:  6.1.0-v1.6.0
+    pullPolicy: Always
+
+  metastore:
+    type: PostgreSQL
+    createDatabase: true
+    hostFrom:
+      name: superset-secret
+      key: SUPERSET_DB_HOST
+    portFrom:
+      name: superset-secret
+      key: SUPERSET_DB_PORT
+    databaseFrom:
+      name: superset-secret
+      key: SUPERSET_DB_NAME
+    usernameFrom:
+      name: superset-secret
+      key: SUPERSET_DB_USER
+    passwordFrom:
+      name: superset-secret
+      key: SUPERSET_DB_PASSWORD
+
+  valkey: {}
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      argocd.argoproj.io/ignore-healthcheck: "true"
+    hosts:
+      # The hostname for the web Ingress (templated)
+      - superset.lab.sspcloud.fr
+
+  podTemplate:
+    volumes:
+      - name: extra-config
+        configMap:
+          name: superset-extra-config
+
+    container:
+      volumeMounts:
+        - name: extra-config
+          mountPath: /app/pythonpath/superset_config.py
+          subPath: superset_config.py
+          readOnly: true
+
+  lifecycle:
+    disabled: false
+    upgradeMode: Automatic
+    init:
+      disabled: false
+      loadExamples: false
+      adminUser:
+        firstname: Superset
+        lastname: Admin
+        email: admin@superset.com
+        username: superset_admin
+        password: superset_admin

@@ -7,7 +7,7 @@ spec:
     namespace: "namespace"
     server: https://kubernetes.default.svc
   source:
-    path: argocd/superset
+    path: argocd/superset/app
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
     targetRevision: main
     helm:
