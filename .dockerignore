@@ -1,0 +1,24 @@
+# VCS
+.git
+
+# Python virtualenv (dev only, never needed to build the images)
+env/
+
+# Node dependencies (reinstalled inside the build stages)
+**/node_modules/
+
+# Superset extension build artifacts (rebuilt inside images/superset/Dockerfile)
+**/dist/
+*.supx
+
+# Python build/test caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local environment files
+.env
+.env.*

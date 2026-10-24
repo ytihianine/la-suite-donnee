@@ -36,6 +36,9 @@ SQLALCHEMY_ENGINE_OPTIONS = {
     "pool_recycle": 1800,  # refresh every 30 minutes to avoid stale connections
 }
 
+# Extensions
+EXTENSIONS_PATH = "/app/custom/extensions"
+
 # ------------------------
 # Thèmes
 # ------------------------
@@ -117,7 +120,7 @@ THEME_DEFAULT = {
             "fontFamilyCode": "'Marianne','SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace",
             "colorText": "rgb(58,58,58)",
             "algorithm": True,
-            "fontSize": 16,
+            "fontSize": 14,
             "fontSizeHeading1": 40,
             "fontSizeHeading2": 32,
             "fontSizeHeading3": 28,

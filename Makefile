@@ -59,8 +59,7 @@ build-trino: ## Build the custom Trino Docker image locally
 build-superset: ## Build the custom Superset Docker image locally
 	docker build -f images/superset/Dockerfile \
 		--no-cache \
-		--build-arg SUPERSET_VERSION=$(SUPERSET_VERSION) \
-		-t superset-custom:$(SUPERSET_VERSION) .
+		-t superset-custom:latest .
 
 build-airflow: ## Build the custom Airflow Docker image locally
 	docker build -f images/airflow/Dockerfile \
