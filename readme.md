@@ -21,6 +21,8 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 ## Pré-requis
 
 - Kubernetes*
+- `kubectl`
+- Docker (pour le build des images personnalisées)
 - Python 3.12+
 - Node.js 24+ (optionnel, uniquement pour la CI git)
 - `make`
@@ -34,11 +36,14 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 ├── .github/
 │    ├── workflows: workflows github
 │    └── skills: skills copilot
-├── ansible/     # Playbooks Ansible
-├── argocd/      # ArgoCD application manifests
-├── images/      # Dockerfile & build
-├── tests/       # Tests unitaires (pytest)
-└── docs/        # Documentation complementaire
+├── ansible/        # Playbooks & rôles Ansible (ArgoCD, init-db)
+├── argocd/         # Manifestes d'application ArgoCD
+├── images/         # Dockerfile & build des images personnalisées
+├── scripts/        # Scripts utilitaires (lint / template helm)
+├── tests/          # Tests unitaires (pytest)
+├── docs/           # Documentation complementaire
+├── install.py      # Orchestrateur d'installation interactif
+└── install_options.yaml  # Étapes d'installation à activer / désactiver
 ```
 
 ## Installation du projet
@@ -102,15 +107,7 @@ git pull upstream main
 
 #### Configuration de l'environnement
 
-**1. Dupliquer les variables d'environnement**
-
-```bash
-make duplicate-env-vars
-```
-
-Configurez les variables d'environnement dans le fichier `.env` en fonction de votre environnement.
-
-**2. Configurer l'environnement Python**
+**1. Configurer l'environnement Python**
 
 ```bash
 make setup-dev-env
@@ -119,7 +116,7 @@ source env/bin/activate
 
 La commande `make setup-dev-env` exécute `create-py-env`, `install-py-packages` et `install-pre-commit`.
 
-**3. Configurer Ansible**
+**2. Configurer Ansible**
 
 La configuration d'Ansible est disponible dans le fichier [ansible.cfg](ansible.cfg).  
 L'option `become_exe` est à ajuster selon votre environnement Unix (exemple ci-dessous).
@@ -132,19 +129,72 @@ L'option `become_exe` est à ajuster selon votre environnement Unix (exemple ci-
 
 Les manifestes des applications se situent dans `argocd/`.
 
+**Choisir les applications à installer**
+
+Les applications déployées lors de l'installation sont définies dans le fichier [install_options.yaml](install_options.yaml).  
+Chaque étape comporte un `name`, une `description`, la ou les commandes `cmd` à exécuter, et le flag `enable` à renseigner à `true` pour activer le déploiement de l'application.
+
+L'ordre des étapes est important : il respecte les dépendances entre les applications.  
+Pour certaines étapes, le paramètre `wait_app` fait attendre que l'application ArgoCD correspondante soit `Healthy` et `Synced` avant de poursuivre :
+
+```yaml
+steps:
+  - name: argocd
+    description: "Déployer ArgoCD dans le namespace"
+    enable: false
+    cmd:
+      - "make deploy-argocd"
+  # ...
+  - name: db-config
+    description: "Déployer la base de données (app config) Postgres"
+    enable: false
+    cmd:
+      - "kubectl apply -f argocd/postgres/config/manifest.yaml"
+    wait_app: db-config-prod
+  # ...
+```
+
 **ArgoCD**
 
-_Indisponible pour le moment_.  
-A installer manuellement selon vos différentes possibilités.
+L'installation d'ArgoCD est réalisée via un playbook Ansible qui déploie le chart Helm `argo-cd`.  
+Pour l'installer, renseignez `enable: true` pour l'étape `argocd` dans votre fichier [install_options.yaml](install_options.yaml).
+
+1. Configurer les variables
+
+Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/argocd/vars/main.yaml).  
+A minima, il est nécessaire de renseigner le `namespace` cible.
+
+2. Configurer les values
+
+Mettre à jour le template [values.yaml.jinja](ansible/roles/apps/argocd/templates/values.yaml.jinja).  
+Toutes les options de configuration du chart Helm sont disponibles ici [https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml](https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml).
 
 **ArgoCD CLI**
 
-Si vous souhaitez installer la CLI d'ArgoCD, renseignez `LSD_INSTALL_ARGOCD_CLI=true` dans votre fichier [.env](.env).  
-Aucune configuration particulière complémentaire.
+Si vous souhaitez installer la CLI d'ArgoCD, renseignez `enable: true` pour l'étape `argocd-cli` dans votre fichier [install_options.yaml](install_options.yaml).  
+Le playbook télécharge la dernière version de la CLI et l'installe dans `/usr/local/bin` (droits d'admin requis).
+
+**Ajouter des dépôts à ArgoCD**
+
+Si vous souhaitez enregistrer des dépôts Git dans ArgoCD, renseignez `enable: true` pour l'étape `argocd-add-repo` dans votre fichier [install_options.yaml](install_options.yaml).
+
+Mettre à jour la liste des dépôts dans [main.yaml](ansible/roles/apps/argocd-add-repo/vars/main.yaml) :
+
+```yaml
+# Template
+repo:
+  - url: ""
+    name: ""
+    project: ""
+    username: ""
+    password: ""
+    proxy: "" # Laisser vide si pas de proxy
+    no_proxy: ""
+```
 
 **Renovatebot**
 
-Si vous souhaitez installer Renovatebot, renseignez `LSD_INSTALL_RENOVATE=true` dans votre fichier [.env](.env).
+Si vous souhaitez installer Renovatebot, renseignez `enable: true` pour l'étape `renovatebot` dans votre fichier [install_options.yaml](install_options.yaml).
 
 1. Configurer le secret
 
@@ -183,7 +233,7 @@ La Suite Donnée déploie deux clusters de base de données:
 - un cluster dédié aux configurations des applications
 - un cluster dédié à l'hébergement des données.
 
-Si vous souhaitez installer les clusters, renseignez `LSD_INSTALL_DATABASES=true` dans votre fichier [.env](.env).
+Si vous souhaitez installer les clusters, renseignez `enable: true` pour les étapes `db-config` et `db-data` dans votre fichier [install_options.yaml](install_options.yaml).
 
 1. Configurer les secrets
 
@@ -212,6 +262,8 @@ Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Initialiser les bases de données**
 
+Si vous souhaitez initialiser les bases de données, renseignez `enable: true` pour l'étape `init-postgres-db` dans votre fichier [install_options.yaml](install_options.yaml).
+
 1. Configurer les values
 
 Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/init-db/vars/main.yaml).  
@@ -233,8 +285,9 @@ Trois templates sont disponibles:
 - [superset.sql.jinja](ansible/roles/apps/init-db/templates/superset.sql.jinja)
 - [data-store.sql.jinja](ansible/roles/apps/init-db/templates/data-store.sql.jinja)
 
-
 **Apache Superset**
+
+Si vous souhaitez installer Superset, renseignez `enable: true` pour l'étape `superset` dans votre fichier [install_options.yaml](install_options.yaml).
 
 1. Configurer le secret
 
@@ -273,9 +326,11 @@ Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Apache Airflow**
 
+Si vous souhaitez installer Airflow, renseignez `enable: true` pour l'étape `airflow` dans votre fichier [install_options.yaml](install_options.yaml).
+
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [airflow-secret.yaml](argocd/airflow/templates/airflow-secret.yaml).
+Mettre à jour les valeurs du secret dans [airflow-custom-secret.yaml](argocd/airflow/templates/airflow-custom-secret.yaml).
 
 2. Configurer les values
 
@@ -311,11 +366,36 @@ Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Apache Polaris**
 
-_a venir_
+Si vous souhaitez installer Polaris, renseignez `enable: true` pour l'étape `polaris` dans votre fichier [install_options.yaml](install_options.yaml).
+
+1. Configurer le secret
+
+Mettre à jour les valeurs du secret dans [polaris-secret.yaml](argocd/polaris/templates/polaris-secret.yaml).  
+Ce secret contient les identifiants de la base de données (`DB_USER`, `DB_PASSWORD`, `DB_JDBC_URL`) et les identifiants du stockage objet (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
+
+2. Configurer les values
+
+Mettre à jour les valeurs de [values-prod.yaml](argocd/polaris/values-prod.yaml).  
+A minima, il est nécessaire de modifier l'ingress et la persistance (`persistence.relationalJdbc` doit pointer vers le secret configuré à l'étape précédente).
+
+3. Configurer le manifest
+
+Mettre à jour les valeurs du [manifest.yaml](argocd/polaris/manifest.yaml).  
+Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Trino**
 
-_a venir_
+Si vous souhaitez installer Trino, renseignez `enable: true` pour l'étape `trino` dans votre fichier [install_options.yaml](install_options.yaml).
+
+1. Configurer les values
+
+Mettre à jour les valeurs de [values-prod.yaml](argocd/trino/values-prod.yaml).  
+A minima, il est nécessaire de modifier l'ingress et les `catalogs` (par exemple le catalogue Iceberg REST pointant vers Polaris).
+
+2. Configurer le manifest
+
+Mettre à jour les valeurs du [manifest.yaml](argocd/trino/manifest.yaml).  
+Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 ### Exécution de l'installation
 
@@ -329,16 +409,25 @@ Exécutez la commande suivante pour lancer l'installation :
 make install-la-suite-donnee
 ```
 
+Le script [install.py](install.py) affiche la liste des étapes de [install_options.yaml](install_options.yaml) (nom, description et état activée/désactivée) et vous demande de confirmer avant de lancer le déploiement des applications activées, dans l'ordre défini.
+
 ## Commandes disponibles
 
 Quelques commandes utiles :
 
-| Commande              | Description                                      |
-|-----------------------|--------------------------------------------------|
-| `make setup-dev-env`  | Configure l'environnement de développement        |
-| `make run-pre-commit` | Exécute pre-commit sur tous les fichiers         |
-| `make test`           | Lance les tests pytest                           |
-| `make clean`          | Supprime les fichiers temporaires                |
+| Commande                      | Description                                                  |
+|-------------------------------|--------------------------------------------------------------|
+| `make setup-dev-env`          | Configure l'environnement de développement                   |
+| `make run-pre-commit`         | Exécute pre-commit sur tous les fichiers                     |
+| `make test`                   | Lance les tests pytest                                       |
+| `make clean`                  | Supprime les fichiers temporaires                            |
+| `make install-la-suite-donnee`| Lance l'installation orchestrée de la suite                  |
+| `make deploy-argocd` / `deploy-argocd-cli` / `deploy-argocd-add-repo` | Déploie ArgoCD / sa CLI / ajoute des dépôts dans ArgoCD (via Ansible) |
+| `make init-databases`         | Initialise les bases de données (via Ansible)                |
+| `make build-trino`            | Build l'image Docker Trino personnalisée (argument `TRINO_VERSION`) |
+| `make build-superset`         | Build l'image Docker Superset personnalisée                  |
+| `make build-airflow`          | Build l'image Docker Airflow personnalisée (argument `AIRFLOW_VERSION`) |
+| `make build-polaris`          | Build l'image Docker Polaris personnalisée (argument `POLARIS_VERSION`) |
 
 ## Guides complémentaires
 
