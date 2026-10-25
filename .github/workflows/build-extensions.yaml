@@ -1,0 +1,49 @@
+name: Check Superset extensions build
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'images/superset/**'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'images/superset/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build-extensions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "26"
+
+      - name: Install Superset extensions CLI
+        run: |
+          python -m pip install --upgrade pip
+          pip install apache-superset-extensions-cli
+
+      - name: Build extensions
+        run: bash images/superset/build-extensions.sh
+
+      - name: Verify generated bundles
+        shell: bash
+        run: |
+          echo "Generated .supx bundles:"
+          ls -1 images/superset/superset-dsfr/extensions/*.supx

@@ -16,8 +16,8 @@ superset:
       - superset.lab.sspcloud.fr
 
   image:
-    repository: ghcr.io/ytihianine/apache-superset
-    tag:  6.1.0-v1.6.0
+    repository: ghcr.io/ytihianine/la-suite-donnee/apache-superset
+    tag: latest
     pullPolicy: Always
 
   # -- Same as above but the values are files
