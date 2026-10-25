@@ -29,24 +29,9 @@ Cette commande exécute automatiquement :
 - `make install-py-packages`
 - `make install-pre-commit`
 
-Important : la variable `ENV_NAME` est lue depuis le fichier `.env`.
-Si vous n'avez pas encore de fichier `.env`, commencez par :
+Note : la variable `ENV_NAME` est définie dans le [Makefile](../../Makefile) (par défaut `env/`).
 
-```bash
-make duplicate-env-vars
-```
-
-### 1. Initialiser le fichier `.env` (première installation)
-
-Dupliquer le template de variables d'environnement :
-
-```bash
-make duplicate-env-vars
-```
-
-Cette étape crée le fichier `.env` avec les valeurs par défaut du projet, dont `ENV_NAME=env`.
-
-### 2. Créer l'environnement Python
+### 1. Créer l'environnement Python
 
 Exécuter la commande suivante à la racine du projet pour créer un environnement virtuel Python :
 
@@ -56,7 +41,7 @@ make create-py-env
 
 Cette commande crée un environnement virtuel dans le dossier défini par `ENV_NAME` (par défaut `env/`) via `python3 -m venv`.
 
-### 3. Activer l'environnement (recommandé)
+### 2. Activer l'environnement (recommandé)
 
 Une fois l'environnement créé, l'activer dans votre terminal :
 
@@ -71,7 +56,7 @@ Vous devriez voir le nom de l'environnement `(env)` apparaître en début de lig
 Note : les cibles `make` utilisent directement l'interpréteur de l'environnement virtuel (`$(VENV_BIN)/python`).
 L'activation reste recommandée pour exécuter vos commandes Python interactives (`python`, `pip`, etc.) dans le bon contexte.
 
-### 4. Installer les packages Python
+### 3. Installer les packages Python
 
 Avec l'environnement activé, lancer l'installation des dépendances :
 
@@ -84,7 +69,7 @@ Cette commande effectue les opérations suivantes :
 - Installe `uv` (gestionnaire de packages performant)
 - Installe les dépendances listées dans `requirements.txt` via `uv`
 
-### 5. Installer les hooks pre-commit
+### 4. Installer les hooks pre-commit
 
 Le projet utilise [pre-commit](https://pre-commit.com/) pour exécuter automatiquement des vérifications avant chaque commit (formatage, linting, validation YAML, etc.).
 
@@ -109,7 +94,7 @@ Pour les lancer manuellement sur tous les fichiers :
 make run-pre-commit
 ```
 
-### 6. Vérifier l'installation
+### 5. Vérifier l'installation
 
 Contrôler que l'environnement est bien configuré :
 

@@ -26,6 +26,7 @@ OPTIONS_PATH = CURR_DIR / "install_options.yaml"
 @dataclass(frozen=True)
 class Options:
     name: str
+    description: str
     enable: bool
     cmd: tuple[str, ...]
     wait_app: str | None = None
@@ -43,6 +44,7 @@ def load_from_yaml(options_path: Path) -> InstallOptions:
     steps = [
         Options(
             name=step["name"],
+            description=step["description"],
             enable=step["enable"],
             cmd=tuple(step["cmd"]),
             wait_app=step.get("wait_app"),
@@ -154,9 +156,9 @@ def main() -> None:
 
     total = len(user_options.steps)
     for i, step in enumerate(user_options.steps, start=1):
-        print(f"[Etape {i}/{total}]")
+        print(f"[Etape {i}/{total}] {step.name.upper()} - {step.description}")
         if step.enable:
-            print(f"{step.name} is enabled. Running commands...")
+            print("Step is enabled. Running its commands...")
             for command in step.cmd:
                 run(shlex.split(command))
             if step.wait_app:
