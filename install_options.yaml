@@ -5,18 +5,18 @@ steps:
     description: "Déployer ArgoCD dans le namespace"
     enable: false
     cmd:
-      - "make deploy-argocd"
+      - "ansible-playbook -i localhost ansible/playbooks/argocd.yaml"
   - name: argocd-cli
     description: "Installer ArgoCD CLI et s'y connecter"
     enable: false
     cmd:
-      - "make deploy-argocd-cli"
+      - "ansible-playbook -i localhost ansible/playbooks/argocd-cli.yaml"
       - "argocd login --core"
   - name: argocd-add-repo
     description: "Ajouter des dépôts GIT dans ArgoCD"
     enable: false
     cmd:
-      - "make deploy-argocd-add-repo"
+      - "ansible-playbook -i localhost ansible/playbooks/argocd-add-repo.yaml"
   # Renovate Bot
   - name: renovatebot
     description: "Déployer Renovate Bot dans le namespace"
@@ -40,7 +40,7 @@ steps:
     description: "Initialiser la base de données Postgres"
     enable: false
     cmd:
-      - "make init-databases"
+      - "ansible-playbook -i localhost ansible/playbooks/init-db.yaml"
   # Superset
   - name: superset
     description: "Déployer Superset dans le namespace"
