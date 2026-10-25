@@ -53,8 +53,7 @@ run-pre-commit: ## Lancer pre-commit sur tous les fichiers
 build-trino: ## Build the custom Trino Docker image locally
 	docker build -f images/trino/Dockerfile \
 		--no-cache \
-		--build-arg TRINO_VERSION=$(TRINO_VERSION) \
-		-t trino-custom:$(TRINO_VERSION) .
+		-t trino-custom:latest .
 
 build-superset: ## Build the custom Superset Docker image locally
 	docker build -f images/superset/Dockerfile \
@@ -64,15 +63,12 @@ build-superset: ## Build the custom Superset Docker image locally
 build-airflow: ## Build the custom Airflow Docker image locally
 	docker build -f images/airflow/Dockerfile \
 		--no-cache \
-		--build-arg AIRFLOW_VERSION=$(AIRFLOW_VERSION) \
-		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
-		-t airflow-custom:$(AIRFLOW_VERSION) .
+		-t airflow-custom:latest .
 
 build-polaris: ## Build the custom Polaris Docker image locally
 	docker build -f images/polaris/Dockerfile \
 		--no-cache \
-		--build-arg POLARIS_VERSION=$(POLARIS_VERSION) \
-		-t polaris-custom:$(POLARIS_VERSION) .
+		-t polaris-custom:latest .
 
 # =====================================================================
 # Déployer les applications sur le cluster Kubernetes
@@ -98,54 +94,10 @@ deploy-argocd-add-repo: ## Ajouter des repo dans ArgoCD
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/argocd-add-repo.yaml
 	@echo "$(GREEN)Les dépôts ont bien été ajoutés dans ArgoCD.$(Color_Off)"
 
-connect-argocd: ## Se connecter à ArgoCD CLI
-	@echo "Connexion à ArgoCD CLI"
-	argocd login --core
-	@echo "$(GREEN)Connexion à ArgoCD CLI réussie$(Color_Off)"
-
-deploy-renovatebot: ## Déployer RenovateBot sur le cluster Kubernetes à partir d'ArgoCD
-	@echo "Déploiement de RenovateBot sur le cluster Kubernetes"
-	kubectl apply -f argocd/renovatebot/manifest.yaml
-	@echo "$(GREEN)RenovateBot a été déployé avec succès$(Color_Off)"
-
-deploy-db-config: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
-	@echo "Déploiement de la base de données de configuration sur le cluster Kubernetes"
-	kubectl apply -f argocd/postgres/config/manifest.yaml
-	@echo "$(GREEN)La base de données de configuration a été déployée avec succès$(Color_Off)"
-
-deploy-db-data: ## Déployer la configuration de la base de données sur le cluster Kubernetes à partir d'ArgoCD
-	@echo "Déploiement de la base de données de configuration sur le cluster Kubernetes"
-	kubectl apply -f argocd/postgres/data/manifest.yaml
-	@echo "$(GREEN)La base de données de configuration a été déployée avec succès$(Color_Off)"
-
-deploy-databases: deploy-db-config deploy-db-data ## Déployer la configuration et les données de la base de données sur le cluster Kubernetes à partir d'ArgoCD
-
 init-databases: ## Initialiser la base de données de configuration
 	@echo "Initialisation de la base de données de configuration"
 	$(VENV_BIN)/ansible-playbook -i localhost ansible/playbooks/init-db.yaml
 	@echo "$(GREEN)La base de données de configuration a été initialisée avec succès$(Color_Off)"
-
-deploy-trino: ## Déployer Trino sur le cluster Kubernetes à partir d'ArgoCD
-	@echo "Déploiement de Trino sur le cluster Kubernetes"
-	kubectl apply -f argocd/trino/manifest.yaml
-	@echo "$(GREEN)Trino a été déployé avec succès$(Color_Off)"
-
-deploy-superset: ## Déployer Superset sur le cluster Kubernetes à partir d'ArgoCD
-	@echo "Déploiement de Superset sur le cluster Kubernetes"
-	kubectl apply -f argocd/superset/manifest.yaml
-	@echo "$(GREEN)Superset a été déployé avec succès$(Color_Off)"
-
-deploy-airflow: ## Déployer Airflow sur le cluster Kubernetes à partir d'ArgoCD
-	@echo "Déploiement d'Airflow sur le cluster Kubernetes"
-	kubectl apply -f argocd/airflow/manifest.yaml
-	@echo "$(GREEN)Airflow a été déployé avec succès$(Color_Off)"
-
-deploy-polaris: ## Déployer Polaris sur le cluster Kubernetes à partir d'ArgoCD
-	@echo "Déploiement de Polaris sur le cluster Kubernetes"
-	kubectl apply -f argocd/polaris/manifest.yaml
-	@echo "$(GREEN)Polaris a été déployé avec succès$(Color_Off)"
-
-deploy-all: deploy-renovatebot deploy-db-config deploy-db-data init-databases deploy-superset deploy-airflow deploy-trino deploy-polaris ## Déployer toutes les applications sur le cluster Kubernetes à partir d'ArgoCD
 
 # =====================================================================
 # Autres commandes utiles
