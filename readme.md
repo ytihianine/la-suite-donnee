@@ -12,6 +12,7 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
   - [Installation du projet](#installation-du-projet)
     - [Initialiser le dépôt](#initialiser-le-dépôt)
     - [Configuration de l'installation](#configuration-de-linstallation)
+      - [TL;DR](#tldr)
       - [Configuration de l'environnement](#configuration-de-lenvironnement)
       - [Configuration des applications](#configuration-des-applications)
     - [Exécution de l'installation](#exécution-de-linstallation)
@@ -39,8 +40,7 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 ├── ansible/        # Playbooks & rôles Ansible (ArgoCD, init-db)
 ├── argocd/         # Manifestes d'application ArgoCD
 ├── images/         # Dockerfile & build des images personnalisées
-├── scripts/        # Scripts utilitaires (lint / template helm)
-├── tests/          # Tests unitaires (pytest)
+├── scripts/        # Scripts utilitaires
 ├── docs/           # Documentation complementaire
 ├── install.py      # Orchestrateur d'installation interactif
 └── install_options.yaml  # Étapes d'installation à activer / désactiver
@@ -65,11 +65,7 @@ Ajoutez le dépôt de référence comme dépôt *upstream* :
 
 ```bash
 git remote add upstream https://github.com/ytihianine/la-suite-donnee.git
-```
-
-Vérifiez que l'ajout est correct :
-
-```bash
+# Pour vérifier
 git remote -v
 ```
 
@@ -105,6 +101,31 @@ git pull upstream main
 
 ### Configuration de l'installation
 
+#### TL;DR
+
+1. Configurer l'environnement python
+
+```bash
+make setup-dev-env
+source env/bin/activate
+```
+
+2. Configurer les playbooks Ansible
+
+Les playbooks Ansible sont situés dans le dossier `ansible/`.  
+Ils permettent de configurer ArgoCD, d'initialiser la base de données et de gérer d'autres composants nécessaires à la suite de données.
+
+3. Configurer les manifests ArgoCD
+
+Les manifests ArgoCD sont situés dans le dossier `argocd/`.
+Il s'agit des fichiers de configuration des applications ArgoCD qui seront déployées dans le namespace.
+
+4. Lancer l'installation
+
+```bash
+make install-la-suite-donnee
+```
+
 #### Configuration de l'environnement
 
 **1. Configurer l'environnement Python**
@@ -127,7 +148,7 @@ L'option `become_exe` est à ajuster selon votre environnement Unix (exemple ci-
 
 #### Configuration des applications
 
-Les manifestes des applications se situent dans `argocd/`.
+Les manifests des applications se situent dans `argocd/`.
 
 **Choisir les applications à installer**
 
@@ -424,10 +445,10 @@ Quelques commandes utiles :
 | `make install-la-suite-donnee`| Lance l'installation orchestrée de la suite                  |
 | `make deploy-argocd` / `deploy-argocd-cli` / `deploy-argocd-add-repo` | Déploie ArgoCD / sa CLI / ajoute des dépôts dans ArgoCD (via Ansible) |
 | `make init-databases`         | Initialise les bases de données (via Ansible)                |
-| `make build-trino`            | Build l'image Docker Trino personnalisée (argument `TRINO_VERSION`) |
+| `make build-trino`            | Build l'image Docker Trino personnalisée |
 | `make build-superset`         | Build l'image Docker Superset personnalisée                  |
-| `make build-airflow`          | Build l'image Docker Airflow personnalisée (argument `AIRFLOW_VERSION`) |
-| `make build-polaris`          | Build l'image Docker Polaris personnalisée (argument `POLARIS_VERSION`) |
+| `make build-airflow`          | Build l'image Docker Airflow personnalisée |
+| `make build-polaris`          | Build l'image Docker Polaris personnalisée |
 
 ## Guides complémentaires
 
