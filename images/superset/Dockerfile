@@ -8,7 +8,7 @@ ARG USE_DSFR=true
 # ------------------------------------------
 # Stage 1: Build frontend translations
 # ------------------------------------------
-FROM node:26.12.1-bookworm-slim AS frontend_translations
+FROM node:26.13.0-bookworm-slim AS frontend_translations
 
 ARG USE_DSFR
 ARG DSFR_VERSION
@@ -54,7 +54,7 @@ RUN set -eux; \
 # ------------------------------------------
 # Stage 2: Build Superset extensions (.supx bundles)
 # ------------------------------------------
-FROM node:26.12.1-bookworm-slim AS extensions_build
+FROM node:26.13.0-bookworm-slim AS extensions_build
 
 WORKDIR /app
 
