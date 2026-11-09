@@ -56,8 +56,7 @@ superset:
     # ALERT_REPORTS: true
     # DASHBOARD_RBAC: true
 
-  extraSecretEnv:
-    SUPERSET_SECRET_KEY: supersetSecretKey
+  extraSecretEnv: {}
 
   # -- Database connection configuration for the Superset metadata database
   database:
