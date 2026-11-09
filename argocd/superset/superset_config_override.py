@@ -441,7 +441,7 @@ DEFAULT_FEATURE_FLAGS: dict[str, bool] = {
     # Requires Redis 5.0+ and Celery workers.
     # @lifecycle: testing
     # @docs: https://superset.apache.org/docs/contributing/misc#async-chart-queries
-    "GLOBAL_ASYNC_QUERIES": True,
+    "GLOBAL_ASYNC_QUERIES": False,
     # When impersonating a user, use the email prefix instead of username
     # @lifecycle: testing
     "IMPERSONATE_WITH_EMAIL_PREFIX": False,
