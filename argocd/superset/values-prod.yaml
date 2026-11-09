@@ -59,7 +59,7 @@ superset:
 
   # -- The name of the secret which we will use to populate env vars in deployed pods
   # This can be useful for secret keys, etc.
-  envFromSecret: 'superset-secret'
+  envFromSecret: superset-prod-secret
   extraSecretEnv: {}
 
   # -- Database connection configuration for the Superset metadata database
