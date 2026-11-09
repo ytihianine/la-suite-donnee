@@ -53,7 +53,7 @@ run-pre-commit: ## Lancer pre-commit sur tous les fichiers
 build-trino: ## Build the custom Trino Docker image locally
 	docker build -f images/trino/Dockerfile \
 		--no-cache \
-		-t trino-custom:$(TRINO_VERSION) .
+		-t trino-custom:latest .
 
 build-superset: ## Build the custom Superset Docker image locally
 	docker build -f images/superset/Dockerfile \
@@ -63,12 +63,12 @@ build-superset: ## Build the custom Superset Docker image locally
 build-airflow: ## Build the custom Airflow Docker image locally
 	docker build -f images/airflow/Dockerfile \
 		--no-cache \
-		-t airflow-custom:$(AIRFLOW_VERSION) .
+		-t airflow-custom:latest .
 
 build-polaris: ## Build the custom Polaris Docker image locally
 	docker build -f images/polaris/Dockerfile \
 		--no-cache \
-		-t polaris-custom:$(POLARIS_VERSION) .
+		-t polaris-custom:latest .
 
 # =====================================================================
 # Déployer les applications sur le cluster Kubernetes

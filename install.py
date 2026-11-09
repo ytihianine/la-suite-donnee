@@ -1,3 +1,4 @@
+import os
 import shlex
 import subprocess
 import sys
@@ -21,6 +22,7 @@ Yellow = "\033[0;33m"
 # Options
 CURR_DIR = Path(__file__).resolve().parent
 OPTIONS_PATH = CURR_DIR / "install_options.yaml"
+VENV_BIN = CURR_DIR / "env" / ("Scripts" if os.name == "nt" else "bin")
 
 
 @dataclass(frozen=True)
@@ -58,11 +60,24 @@ def load_from_yaml(options_path: Path) -> InstallOptions:
 # ==============================
 # Helpers
 # ==============================
+def build_env() -> dict[str, str]:
+    """Return a copy of the environment with the local venv bin dir first in PATH.
+
+    This ensures commands like `ansible-playbook` resolve to the venv ones
+    even when the venv is not activated in the calling shell.
+    """
+    env = os.environ.copy()
+    if VENV_BIN.is_dir():
+        env["PATH"] = os.pathsep.join((str(VENV_BIN), env.get("PATH", "")))
+    return env
+
+
 def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
     print(f"$ {' '.join(cmd)}")
     result = subprocess.run(  # noqa: PLW1510
         cmd,
         cwd=CURR_DIR,  # Force execution from current py script location
+        env=build_env(),  # Use the local venv for child processes
         text=True,
     )
     if check and result.returncode != 0:
