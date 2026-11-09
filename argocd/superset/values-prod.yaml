@@ -45,10 +45,9 @@ superset:
   # -- Superset configuration properties
   # Set any configuration property from superset/config.py here
   # See https://github.com/apache/superset/blob/master/superset/config.py for all available options
-  config: {}
-    # SECRET_KEY: "supersetSecretKey"
-    # ROW_LIMIT: 50000
-    # DEBUG: false
+  config:
+    SECRET_KEY: "nSj9mK1FxrGlGFdYlQS9Em7sTb73tkjm1c2wXz6lvFs"
+
 
   # -- Feature flags configuration
   # See https://github.com/apache/superset/blob/master/RESOURCES/FEATURE_FLAGS.md
@@ -60,8 +59,8 @@ superset:
   # -- The name of the secret which we will use to populate env vars in deployed pods
   # This can be useful for secret keys, etc.
   # envFromSecret: superset-prod-secret
-  extraSecretEnv:
-    SUPERSET_SECRET_KEY: nSj9mK1FxrGlGFdYlQS9Em7sTb73tkjm1c2wXz6lvFs
+  # extraSecretEnv:
+  #   SUPERSET_SECRET_KEY:
 
   # -- Database connection configuration for the Superset metadata database
   database:
