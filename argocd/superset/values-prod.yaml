@@ -17,7 +17,7 @@ superset:
 
   image:
     repository: ghcr.io/ytihianine/la-suite-donnee/apache-superset
-    tag: 6.1.0-latest
+    tag: 6.1.0-v1.8.0
     pullPolicy: Always
 
   # -- Same as above but the values are files
@@ -109,7 +109,7 @@ superset:
   supersetWorker:
     replicas:
       enabled: true
-      replicaCount: 5
+      replicaCount: 1
     autoscaling:
       enabled: false
       minReplicas: 2
