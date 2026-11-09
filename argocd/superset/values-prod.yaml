@@ -56,6 +56,10 @@ superset:
     # ALERT_REPORTS: true
     # DASHBOARD_RBAC: true
 
+
+  # -- The name of the secret which we will use to populate env vars in deployed pods
+  # This can be useful for secret keys, etc.
+  envFromSecret: 'superset-secret'
   extraSecretEnv: {}
 
   # -- Database connection configuration for the Superset metadata database
