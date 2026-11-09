@@ -108,7 +108,7 @@ superset:
   supersetWorker:
     replicas:
       enabled: true
-      replicaCount: 1
+      replicaCount: 3
     autoscaling:
       enabled: false
       minReplicas: 2
