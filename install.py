@@ -58,38 +58,6 @@ class Step:
         marker = f"{Green}✔{Color_Off}" if self.enable else f"{Red}✖{Color_Off}"
         return f"{marker} {self.name}: {state} {marker} — {self.description}"
 
-    def generate_helm_command(self, namespace: str) -> str:
-        """Generate a helm upgrade --install command for the given step."""
-        if self.helm is None:
-            return ""
-
-        release = self.helm.release
-        cmd = ["helm", "upgrade", "--install", release]
-
-        if self.helm.values:
-            cmd.extend(["-f", self.helm.values])
-        for name, path in self.helm.set_file:
-            cmd.extend(["--set-file", f"{name}={path}"])
-
-        cmd.extend(["-n", namespace])
-        return " ".join(cmd)
-
-    def generate_argocd_command(self) -> str:
-        """To define"""
-        if self.argocd is None:
-            return ""
-
-        cmd = ["kubectl", "apply", "-f", self.argocd.manifest]
-        return " ".join(cmd)
-
-    def generate_playbook_command(self) -> str:
-        """To define"""
-        if self.playbook is None:
-            return ""
-
-        cmd = ["ansible-playbook", "-i", "localhost", self.playbook]
-        return " ".join(cmd)
-
     def generate_install_commands(
         self, method: DeploymentMethod, namespace: str
     ) -> list[str]:
@@ -98,13 +66,22 @@ class Step:
         if self.enable is False:
             return cmd
 
-        if method == DeploymentMethod.HELM:
-            cmd.append(self.generate_helm_command(namespace=namespace))
+        if method == DeploymentMethod.HELM and self.helm is not None:
+            _cmd = ["helm", "upgrade", "--install", self.helm.release]
 
-        if method == DeploymentMethod.ARGOCD:
-            cmd.append(self.generate_argocd_command())
+            if self.helm.values:
+                cmd.extend(["-f", self.helm.values])
+            for name, path in self.helm.set_file:
+                cmd.extend(["--set-file", f"{name}={path}"])
 
-        cmd.append(self.generate_playbook_command())
+            cmd.extend(["-n", namespace])
+            cmd.append(" ".join(_cmd))
+
+        if method == DeploymentMethod.ARGOCD and self.argocd is not None:
+            cmd.append(f"kubectl apply -f {self.argocd.manifest}")
+
+        if self.playbook is not None:
+            cmd.append(f"ansible-playbook -i localhost {self.playbook}")
 
         return cmd
 
