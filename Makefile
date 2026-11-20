@@ -16,7 +16,7 @@ RED := \033[0;31m
 GREEN := \033[0;32m
 YELLOW := \033[0;33m
 
-.PHONY: create-py-env clean install-py-packages install-pre-commit test build-trino
+.PHONY: create-py-env clean install-py-packages install-pre-commit test build-trino install-la-suite-donnee
 
 create-py-env: ## Créer un nouvel environnement python
 	@echo "Création d'un environnement"
