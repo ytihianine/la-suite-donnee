@@ -1,11 +1,12 @@
 import os
-import shlex
 import subprocess
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
 from subprocess import CompletedProcess
+from textwrap import dedent
 from typing import Literal
 
 import yaml
@@ -25,36 +26,143 @@ OPTIONS_PATH = CURR_DIR / "install_options.yaml"
 VENV_BIN = CURR_DIR / "env" / ("Scripts" if os.name == "nt" else "bin")
 
 
+class DeploymentMethod(StrEnum):
+    ARGOCD = "argocd"
+    HELM = "helm"
+
+
 @dataclass(frozen=True)
-class Options:
+class HelmOptions:
+    release: str
+    values: str
+    set_file: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
+class ArgocdOptions:
+    manifest: str
+
+
+@dataclass(frozen=True)
+class Step:
     name: str
     description: str
-    enable: bool
-    cmd: tuple[str, ...]
-    wait_app: str | None = None
+    enable: bool = False
+    helm: HelmOptions | None = None
+    argocd: ArgocdOptions | None = None
+    playbook: str | None = None
+
+    @property
+    def enable_logs(self) -> str:
+        state = "enabled" if self.enable else "disabled"
+        marker = f"{Green}✔{Color_Off}" if self.enable else f"{Red}✖{Color_Off}"
+        return f"{marker} {self.name}: {state} {marker} — {self.description}"
+
+    def generate_helm_command(self, namespace: str) -> str:
+        """Generate a helm upgrade --install command for the given step."""
+        if self.helm is None:
+            return ""
+
+        release = self.helm.release
+        cmd = ["helm", "upgrade", "--install", release]
+
+        if self.helm.values:
+            cmd.extend(["-f", self.helm.values])
+        for name, path in self.helm.set_file:
+            cmd.extend(["--set-file", f"{name}={path}"])
+
+        cmd.extend(["-n", namespace])
+        return " ".join(cmd)
+
+    def generate_argocd_command(self) -> str:
+        """To define"""
+        if self.argocd is None:
+            return ""
+
+        cmd = ["kubectl", "apply", "-f", self.argocd.manifest]
+        return " ".join(cmd)
+
+    def generate_playbook_command(self) -> str:
+        """To define"""
+        if self.playbook is None:
+            return ""
+
+        cmd = ["ansible-playbook", "-i", "localhost", self.playbook]
+        return " ".join(cmd)
+
+    def generate_install_commands(
+        self, method: DeploymentMethod, namespace: str
+    ) -> list[str]:
+        cmd = []
+
+        if self.enable is False:
+            return cmd
+
+        if method == DeploymentMethod.HELM:
+            cmd.append(self.generate_helm_command(namespace=namespace))
+
+        if method == DeploymentMethod.ARGOCD:
+            cmd.append(self.generate_argocd_command())
+
+        cmd.append(self.generate_playbook_command())
+
+        return cmd
 
 
 @dataclass(frozen=True)
 class InstallOptions:
-    steps: list[Options]
+    mode: DeploymentMethod
+    namespace: str
+    app_folder: str
+    playbook_folder: str
+    timeout: str
+    steps: list[Step]
+
+
+def _load_helm_options(raw: dict | None) -> HelmOptions | None:
+    if raw is None:
+        return None
+    return HelmOptions(
+        release=raw["release"],
+        values=raw.get("values", ()),
+        set_file=tuple((p["name"], p["path"]) for p in raw.get("set_file", ())),
+    )
+
+
+def _load_argocd_options(raw: dict | None) -> ArgocdOptions | None:
+    if raw is None:
+        return None
+    return ArgocdOptions(manifest=raw["manifest"])
 
 
 def load_from_yaml(options_path: Path) -> InstallOptions:
     with options_path.open("r") as f:
         _options = yaml.safe_load(stream=f)
 
+    global_params = _options.get("global")
+    deployment_config = _options.get("deployment_config")
     steps = [
-        Options(
+        Step(
             name=step["name"],
             description=step["description"],
-            enable=step["enable"],
-            cmd=tuple(step["cmd"]),
-            wait_app=step.get("wait_app"),
+            enable=step["config"]["enable"],
+            helm=_load_helm_options(raw=step.get("helm") or step["config"].get("helm")),
+            argocd=_load_argocd_options(
+                raw=step.get("argocd") or step["config"].get("argocd")
+            ),
+            playbook=step.get("playbook") or step["config"].get("playbook"),
         )
         for step in _options["steps"]
     ]
 
-    return InstallOptions(steps=steps)
+    return InstallOptions(
+        mode=DeploymentMethod[deployment_config.get("mode", "argocd").upper()],
+        namespace=deployment_config.get("namespace"),
+        app_folder=global_params.get("app_folder"),
+        playbook_folder=global_params.get("playbook_folder"),
+        timeout=global_params.get("timeout"),
+        steps=steps,
+    )
 
 
 # ==============================
@@ -72,59 +180,29 @@ def build_env() -> dict[str, str]:
     return env
 
 
-def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
+def run(
+    cmd: Sequence[str],
+    check: bool = True,
+    stdin: str | None = None,
+    extra_env: dict[str, str] | None = None,
+) -> CompletedProcess[str]:
     print(f"$ {' '.join(cmd)}")
+    env = build_env()
+    if extra_env:
+        env.update(extra_env)
     result = subprocess.run(  # noqa: PLW1510
         cmd,
         cwd=CURR_DIR,  # Force execution from current py script location
-        env=build_env(),  # Use the local venv for child processes
+        env=env,  # Use the local venv for child processes
         text=True,
+        input=stdin,
     )
     if check and result.returncode != 0:
         sys.exit(result.returncode)
     return result
 
 
-def wait_for_argocd_app(app_name: str, timeout: int = 300) -> None:
-    print(
-        f"Waiting for ArgoCD application '{app_name}' ",
-        f"to be Healthy and Synced (timeout: {timeout}s)",
-    )
-
-    result = run(
-        [
-            "argocd",
-            "app",
-            "wait",
-            app_name,
-            "--health",
-            "--sync",
-            "--timeout",
-            str(timeout),
-        ],
-        check=False,
-    )
-
-    if result.returncode != 0:
-        print(
-            f"{Red}ERROR: ArgoCD application '{app_name}' ",
-            f"did not become healthy within {timeout}s. Aborting.{Color_Off}",
-        )
-        sys.exit(1)
-
-    print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
-
-
-def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
-    print(
-        "This script will install la Suite Donnée with the following installation options:"
-    )
-    for step in options.steps:
-        state = "enabled" if step.enable else "disabled"
-        marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
-        print(f"\t {step.name}: {state} {marker}")
-    print()
-
+def prompt_choice() -> Literal["Yes", "No", "Cancel"]:
     user_options = ["Yes", "No", "Cancel"]
 
     while True:
@@ -149,8 +227,40 @@ def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
 # ==============================
 def main() -> None:
     user_options = load_from_yaml(options_path=OPTIONS_PATH)
+    install_mode = user_options.mode
+    namespace = user_options.namespace
 
-    choice = prompt_choice(options=user_options)
+    if namespace is None:
+        raise ValueError("Please define the namespace value in install_options.yaml.")
+
+    print(
+        dedent(
+            text=f"""
+            {"=" * 70}
+            This script will install la Suite Donnée
+            using the '{install_mode}' method.
+            {"-" * 70}
+        """
+        )
+    )
+
+    enable_logs = []
+    cmd_logs = []
+    for step in user_options.steps:
+        enable_logs.append(step.enable_logs)
+        cmd_logs.extend(
+            step.generate_install_commands(
+                method=user_options.mode, namespace=namespace
+            )
+        )
+
+    print("[Summary] Enabled steps:")
+    print(f"\t{'\n\t'.join(enable_logs)}")
+    print("[Summary] Commands to execute:")
+    print(f"\t{'\n\t'.join(cmd_logs)}")
+    print("=" * 70)
+
+    choice = prompt_choice()
 
     if choice == "Yes":
         print("Proceeding with the installation...")
@@ -167,19 +277,17 @@ def main() -> None:
     # ==============================
     # Install la Suite Donnée
     # ==============================
-    print("Install la Suite Donnée using the modular method...")
+    print(f"Installing la Suite Donnée using the {install_mode} method...")
 
     total = len(user_options.steps)
     for i, step in enumerate(user_options.steps, start=1):
         print(f"[Etape {i}/{total}] {step.name.upper()} - {step.description}")
-        if step.enable:
-            print("Step is enabled. Running its commands...")
-            for command in step.cmd:
-                run(shlex.split(command))
-            if step.wait_app:
-                wait_for_argocd_app(step.wait_app)
-        else:
+        if not step.enable:
             print(f"{Yellow}{step.name} is disabled... Skipping{Color_Off}")
+            continue
+
+        cmd = step.generate_install_commands(method=install_mode, namespace=namespace)
+        run(cmd=cmd)
 
 
 if __name__ == "__main__":

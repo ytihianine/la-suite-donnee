@@ -19,7 +19,7 @@ global:
 # Namespace cible des releases Helm (méthode helm uniquement)
 # ⚠️ Le namespace doit exister (le script ne le crée pas)
 deployment_config:
-  mode: other_method
+  mode: argocd
   namespace: projet-dsci
 
 
