@@ -1,67 +1,97 @@
+# =====================================================================
+# Options d'installation de la Suite Donnée
+#
+# Un seul fichier pour les deux méthodes de déploiement:
+#   - argocd (par défaut): python install.py
+#     Chaque étape exécute ses commandes `cmd` (Ansible / kubectl / ArgoCD).
+#   - helm:                python install.py --method helm
+#     Chaque étape déploie sa release `helm` (helm + kubectl uniquement,
+#     sans ArgoCD ni Ansible), et `init_db` initialise les bases de données.
+#
+# Les clés d'une méthode sont ignorées par l'autre. Une étape sans
+# définition pour la méthode sélectionnée est ignorée ("non applicable").
+# =====================================================================
+global:
+  playbook_folder: $playbook_folder ansible/playbooks
+  app_folder: $app_folder argocd
+  timeout: 10m
+
+# Namespace cible des releases Helm (méthode helm uniquement)
+# ⚠️ Le namespace doit exister (le script ne le crée pas)
+deployment_config:
+  mode: other_method
+  namespace: projet-dsci
+
+
 # Must be ordered to respect app dependencies
 steps:
   # ArgoCD
   - name: argocd
     description: "Déployer ArgoCD dans le namespace"
-    enable: false
-    cmd:
-      - "ansible-playbook -i localhost ansible/playbooks/argocd.yaml"
+    config:
+      enable: false
+      playbook: argocd.yaml
   - name: argocd-cli
     description: "Installer ArgoCD CLI et s'y connecter"
-    enable: false
-    cmd:
-      - "ansible-playbook -i localhost ansible/playbooks/argocd-cli.yaml"
-      - "argocd login --core"
+    config:
+      enable: true
+      playbook: argocd-cli.yaml
   - name: argocd-add-repo
     description: "Ajouter des dépôts GIT dans ArgoCD"
-    enable: false
-    cmd:
-      - "ansible-playbook -i localhost ansible/playbooks/argocd-add-repo.yaml"
-  # Renovate Bot
-  - name: renovatebot
-    description: "Déployer Renovate Bot dans le namespace"
-    enable: false
-    cmd:
-      - "kubectl apply -f argocd/renovatebot/manifest.yaml"
+    config:
+      enable: false
+      playbook: argocd-add-repo.yaml
   # Postgres
   - name: db-config
     description: "Déployer la base de données (app config) Postgres"
-    enable: false
-    cmd:
-      - "kubectl apply -f argocd/postgres/config/manifest.yaml"
-    wait_app: db-config-prod
+    config:
+      enable: false
+      helm:
+        release: db-config-cluster
+        values: postgres/config/values-prod.yaml
+      argocd:
+        manifest: postgres/config/manifest.yaml
   - name: db-data
     description: "Déployer la base de données (app data) Postgres"
-    enable: false
-    cmd:
-      - "kubectl apply -f argocd/postgres/data/manifest.yaml"
-    wait_app: db-data-prod
+    config:
+      enable: false
+      helm:
+        release: db-data-cluster
+        values: postgres/data/values-prod.yaml
+      argocd:
+        manifest: postgres/data/manifest.yaml
   - name: init-postgres-db
-    description: "Initialiser la base de données Postgres"
-    enable: false
-    cmd:
-      - "ansible-playbook -i localhost ansible/playbooks/init-db.yaml"
+    description: "Initialiser les bases de données Postgres"
+    config:
+      enable: false
+      playbook: init-db.yaml
   # Superset
   - name: superset
     description: "Déployer Superset dans le namespace"
-    enable: false
-    cmd:
-      - "kubectl apply -f argocd/superset/manifest.yaml"
+    config:
+      enable: false
+      helm:
+        release: superset
+        values: superset/values-prod.yaml
+      argocd:
+        manifest: superset/manifest.yaml
   # Airflow
   - name: airflow
     description: "Déployer Airflow dans le namespace"
-    enable: false
-    cmd:
-      - "kubectl apply -f argocd/airflow/manifest.yaml"
-  # Trino
-  - name: trino
-    description: "Déployer Trino dans le namespace"
-    enable: false
-    cmd:
-      - "kubectl apply -f argocd/trino/manifest.yaml"
-  # Polaris
-  - name: polaris
-    description: "Déployer Polaris dans le namespace"
-    enable: false
-    cmd:
-      - "kubectl apply -f argocd/polaris/manifest.yaml"
+    config:
+      enable: false
+      helm:
+        release: airflow
+        values: airflow/values-prod.yaml
+      argocd:
+        manifest: airflow/manifest.yaml
+  # Renovate Bot
+  - name: renovatebot
+    description: "Déployer Renovate Bot dans le namespace"
+    config:
+      enable: false
+      helm:
+        release: renovatebot
+        values: renovatebot/values-prod.yaml
+      argocd:
+        manifest: renovatebot/manifest.yaml
