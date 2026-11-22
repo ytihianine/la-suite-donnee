@@ -1,0 +1,13 @@
+---
+- name: Deploy Kubernetes manifests
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  tasks:
+    - name: Apply the manifest
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ app_namespace }}"
+        src: "{{ playbook_dir }}/../../{{ install_step.manifest }}"

@@ -1,0 +1,70 @@
+---
+deployment_method: argocd # argocd or helm
+app_namespace: projet-dsci
+argocd_namespace: projet-dsci
+
+# Keep steps ordered according to their dependencies.
+install_steps:
+  - name: argocd
+    description: "Déployer ArgoCD dans le namespace"
+    enable: false
+    playbook: ansible/playbooks/argocd.yaml
+  - name: argocd-cli
+    description: "Installer ArgoCD CLI et s'y connecter"
+    enable: true
+    playbook: ansible/playbooks/argocd-cli.yaml
+  - name: argocd-add-repo
+    description: "Ajouter des dépôts GIT dans ArgoCD"
+    enable: false
+    playbook: ansible/playbooks/argocd-add-repo.yaml
+  - name: renovatebot
+    description: "Déployer Renovate Bot dans le namespace"
+    enable: false
+    chart: argocd/renovatebot
+    manifest: argocd/renovatebot/manifest.yaml
+    release_name: renovatebot
+  - name: db-config
+    description: "Déployer la base de données (app config) Postgres"
+    enable: true
+    chart: argocd/postgres/config
+    manifest: argocd/postgres/config/manifest.yaml
+    release_name: db-config-prod
+    wait: true
+  - name: db-data
+    description: "Déployer la base de données (app data) Postgres"
+    enable: false
+    chart: argocd/postgres/data
+    manifest: argocd/postgres/data/manifest.yaml
+    release_name: db-data-prod
+    wait: true
+  - name: init-postgres-db
+    description: "Initialiser la base de données Postgres"
+    enable: false
+    playbook: ansible/playbooks/init-db.yaml
+  - name: superset
+    description: "Déployer Superset dans le namespace"
+    enable: false
+    chart: argocd/superset
+    manifest: argocd/superset/manifest.yaml
+    release_name: superset
+    file_values:
+      - name: superset.configOverrides.config_override
+        path: argocd/superset/superset_config_override.py
+  - name: airflow
+    description: "Déployer Airflow dans le namespace"
+    enable: false
+    chart: argocd/airflow
+    manifest: argocd/airflow/manifest.yaml
+    release_name: airflow
+  - name: trino
+    description: "Déployer Trino dans le namespace"
+    enable: false
+    chart: argocd/trino
+    manifest: argocd/trino/manifest.yaml
+    release_name: trino
+  - name: polaris
+    description: "Déployer Polaris dans le namespace"
+    enable: false
+    chart: argocd/polaris
+    manifest: argocd/polaris/manifest.yaml
+    release_name: polaris

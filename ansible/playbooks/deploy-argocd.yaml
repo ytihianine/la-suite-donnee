@@ -1,0 +1,28 @@
+---
+- name: Deploy an application with Argo CD
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  tasks:
+    - name: Apply the Argo CD application
+      kubernetes.core.k8s:
+        state: present
+        namespace: "{{ argocd_namespace }}"
+        src: "{{ playbook_dir }}/../../{{ install_step.manifest }}"
+
+    - name: Wait for the application to be healthy and synced
+      kubernetes.core.k8s_info:
+        api_version: argoproj.io/v1alpha1
+        kind: Application
+        namespace: "{{ argocd_namespace }}"
+        name: "{{ install_step.release_name }}"
+      register: application
+      until: >-
+        application.resources | length > 0 and
+        application.resources[0].status.health.status | default('') == 'Healthy' and
+        application.resources[0].status.sync.status | default('') == 'Synced'
+      retries: 60
+      delay: 5
+      when: install_step.wait | default(false) | bool
