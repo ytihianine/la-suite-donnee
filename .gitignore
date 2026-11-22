@@ -322,3 +322,6 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+# Additional ignores for this project
+*.lock
