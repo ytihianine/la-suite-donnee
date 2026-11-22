@@ -1,7 +1,7 @@
 ---
 deployment_method: argocd # argocd or helm
-app_namespace: projet-dsci
-argocd_namespace: projet-dsci
+app_namespace: user-ytihianine
+argocd_namespace: user-ytihianine
 
 # Keep steps ordered according to their dependencies.
 install_steps:
