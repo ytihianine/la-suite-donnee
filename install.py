@@ -1,5 +1,5 @@
+import json
 import os
-import shlex
 import subprocess
 import sys
 from collections.abc import Sequence
@@ -21,7 +21,7 @@ Yellow = "\033[0;33m"
 
 # Options
 CURR_DIR = Path(__file__).resolve().parent
-OPTIONS_PATH = CURR_DIR / "install_options.yaml"
+OPTIONS_PATH = CURR_DIR / "ansible" / "vars" / "install.yaml"
 VENV_BIN = CURR_DIR / "env" / ("Scripts" if os.name == "nt" else "bin")
 
 
@@ -30,31 +30,34 @@ class Options:
     name: str
     description: str
     enable: bool
-    cmd: tuple[str, ...]
-    wait_app: str | None = None
+    data: dict
 
 
 @dataclass(frozen=True)
 class InstallOptions:
     steps: list[Options]
+    deployment_method: str
 
 
 def load_from_yaml(options_path: Path) -> InstallOptions:
     with options_path.open("r") as f:
         _options = yaml.safe_load(stream=f)
 
+    deployment_method = _options["deployment_method"]
+    if deployment_method not in ("helm", "argocd"):
+        raise ValueError(f"Unsupported deployment method: {deployment_method}")
+
     steps = [
         Options(
             name=step["name"],
             description=step["description"],
             enable=step["enable"],
-            cmd=tuple(step["cmd"]),
-            wait_app=step.get("wait_app"),
+            data=step,
         )
-        for step in _options["steps"]
+        for step in _options["install_steps"]
     ]
 
-    return InstallOptions(steps=steps)
+    return InstallOptions(steps=steps, deployment_method=deployment_method)
 
 
 # ==============================
@@ -83,36 +86,6 @@ def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
     if check and result.returncode != 0:
         sys.exit(result.returncode)
     return result
-
-
-def wait_for_argocd_app(app_name: str, timeout: int = 300) -> None:
-    print(
-        f"Waiting for ArgoCD application '{app_name}' ",
-        f"to be Healthy and Synced (timeout: {timeout}s)",
-    )
-
-    result = run(
-        [
-            "argocd",
-            "app",
-            "wait",
-            app_name,
-            "--health",
-            "--sync",
-            "--timeout",
-            str(timeout),
-        ],
-        check=False,
-    )
-
-    if result.returncode != 0:
-        print(
-            f"{Red}ERROR: ArgoCD application '{app_name}' ",
-            f"did not become healthy within {timeout}s. Aborting.{Color_Off}",
-        )
-        sys.exit(1)
-
-    print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
 
 
 def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
@@ -173,11 +146,22 @@ def main() -> None:
     for i, step in enumerate(user_options.steps, start=1):
         print(f"[Etape {i}/{total}] {step.name.upper()} - {step.description}")
         if step.enable:
-            print("Step is enabled. Running its commands...")
-            for command in step.cmd:
-                run(shlex.split(command))
-            if step.wait_app:
-                wait_for_argocd_app(step.wait_app)
+            playbook = step.data.get(
+                "playbook",
+                f"ansible/playbooks/deploy-{user_options.deployment_method}.yaml",
+            )
+            run(
+                [
+                    "ansible-playbook",
+                    "-i",
+                    "localhost,",
+                    playbook,
+                    "--extra-vars",
+                    f"@{OPTIONS_PATH}",
+                    "--extra-vars",
+                    json.dumps({"install_step": step.data}),
+                ]
+            )
         else:
             print(f"{Yellow}{step.name} is disabled... Skipping{Color_Off}")
 
