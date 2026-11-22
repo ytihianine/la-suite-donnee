@@ -89,15 +89,6 @@ def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
 
 
 def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
-    print(
-        "This script will install la Suite Donnée with the following installation options:"
-    )
-    for step in options.steps:
-        state = "enabled" if step.enable else "disabled"
-        marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
-        print(f"\t {step.name}: {state} {marker}")
-    print()
-
     user_options = ["Yes", "No", "Cancel"]
 
     while True:
@@ -122,6 +113,18 @@ def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
 # ==============================
 def main() -> None:
     user_options = load_from_yaml(options_path=OPTIONS_PATH)
+
+    print()
+    print(
+        "This script will install la Suite Donnée with the following installation options:"
+    )
+    print()
+    print(f"Deployment method: {user_options.deployment_method}")
+    for step in user_options.steps:
+        state = "enabled" if step.enable else "disabled"
+        marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
+        print(f"\t {step.name}: {state} {marker}")
+    print()
 
     choice = prompt_choice(options=user_options)
 
