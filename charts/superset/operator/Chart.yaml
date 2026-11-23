@@ -1,0 +1,11 @@
+apiVersion: v2
+name: superset-operator-mef
+description: Apache Superset Kubernetes Operator
+type: application
+version: 0.1.0
+appVersion: "0.4.0"
+
+dependencies:
+  - name: superset-operator
+    version: 0.4.0
+    repository: oci://ghcr.io/apache/superset-kubernetes-operator/charts

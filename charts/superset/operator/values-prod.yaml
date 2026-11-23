@@ -1,0 +1,5 @@
+superset-operator:
+  watch:
+    scope: namespaces
+    namespaces:
+      - user-ytihianine

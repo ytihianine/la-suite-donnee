@@ -1,0 +1,8 @@
+apiVersion: superset.apache.org/v1alpha1
+kind: Superset
+metadata:
+  name: {{ .Values.superset.name }}
+spec:
+{{ toYaml .Values.superset.spec | nindent 2 }}
+  config: |
+{{ .Files.Get "legacy/superset_config_override.py" | indent 4 }}

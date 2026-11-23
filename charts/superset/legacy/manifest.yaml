@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: superset-legacy
+spec:
+  destination:
+    namespace: "user-ytihianine"
+    server: https://kubernetes.default.svc
+  source:
+    path: charts/superset/legacy
+    repoURL: https://github.com/ytihianine/la-suite-donnee.git
+    targetRevision: main
+    helm:
+      valueFiles:
+        - values-prod.yaml
+      fileParameters:
+        - name: superset.configOverrides.config_override
+          path: superset_config_override.py
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
