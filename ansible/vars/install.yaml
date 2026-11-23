@@ -22,22 +22,22 @@ install_steps:
   - name: renovatebot
     description: "Déployer Renovate Bot dans le namespace"
     enable: false
-    chart: argocd/renovatebot
-    manifest: argocd/renovatebot/manifest.yaml
+    chart: charts/renovatebot
+    manifest: charts/renovatebot/manifest.yaml
     release_name: renovatebot
   # Database configuration step
   - name: db-config
     description: "Déployer la base de données (app config) Postgres"
     enable: true
-    chart: argocd/postgres/config
-    manifest: argocd/postgres/config/manifest.yaml
+    chart: charts/postgres/config
+    manifest: charts/postgres/config/manifest.yaml
     release_name: db-config-prod
     wait: true
   - name: db-data
     description: "Déployer la base de données (app data) Postgres"
     enable: true
-    chart: argocd/postgres/data
-    manifest: argocd/postgres/data/manifest.yaml
+    chart: charts/postgres/data
+    manifest: charts/postgres/data/manifest.yaml
     release_name: db-data-prod
     wait: true
   - name: init-postgres-db
@@ -48,30 +48,30 @@ install_steps:
   - name: superset
     description: "Déployer Superset dans le namespace"
     enable: true
-    chart: argocd/superset
-    manifest: argocd/superset/manifest.yaml
+    chart: charts/superset
+    manifest: charts/superset/manifest.yaml
     release_name: superset
     file_values:
       - name: superset.configOverrides.config_override
-        path: argocd/superset/superset_config_override.py
+        path: charts/superset/superset_config_override.py
   # Airflow installation step
   - name: airflow
     description: "Déployer Airflow dans le namespace"
     enable: true
-    chart: argocd/airflow
-    manifest: argocd/airflow/manifest.yaml
+    chart: charts/airflow
+    manifest: charts/airflow/manifest.yaml
     release_name: airflow
   # Trino installation step
   - name: trino
     description: "Déployer Trino dans le namespace"
     enable: false
-    chart: argocd/trino
-    manifest: argocd/trino/manifest.yaml
+    chart: charts/trino
+    manifest: charts/trino/manifest.yaml
     release_name: trino
   # Polaris installation step
   - name: polaris
     description: "Déployer Polaris dans le namespace"
     enable: false
-    chart: argocd/polaris
-    manifest: argocd/polaris/manifest.yaml
+    chart: charts/polaris
+    manifest: charts/polaris/manifest.yaml
     release_name: polaris
