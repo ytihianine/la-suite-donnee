@@ -10,9 +10,9 @@ cnpg-cluster:
     superuserSecret: db-data-secret
     initdb:
       database: defaultdb
-      owner: pg_admin
+      owner: postgres
       secret:
-        name: db-data-app-secret
+        name: db-data-secret
     storage:
       size: 20Gi
     resources:
