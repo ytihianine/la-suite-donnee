@@ -51,7 +51,7 @@ install_steps:
     wait: true
   - name: db-data
     description: "Déployer le cluster CNPG (app data)"
-    enable: true
+    enable: false
     chart: charts/postgres/data
     manifest: charts/postgres/data/manifest.yaml
     release_name: db-data-prod
@@ -81,21 +81,37 @@ install_steps:
   # ===========================
   # Superset installation step
   # ===========================
+  - name: superset-operator
+    description: "Déployer l'opérateur Apache Superset (à activer par un administrateur du cluster)"
+    enable: false
+    chart: charts/superset/operator
+    manifest: charts/superset/operator/manifest.yaml
+    release_name: superset-operator
+    wait: true
   - name: superset
     description: "Déployer Superset dans le namespace"
     enable: true
     chart: charts/superset
     manifest: charts/superset/manifest.yaml
     release_name: superset
+  # ===========================
+  # [Legacy] Superset installation step
+  # ===========================
+  - name: superset-legacy
+    description: "[Legacy] Déployer Superset dans le namespace"
+    enable: false
+    chart: charts/superset/legacy
+    manifest: charts/superset/legacy/manifest.yaml
+    release_name: superset-legacy
     file_values:
       - name: superset.configOverrides.config_override
-        path: charts/superset/superset_config_override.py
+        path: charts/superset/legacy/superset_config_override.py
   # ===========================
   # Airflow installation step
   # ===========================
   - name: airflow
     description: "Déployer Airflow dans le namespace"
-    enable: true
+    enable: false
     chart: charts/airflow
     manifest: charts/airflow/manifest.yaml
     release_name: airflow
