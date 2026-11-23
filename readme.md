@@ -23,6 +23,7 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 
 - Kubernetes*
 - `kubectl`
+- `helm` (pour les installations Helm, y compris ArgoCD)
 - Docker (pour le build des images personnalisées)
 - Python 3.12+
 - Node.js 24+ (optionnel, uniquement pour la CI git)
@@ -37,13 +38,15 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 ├── .github/
 │    ├── workflows: workflows github
 │    └── skills: skills copilot
-├── ansible/        # Playbooks & rôles Ansible (ArgoCD, init-db)
-├── argocd/         # Manifestes d'application ArgoCD
+├── ansible/        # Playbooks, rôles et variables d'installation
+│    ├── playbooks/
+│    ├── roles/
+│    └── vars/install.yaml
+├── charts/         # Helm charts & Manifestes d'application ArgoCD
 ├── images/         # Dockerfile & build des images personnalisées
 ├── scripts/        # Scripts utilitaires
 ├── docs/           # Documentation complementaire
-├── install.py      # Orchestrateur d'installation interactif
-└── install_options.yaml  # Étapes d'installation à activer / désactiver
+└── install.py      # Orchestrateur d'installation interactif
 ```
 
 ## Installation du projet
@@ -113,7 +116,8 @@ source env/bin/activate
 2. Configurer les playbooks Ansible
 
 Les playbooks Ansible sont situés dans le dossier `ansible/`.  
-Ils permettent de configurer ArgoCD, d'initialiser la base de données et de gérer d'autres composants nécessaires à la suite de données.
+Les fichiers `ansible/**/vars/main.yaml` sont à adapter. Ils permettent de configurer les différentes applications (ArgoCD, initialisation de la base de données et de gérer d'autres composants nécessaires à la suite de données).  
+Le fichier [install.yaml](ansible/vars/install.yaml) contient les étapes d'exécutions.
 
 3. Configurer les manifests ArgoCD
 
@@ -148,37 +152,46 @@ L'option `become_exe` est à ajuster selon votre environnement Unix (exemple ci-
 
 #### Configuration des applications
 
-Les manifests des applications se situent dans `argocd/`.
+Les manifests des applications se situent dans `charts/`.
 
 **Choisir les applications à installer**
 
-Les applications déployées lors de l'installation sont définies dans le fichier [install_options.yaml](install_options.yaml).  
-Chaque étape comporte un `name`, une `description`, la ou les commandes `cmd` à exécuter, et le flag `enable` à renseigner à `true` pour activer le déploiement de l'application.
+Les étapes sont définies dans le fichier de variables Ansible [install.yaml](ansible/vars/install.yaml). Renseignez `enable: true` pour activer une étape et conservez l'ordre des dépendances.
 
-L'ordre des étapes est important : il respecte les dépendances entre les applications.  
-Pour certaines étapes, le paramètre `wait_app` fait attendre que l'application ArgoCD correspondante soit `Healthy` et `Synced` avant de poursuivre :
+Choisissez `deployment_method: argocd` pour appliquer les manifests Application, ou `deployment_method: helm` pour installer directement les charts locaux avec leurs fichiers `values-prod.yaml`. Configurez `app_namespace` pour Helm et les manifests Kubernetes, et `argocd_namespace` pour les Applications ArgoCD. Ces namespaces doivent déjà exister. Pour ArgoCD, configurez aussi le namespace de destination, le dépôt et la révision dans chaque manifest Application.
+
+Les étapes avec `wait: true` attendent que le chart soit prêt en mode Helm ou que l'Application soit `Healthy` et `Synced` en mode ArgoCD avant de continuer. Les étapes spéciales utilisent directement le playbook indiqué par `playbook`. Par exemple :
 
 ```yaml
-steps:
-  - name: argocd
-    description: "Déployer ArgoCD dans le namespace"
-    enable: false
-    cmd:
-      - "make deploy-argocd"
-  # ...
+deployment_method: argocd
+app_namespace: projet-dsci
+argocd_namespace: projet-dsci
+install_steps:
   - name: db-config
     description: "Déployer la base de données (app config) Postgres"
     enable: false
-    cmd:
-      - "kubectl apply -f argocd/postgres/config/manifest.yaml"
-    wait_app: db-config-prod
-  # ...
+    chart: charts/postgres/config
+    manifest: charts/postgres/config/manifest.yaml
+    release_name: db-config-prod
+    wait: true
 ```
+
+Pour un opérateur ou une autre ressource sans chart Helm, ajoutez une étape à l'endroit approprié dans `install_steps` :
+
+```yaml
+  - name: mon-operateur
+    description: "Déployer l'opérateur"
+    enable: false
+    playbook: ansible/playbooks/deploy-manifest.yaml
+    manifest: chemin/vers/operateur.yaml
+```
+
+Le manifest peut contenir plusieurs documents Kubernetes. Les ressources cluster nécessitent les droits correspondants. Si l'opérateur nécessite une attente de disponibilité ou des étapes supplémentaires, utilisez un playbook dédié dans `playbook`.
 
 **ArgoCD**
 
 L'installation d'ArgoCD est réalisée via un playbook Ansible qui déploie le chart Helm `argo-cd`.  
-Pour l'installer, renseignez `enable: true` pour l'étape `argocd` dans votre fichier [install_options.yaml](install_options.yaml).
+Pour l'installer, renseignez `enable: true` pour l'étape `argocd` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer les variables
 
@@ -192,12 +205,12 @@ Toutes les options de configuration du chart Helm sont disponibles ici [https://
 
 **ArgoCD CLI**
 
-Si vous souhaitez installer la CLI d'ArgoCD, renseignez `enable: true` pour l'étape `argocd-cli` dans votre fichier [install_options.yaml](install_options.yaml).  
+Si vous souhaitez installer la CLI d'ArgoCD, renseignez `enable: true` pour l'étape `argocd-cli` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 Le playbook télécharge la dernière version de la CLI et l'installe dans `/usr/local/bin` (droits d'admin requis).
 
 **Ajouter des dépôts à ArgoCD**
 
-Si vous souhaitez enregistrer des dépôts Git dans ArgoCD, renseignez `enable: true` pour l'étape `argocd-add-repo` dans votre fichier [install_options.yaml](install_options.yaml).
+Si vous souhaitez enregistrer des dépôts Git dans ArgoCD, renseignez `enable: true` pour l'étape `argocd-add-repo` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 Mettre à jour la liste des dépôts dans [main.yaml](ansible/roles/apps/argocd-add-repo/vars/main.yaml) :
 
@@ -215,15 +228,15 @@ repo:
 
 **Renovatebot**
 
-Si vous souhaitez installer Renovatebot, renseignez `enable: true` pour l'étape `renovatebot` dans votre fichier [install_options.yaml](install_options.yaml).
+Si vous souhaitez installer Renovatebot, renseignez `enable: true` pour l'étape `renovatebot` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [renovatebot-secret.yaml](argocd/renovatebot/templates/renovatebot-secret.yaml).
+Mettre à jour les valeurs du secret dans [renovatebot-secret.yaml](charts/renovatebot/templates/renovatebot-secret.yaml).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/renovatebot/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/renovatebot/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 
 ```yaml
@@ -245,7 +258,7 @@ Pour la configuration de renovate, toutes les options sont disponibles ici [http
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/renovatebot/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/renovatebot/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Bases de données**
@@ -254,36 +267,47 @@ La Suite Donnée déploie deux clusters de base de données:
 - un cluster dédié aux configurations des applications
 - un cluster dédié à l'hébergement des données.
 
-Si vous souhaitez installer les clusters, renseignez `enable: true` pour les étapes `db-config` et `db-data` dans votre fichier [install_options.yaml](install_options.yaml).
+Les clusters sont gérés par CloudNativePG. L'opérateur doit déjà être installé par un administrateur du cluster; le chart de l'opérateur dans [charts/postgres/operator](charts/postgres/operator/Chart.yaml) n'est pas activé par l'installateur. Si vous souhaitez créer les clusters, renseignez `enable: true` pour les étapes `db-config` et `db-data` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer les secrets
 
-Cluster de configuration: mettre à jour les valeurs du secret dans [db-config-secret.yaml](argocd/postgres/config/templates/db-config-secret.yaml).  
-Cluster de données: mettre à jour les valeurs du secret dans [db-data-secret.yaml](argocd/postgres/data/templates/db-data-secret.yaml).
+Cluster de configuration: mettre à jour les identifiants des secrets dans [db-config-secret.yaml](charts/postgres/config/templates/db-config-secret.yaml).
+Cluster de données: mettre à jour les identifiants des secrets dans [db-data-secret.yaml](charts/postgres/data/templates/db-data-secret.yaml).
 
 2. Configurer les values
 
-Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/config/values-prod.yaml).  
-Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/data/values-prod.yaml).
+Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](charts/postgres/config/values-prod.yaml).  
+Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](charts/postgres/data/values-prod.yaml).
 
-Il n'y a pas de valeurs particulières nécessaires à mettre à jour.
-
-Toutes les options de configuration du Helm chart sont disponibles ici [https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml](https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml)
+Les valeurs définissent le nom, les ressources, le stockage et la version de PostgreSQL de chaque cluster. Le service d'écriture CNPG est exposé sous le nom `<nom-du-cluster>-rw`.
 
 3. Configurer le manifest
 
-Cluster de configuration: mettre à jour les valeurs du [manifest.yaml](argocd/postgres/config/manifest.yaml).  
-Cluster de données: mettre à jour les valeurs du [manifest.yaml](argocd/postgres/data/manifest.yaml).
+Cluster de configuration: mettre à jour les valeurs du [manifest.yaml](charts/postgres/config/manifest.yaml).  
+Cluster de données: mettre à jour les valeurs du [manifest.yaml](charts/postgres/data/manifest.yaml).
 
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
-> ⚠️ Attention ⚠️  
-> Si vos bases de données ont déjà été déployées ou si vous souhaitez changer le mot de passe de l'administrateur `postgres`, il est nécessaire de **supprimer les PVC** associés aux bases de données.  
-> Sauvegardez vos données avant toute manipulation.
+> ⚠️ Les charts CNPG créent de nouveaux clusters et ne réutilisent pas les PVC Bitnami. Sauvegardez puis restaurez les données vers CNPG avant de basculer les applications; conservez les anciens charts sous [charts/postgres/legacy](charts/postgres/legacy) jusqu'à validation de la migration.
 
 **Initialiser les bases de données**
 
-Si vous souhaitez initialiser les bases de données, renseignez `enable: true` pour l'étape `init-postgres-db` dans votre fichier [install_options.yaml](install_options.yaml).
+Il existe deux méthodes pour initialiser les bases de données :
+
+| Méthode | Description |
+|---|---|
+| **CNPG (actuelle)** | Les bases et rôles applicatifs sont déclarés directement dans les valeurs des charts CloudNativePG. Aucune étape d'initialisation séparée n'est nécessaire. |
+| **Legacy (désactivée)** | Exécute des templates SQL via le playbook Ansible `init-postgres-db`. Méthode héritée, désactivée par défaut depuis la migration vers CNPG. |
+
+> ⚠️ **Depuis la migration vers CNPG**, l'étape legacy `init-postgres-db` est **désactivée** par défaut dans le fichier [install.yaml](ansible/vars/install.yaml). La méthode recommandée est CNPG, qui ne nécessite aucune étape d'initialisation supplémentaire.
+
+**Méthode CNPG (recommandée — sans init-db)**
+
+Avec les charts CNPG, les bases de données et les rôles applicatifs sont déclarés directement dans les fichiers de valeurs des clusters (voir section [Bases de données](#bases-de-données) ci-dessus). Aucune étape d'initialisation séparée n'est nécessaire.
+
+**Méthode Legacy (avec `init-db`)**
+
+> ⚠️ Cette méthode est **désactivée par défaut**. Elle n'est plus recommandée car elle utilise des templates SQL non compatibles avec la configuration CNPG. Si vous souhaitez l'activer, renseignez `enable: true` pour l'étape `init-postgres-db` dans [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer les values
 
@@ -291,16 +315,16 @@ Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/init-db/vars/main.y
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 auth:
-    host: db-config-prod-postgresql
+    host: db-config-prod
     port: 5432
     name: defaultdb
     user: postgres          # Admin
     password: config_admin  # Défini dans le secret db-X-secret.yaml
 ```
 
-2. Configurer les fichier SQL
+2. Configurer les fichiers SQL
 
-Vous pouvez compléter les fichiers SQL pour créer des roles particuliers.  
+Vous pouvez compléter les fichiers SQL pour créer des rôles particuliers.  
 Trois templates sont disponibles:
 - [airflow.sql.jinja](ansible/roles/apps/init-db/templates/airflow.sql.jinja)
 - [superset.sql.jinja](ansible/roles/apps/init-db/templates/superset.sql.jinja)
@@ -308,15 +332,15 @@ Trois templates sont disponibles:
 
 **Apache Superset**
 
-Si vous souhaitez installer Superset, renseignez `enable: true` pour l'étape `superset` dans votre fichier [install_options.yaml](install_options.yaml).
+Si vous souhaitez installer Superset, renseignez `enable: true` pour l'étape `superset` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [superset-secret.yaml](argocd/superset/templates/superset-secret.yaml).
+Mettre à jour les valeurs du secret dans [superset-secret.yaml](charts/superset/templates/superset-secret.yaml).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/superset/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/superset/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 superset:
@@ -338,24 +362,24 @@ Toutes les options de configuration du Helm chart sont disponibles ici [https://
 
 3. Configurer la configuration de Superset
 
-Mettre à jour le fichier [superset_config_override.py](argocd/superset/superset_config_override.py).
+Mettre à jour le fichier [superset_config_override.py](charts/superset/superset_config_override.py).
 
 4. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/superset/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/superset/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Apache Airflow**
 
-Si vous souhaitez installer Airflow, renseignez `enable: true` pour l'étape `airflow` dans votre fichier [install_options.yaml](install_options.yaml).
+Si vous souhaitez installer Airflow, renseignez `enable: true` pour l'étape `airflow` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [airflow-custom-secret.yaml](argocd/airflow/templates/airflow-custom-secret.yaml).
+Mettre à jour les valeurs du secret dans [airflow-custom-secret.yaml](charts/airflow/templates/airflow-custom-secret.yaml).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/airflow/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/airflow/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 airflow:
@@ -382,46 +406,45 @@ Toutes les options de configuration du Helm chart sont disponibles ici [https://
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/airflow/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/airflow/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Apache Polaris**
 
-Si vous souhaitez installer Polaris, renseignez `enable: true` pour l'étape `polaris` dans votre fichier [install_options.yaml](install_options.yaml).
+Si vous souhaitez installer Polaris, renseignez `enable: true` pour l'étape `polaris` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [polaris-secret.yaml](argocd/polaris/templates/polaris-secret.yaml).  
+Mettre à jour les valeurs du secret dans [polaris-secret.yaml](charts/polaris/templates/polaris-secret.yaml).  
 Ce secret contient les identifiants de la base de données (`DB_USER`, `DB_PASSWORD`, `DB_JDBC_URL`) et les identifiants du stockage objet (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/polaris/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/polaris/values-prod.yaml).  
 A minima, il est nécessaire de modifier l'ingress et la persistance (`persistence.relationalJdbc` doit pointer vers le secret configuré à l'étape précédente).
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/polaris/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/polaris/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Trino**
 
-Si vous souhaitez installer Trino, renseignez `enable: true` pour l'étape `trino` dans votre fichier [install_options.yaml](install_options.yaml).
+Si vous souhaitez installer Trino, renseignez `enable: true` pour l'étape `trino` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/trino/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/trino/values-prod.yaml).  
 A minima, il est nécessaire de modifier l'ingress et les `catalogs` (par exemple le catalogue Iceberg REST pointant vers Polaris).
 
 2. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/trino/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/trino/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 ### Exécution de l'installation
 
-Une fois toutes les configurations précédentes terminées, poussez votre code via `git push`.  
-Dans chaque manifeste, les paramètres `repoURL` et `targetRevision` doivent correspondre au repo qui contient votre code.  
+En mode ArgoCD, une fois la configuration terminée, poussez votre code via `git push`. Dans chaque manifeste, les paramètres `repoURL` et `targetRevision` doivent correspondre au dépôt qui contient votre code.
 
 Exécutez la commande suivante pour lancer l'installation :
 
@@ -430,7 +453,7 @@ Exécutez la commande suivante pour lancer l'installation :
 make install-la-suite-donnee
 ```
 
-Le script [install.py](install.py) affiche la liste des étapes de [install_options.yaml](install_options.yaml) (nom, description et état activée/désactivée) et vous demande de confirmer avant de lancer le déploiement des applications activées, dans l'ordre défini.
+Le script [install.py](install.py) affiche les étapes de [install.yaml](ansible/vars/install.yaml) et demande confirmation avant de lancer les playbooks activés, dans l'ordre défini. Il lance une seule commande Ansible et demande une seule fois le mot de passe de privilèges, même lorsque plusieurs étapes sont activées. Aucune commande Ansible n'est lancée si toutes les étapes sont désactivées.
 
 ## Commandes disponibles
 

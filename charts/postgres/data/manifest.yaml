@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: renovatebot
+  name: db-data-prod
 spec:
   destination:
     namespace: "user-ytihianine"
     server: https://kubernetes.default.svc
   source:
-    path: argocd/renovatebot
+    path: charts/postgres/data
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
-    targetRevision: demo-sspcloud
+    targetRevision: main
     helm:
       valueFiles:
         - values-prod.yaml

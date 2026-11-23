@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: trino
+spec:
+  destination:
+    namespace: "user-ytihianine"
+    server: https://kubernetes.default.svc
+  source:
+    path: charts/trino
+    repoURL: https://github.com/ytihianine/la-suite-donnee.git
+    targetRevision: demo-sspcloud
+    helm:
+      valueFiles:
+        - values-prod.yaml
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

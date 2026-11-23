@@ -4,13 +4,15 @@ set -euo pipefail
 
 # Render each umbrella chart independently with its production values
 charts=(
-  argocd/superset
-  argocd/airflow
-  argocd/trino
-  argocd/polaris
-  argocd/renovatebot
-  argocd/postgres/config
-  argocd/postgres/data
+  charts/superset
+  charts/airflow
+  charts/trino
+  charts/polaris
+  charts/renovatebot
+  charts/postgres/config
+  charts/postgres/data
+  charts/postgres/legacy/config
+  charts/postgres/legacy/data
 )
 
 cleanup() {

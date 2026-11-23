@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: polaris
+  name: renovatebot
 spec:
   destination:
-    namespace: "namespace"
+    namespace: "user-ytihianine"
     server: https://kubernetes.default.svc
   source:
-    path: argocd/polaris
+    path: charts/renovatebot
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
     targetRevision: demo-sspcloud
     helm:

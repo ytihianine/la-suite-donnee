@@ -1,0 +1,119 @@
+---
+deployment_method: helm # argocd or helm
+app_namespace: user-ytihianine
+argocd_namespace: user-ytihianine
+
+# Keep steps ordered according to their dependencies.
+install_steps:
+  # ===========================
+  # ArgoCD installation step
+  # ===========================
+  - name: argocd
+    description: "Déployer ArgoCD dans le namespace"
+    enable: false
+    playbook: ansible/playbooks/argocd.yaml
+  - name: argocd-cli
+    description: "Installer ArgoCD CLI et s'y connecter"
+    enable: true
+    playbook: ansible/playbooks/argocd-cli.yaml
+  - name: argocd-add-repo
+    description: "Ajouter des dépôts GIT dans ArgoCD"
+    enable: false
+    playbook: ansible/playbooks/argocd-add-repo.yaml
+  # ===========================
+  # Renovate Bot installation step
+  # ===========================
+  - name: renovatebot
+    description: "Déployer Renovate Bot dans le namespace"
+    enable: false
+    chart: charts/renovatebot
+    manifest: charts/renovatebot/manifest.yaml
+    release_name: renovatebot
+  # ===========================
+  # CNPG operator (requires cluster-admin privileges)
+  # ===========================
+  - name: cnpg-operator
+    description: "Déployer l'opérateur CloudNativePG (à activer par un administrateur du cluster)"
+    enable: false
+    chart: charts/postgres/operator
+    manifest: charts/postgres/operator/manifest.yaml
+    release_name: cnpg-operator
+    wait: true
+  # ===========================
+  # CNPG database cluster steps
+  # ===========================
+  - name: db-config
+    description: "Déployer le cluster CNPG (app config)"
+    enable: true
+    chart: charts/postgres/config
+    manifest: charts/postgres/config/manifest.yaml
+    release_name: db-config-prod
+    wait: true
+  - name: db-data
+    description: "Déployer le cluster CNPG (app data)"
+    enable: true
+    chart: charts/postgres/data
+    manifest: charts/postgres/data/manifest.yaml
+    release_name: db-data-prod
+    wait: true
+  # ===========================
+  # [Legacy] Bitnami databases and SQL initialization
+  # Enable these only when using the legacy charts, and disable the CNPG steps above.
+  # ===========================
+  - name: legacy-db-config
+    description: "[Legacy] Déployer la base de données (app config) Postgres"
+    enable: false
+    chart: charts/postgres/legacy/config
+    manifest: charts/postgres/legacy/config/manifest.yaml
+    release_name: db-config-prod
+    wait: true
+  - name: legacy-db-data
+    description: "[Legacy] Déployer la base de données (app data) Postgres"
+    enable: false
+    chart: charts/postgres/legacy/data
+    manifest: charts/postgres/legacy/data/manifest.yaml
+    release_name: db-data-prod
+    wait: true
+  - name: init-postgres-db
+    description: "[Legacy] Initialiser les bases de données Postgres"
+    enable: false
+    playbook: ansible/playbooks/init-db.yaml
+  # ===========================
+  # Superset installation step
+  # ===========================
+  - name: superset
+    description: "Déployer Superset dans le namespace"
+    enable: true
+    chart: charts/superset
+    manifest: charts/superset/manifest.yaml
+    release_name: superset
+    file_values:
+      - name: superset.configOverrides.config_override
+        path: charts/superset/superset_config_override.py
+  # ===========================
+  # Airflow installation step
+  # ===========================
+  - name: airflow
+    description: "Déployer Airflow dans le namespace"
+    enable: true
+    chart: charts/airflow
+    manifest: charts/airflow/manifest.yaml
+    release_name: airflow
+  # ===========================
+  # Trino installation step
+  # ===========================
+  - name: trino
+    description: "Déployer Trino dans le namespace"
+    enable: false
+    chart: charts/trino
+    manifest: charts/trino/manifest.yaml
+    release_name: trino
+  # ===========================
+  # Polaris installation step
+  # ===========================
+  - name: polaris
+    description: "Déployer Polaris dans le namespace"
+    enable: false
+    chart: charts/polaris
+    manifest: charts/polaris/manifest.yaml
+    release_name: polaris
