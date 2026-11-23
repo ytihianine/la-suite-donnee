@@ -323,40 +323,27 @@ Trois templates sont disponibles:
 
 Si vous souhaitez installer Superset, renseignez `enable: true` pour l'étape `superset` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
+L'étape `superset-operator` installe séparément l'opérateur Kubernetes Superset 0.4.0 depuis [charts/superset/operator](charts/superset/operator). Elle doit précéder l'étape Superset. Le chart [charts/superset](charts/superset) déploie la ressource `Superset` et Redis. L'ancien chart Apache Superset est conservé dans [charts/superset/legacy](charts/superset/legacy).
+
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [superset-secret.yaml](charts/superset/templates/superset-secret.yaml).
+Mettre à jour `SUPERSET_SECRET_KEY`, `METASTORE_URI` et les paramètres SMTP dans [superset-secret.yaml](charts/superset/templates/superset-secret.yaml). `METASTORE_URI` doit pointer vers la base de métadonnées Superset.
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](charts/superset/values-prod.yaml).  
-A minima, il est nécessaire de modifier les sections suivantes:
-```yaml
-superset:
-    # Ingress configuration
-    ingress:
-        # YOUR_VALUES
-
-  init:
-    adminUser:
-        # YOUR_VALUES
-
-  supersetNode:
-    connections:
-        # YOUR_VALUES
-        # Doit correspondre aux identifiants de l'admin superset créé dans l'étape précédente
-```
-
-Toutes les options de configuration du Helm chart sont disponibles ici [https://github.com/apache/superset/blob/master/helm/superset/values.yaml](https://github.com/apache/superset/blob/master/helm/superset/values.yaml).
+Mettre à jour [values-prod.yaml](charts/superset/values-prod.yaml), notamment le namespace surveillé par l'opérateur, l'image personnalisée, l'Ingress et l'hôte Redis si nécessaire. Les options de la ressource sont décrites dans la [documentation de l'opérateur Superset](https://apache.github.io/superset-kubernetes-operator/latest/user-guide/configuration/).
 
 3. Configurer la configuration de Superset
 
-Mettre à jour le fichier [superset_config_override.py](charts/superset/superset_config_override.py).
+Mettre à jour le fichier [superset_config_override.py](charts/superset/legacy/superset_config_override.py), chargé par le template de la ressource opérateur.
 
 4. Configurer le manifest
 
 Mettre à jour les valeurs du [manifest.yaml](charts/superset/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
+
+L'opérateur peut lancer des tâches d'initialisation et de migration sur la base de métadonnées. Sauvegardez cette base et planifiez la première réconciliation avant la bascule.
+En Production, l'opérateur ne crée pas et ne gère pas les comptes Superset: les comptes existants sont conservés dans la base, et un mécanisme externe doit provisionner le premier compte sur une nouvelle base.
 
 **Apache Airflow**
 

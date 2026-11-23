@@ -20,7 +20,7 @@
 
 ## Architecture
 
-- **charts/** — per-app subdirectories, each with `Chart.yaml`, `values-prod.yaml`, `manifest.yaml`, optional `templates/`. These are the ArgoCD Application manifests (bitnami/postgres, apache/superset, apache/airflow, renovatebot, polaris, trino).
+- **charts/** — per-app subdirectories, each with `Chart.yaml`, `values-prod.yaml`, `manifest.yaml`, optional `templates/`. The Superset operator is deployed separately from the Superset custom resource; the former Apache Superset chart is preserved under `charts/superset/legacy`.
 - **images/** — Dockerfiles for custom Superset, Airflow, Trino, and Polaris images.
 - **ansible/playbooks/** — localhost playbooks for ArgoCD install, ARGOCD CLI, ArgoCD repo add, and DB init.
 - **install.py** — interactive orchestrator reads `install_options.yaml` to decide which apps to deploy and in which order.
