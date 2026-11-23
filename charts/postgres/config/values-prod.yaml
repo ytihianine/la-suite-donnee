@@ -1,20 +1,20 @@
-postgresql:
-  auth:
-    username: pg_admin
-    database: defaultdb
-    existingSecret: "db-config-secret"
-    secretKeys:
-      adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
-      userPasswordKey: "POSTGRES_USER_PASSWORD"
-      replicationPasswordKey: "POSTGRES_REPLICATION_PASSWORD"
-
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/postgresql
-    tag: 17.6.0-debian-12-r4
-
-  primary:
-    name: main
+cnpg-cluster:
+  fullnameOverride: db-config-prod
+  type: postgresql
+  version:
+    postgresql: "17"
+  cluster:
+    instances: 1
+    imageName: ghcr.io/cloudnative-pg/postgresql:17.6
+    enableSuperuserAccess: true
+    superuserSecret: db-config-secret
+    initdb:
+      database: defaultdb
+      owner: pg_admin
+      secret:
+        name: db-config-app-secret
+    storage:
+      size: 20Gi
     resources:
       limits:
         cpu: "2"
@@ -22,6 +22,3 @@ postgresql:
       requests:
         cpu: 250m
         memory: 5Gi
-    persistence:
-      volumeName: "data"
-      size: 20Gi

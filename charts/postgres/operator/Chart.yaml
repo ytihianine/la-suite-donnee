@@ -1,0 +1,9 @@
+apiVersion: v2
+name: cloudnative-pg-operator
+description: CloudNativePG operator Helm chart (install separately by a cluster administrator)
+type: application
+version: 0.1.0
+dependencies:
+  - name: cloudnative-pg
+    version: 0.26.0
+    repository: https://cloudnative-pg.github.io/charts
