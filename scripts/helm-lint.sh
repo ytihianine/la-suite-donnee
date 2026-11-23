@@ -12,7 +12,9 @@ helm repo update
 
 # Lint each Helm chart
 charts=(
+  charts/superset/operator
   charts/superset
+  charts/superset/legacy
   charts/airflow
   charts/trino
   charts/polaris
@@ -23,6 +25,7 @@ charts=(
 
 for chart in "${charts[@]}"; do
   echo "==> Linting $chart"
+  helm dependency build "$chart"
   values_file="$chart/values-prod.yaml"
   if [ -f "$values_file" ]; then
     helm lint "$chart" -f "$values_file"

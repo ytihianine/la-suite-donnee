@@ -4,7 +4,9 @@ set -euo pipefail
 
 # Render each umbrella chart independently with its production values
 charts=(
+  charts/superset/operator
   charts/superset
+  charts/superset/legacy
   charts/airflow
   charts/trino
   charts/polaris
