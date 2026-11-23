@@ -92,7 +92,7 @@ airflow:
       user: airflow_admin_user
       pass: airflow_password
       protocol: postgresql
-      host: db-config-prod-postgresql
+      host: db-config-prod-rw
       port: 5432
       db: airflow_config
 

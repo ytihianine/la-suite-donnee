@@ -1,11 +1,12 @@
 apiVersion: v2
 name: db-data-prod
-description: Postgres Database umbrella chart for app data
+description: CloudNativePG umbrella chart for app data
 type: application
-version: 0.1.0
-appVersion: "1.0"
+version: 0.2.0
+appVersion: "17.6"
 
 dependencies:
-- name: postgresql
-  version: 18.11.0
-  repository: https://charts.bitnami.com/bitnami
+  - name: cluster
+    alias: cnpg-cluster
+    version: 0.9.0
+    repository: https://cloudnative-pg.github.io/charts

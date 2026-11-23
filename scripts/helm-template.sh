@@ -13,6 +13,8 @@ charts=(
   charts/renovatebot
   charts/postgres/config
   charts/postgres/data
+  charts/postgres/legacy/config
+  charts/postgres/legacy/data
 )
 
 cleanup() {
