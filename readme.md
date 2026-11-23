@@ -42,7 +42,7 @@ Ce dépôt est un guide d'installation de l'ensemble des outils qui composent la
 │    ├── playbooks/
 │    ├── roles/
 │    └── vars/install.yaml
-├── argocd/         # Manifestes d'application ArgoCD
+├── charts/         # Helm charts & Manifestes d'application ArgoCD
 ├── images/         # Dockerfile & build des images personnalisées
 ├── scripts/        # Scripts utilitaires
 ├── docs/           # Documentation complementaire
@@ -152,7 +152,7 @@ L'option `become_exe` est à ajuster selon votre environnement Unix (exemple ci-
 
 #### Configuration des applications
 
-Les manifests des applications se situent dans `argocd/`.
+Les manifests des applications se situent dans `charts/`.
 
 **Choisir les applications à installer**
 
@@ -170,8 +170,8 @@ install_steps:
   - name: db-config
     description: "Déployer la base de données (app config) Postgres"
     enable: false
-    chart: argocd/postgres/config
-    manifest: argocd/postgres/config/manifest.yaml
+    chart: charts/postgres/config
+    manifest: charts/postgres/config/manifest.yaml
     release_name: db-config-prod
     wait: true
 ```
@@ -232,11 +232,11 @@ Si vous souhaitez installer Renovatebot, renseignez `enable: true` pour l'étape
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [renovatebot-secret.yaml](argocd/renovatebot/templates/renovatebot-secret.yaml).
+Mettre à jour les valeurs du secret dans [renovatebot-secret.yaml](charts/renovatebot/templates/renovatebot-secret.yaml).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/renovatebot/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/renovatebot/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 
 ```yaml
@@ -258,7 +258,7 @@ Pour la configuration de renovate, toutes les options sont disponibles ici [http
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/renovatebot/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/renovatebot/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Bases de données**
@@ -271,13 +271,13 @@ Si vous souhaitez installer les clusters, renseignez `enable: true` pour les ét
 
 1. Configurer les secrets
 
-Cluster de configuration: mettre à jour les valeurs du secret dans [db-config-secret.yaml](argocd/postgres/config/templates/db-config-secret.yaml).  
-Cluster de données: mettre à jour les valeurs du secret dans [db-data-secret.yaml](argocd/postgres/data/templates/db-data-secret.yaml).
+Cluster de configuration: mettre à jour les valeurs du secret dans [db-config-secret.yaml](charts/postgres/config/templates/db-config-secret.yaml).  
+Cluster de données: mettre à jour les valeurs du secret dans [db-data-secret.yaml](charts/postgres/data/templates/db-data-secret.yaml).
 
 2. Configurer les values
 
-Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/config/values-prod.yaml).  
-Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](argocd/postgres/data/values-prod.yaml).
+Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](charts/postgres/config/values-prod.yaml).  
+Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](charts/postgres/data/values-prod.yaml).
 
 Il n'y a pas de valeurs particulières nécessaires à mettre à jour.
 
@@ -285,8 +285,8 @@ Toutes les options de configuration du Helm chart sont disponibles ici [https://
 
 3. Configurer le manifest
 
-Cluster de configuration: mettre à jour les valeurs du [manifest.yaml](argocd/postgres/config/manifest.yaml).  
-Cluster de données: mettre à jour les valeurs du [manifest.yaml](argocd/postgres/data/manifest.yaml).
+Cluster de configuration: mettre à jour les valeurs du [manifest.yaml](charts/postgres/config/manifest.yaml).  
+Cluster de données: mettre à jour les valeurs du [manifest.yaml](charts/postgres/data/manifest.yaml).
 
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
@@ -325,11 +325,11 @@ Si vous souhaitez installer Superset, renseignez `enable: true` pour l'étape `s
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [superset-secret.yaml](argocd/superset/templates/superset-secret.yaml).
+Mettre à jour les valeurs du secret dans [superset-secret.yaml](charts/superset/templates/superset-secret.yaml).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/superset/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/superset/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 superset:
@@ -351,11 +351,11 @@ Toutes les options de configuration du Helm chart sont disponibles ici [https://
 
 3. Configurer la configuration de Superset
 
-Mettre à jour le fichier [superset_config_override.py](argocd/superset/superset_config_override.py).
+Mettre à jour le fichier [superset_config_override.py](charts/superset/superset_config_override.py).
 
 4. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/superset/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/superset/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Apache Airflow**
@@ -364,11 +364,11 @@ Si vous souhaitez installer Airflow, renseignez `enable: true` pour l'étape `ai
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [airflow-custom-secret.yaml](argocd/airflow/templates/airflow-custom-secret.yaml).
+Mettre à jour les valeurs du secret dans [airflow-custom-secret.yaml](charts/airflow/templates/airflow-custom-secret.yaml).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/airflow/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/airflow/values-prod.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 airflow:
@@ -395,7 +395,7 @@ Toutes les options de configuration du Helm chart sont disponibles ici [https://
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/airflow/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/airflow/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Apache Polaris**
@@ -404,17 +404,17 @@ Si vous souhaitez installer Polaris, renseignez `enable: true` pour l'étape `po
 
 1. Configurer le secret
 
-Mettre à jour les valeurs du secret dans [polaris-secret.yaml](argocd/polaris/templates/polaris-secret.yaml).  
+Mettre à jour les valeurs du secret dans [polaris-secret.yaml](charts/polaris/templates/polaris-secret.yaml).  
 Ce secret contient les identifiants de la base de données (`DB_USER`, `DB_PASSWORD`, `DB_JDBC_URL`) et les identifiants du stockage objet (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`).
 
 2. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/polaris/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/polaris/values-prod.yaml).  
 A minima, il est nécessaire de modifier l'ingress et la persistance (`persistence.relationalJdbc` doit pointer vers le secret configuré à l'étape précédente).
 
 3. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/polaris/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/polaris/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Trino**
@@ -423,12 +423,12 @@ Si vous souhaitez installer Trino, renseignez `enable: true` pour l'étape `trin
 
 1. Configurer les values
 
-Mettre à jour les valeurs de [values-prod.yaml](argocd/trino/values-prod.yaml).  
+Mettre à jour les valeurs de [values-prod.yaml](charts/trino/values-prod.yaml).  
 A minima, il est nécessaire de modifier l'ingress et les `catalogs` (par exemple le catalogue Iceberg REST pointant vers Polaris).
 
 2. Configurer le manifest
 
-Mettre à jour les valeurs du [manifest.yaml](argocd/trino/manifest.yaml).  
+Mettre à jour les valeurs du [manifest.yaml](charts/trino/manifest.yaml).  
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 ### Exécution de l'installation

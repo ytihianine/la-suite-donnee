@@ -7,7 +7,7 @@ spec:
     namespace: "user-ytihianine"
     server: https://kubernetes.default.svc
   source:
-    path: argocd/superset
+    path: charts/superset
     repoURL: https://github.com/ytihianine/la-suite-donnee.git
     targetRevision: main
     helm:

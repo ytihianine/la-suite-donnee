@@ -12,13 +12,13 @@ helm repo update
 
 # Lint each Helm chart
 charts=(
-  argocd/superset
-  argocd/airflow
-  argocd/trino
-  argocd/polaris
-  argocd/renovatebot
-  argocd/postgres/config
-  argocd/postgres/data
+  charts/superset
+  charts/airflow
+  charts/trino
+  charts/polaris
+  charts/renovatebot
+  charts/postgres/config
+  charts/postgres/data
 )
 
 for chart in "${charts[@]}"; do

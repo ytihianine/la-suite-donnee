@@ -20,7 +20,7 @@
 
 ## Architecture
 
-- **argocd/** — per-app subdirectories, each with `Chart.yaml`, `values-prod.yaml`, `manifest.yaml`, optional `templates/`. These are the ArgoCD Application manifests (bitnami/postgres, apache/superset, apache/airflow, renovatebot, polaris, trino).
+- **charts/** — per-app subdirectories, each with `Chart.yaml`, `values-prod.yaml`, `manifest.yaml`, optional `templates/`. These are the ArgoCD Application manifests (bitnami/postgres, apache/superset, apache/airflow, renovatebot, polaris, trino).
 - **images/** — Dockerfiles for custom Superset, Airflow, Trino, and Polaris images.
 - **ansible/playbooks/** — localhost playbooks for ArgoCD install, ARGOCD CLI, ArgoCD repo add, and DB init.
 - **install.py** — interactive orchestrator reads `install_options.yaml` to decide which apps to deploy and in which order.
@@ -39,7 +39,7 @@
 - `install.py` runs `make` subcommands from its own directory (`os.getcwd` is overridden). Do not move it.
 - No `.env` file is used (`.env.example` was removed). Docker image build versions are passed as `*_VERSION` make args (e.g. `make build-trino TRINO_VERSION=484`).
 - CI lint uses Python 3.14 (not 3.12 as in the README prereqs). The Makefile uses `PYTHON := python3` which resolves to whatever is in the venv.
-- Renovatebot needs a GitHub token secret in `argocd/renovatebot/templates/renovatebot-secret.yaml` and matching `values-prod.yaml` config.
+- Renovatebot needs a GitHub token secret in `charts/renovatebot/templates/renovatebot-secret.yaml` and matching `values-prod.yaml` config.
 
 ## Style
 
