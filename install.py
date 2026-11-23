@@ -6,7 +6,6 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Literal
 
 import yaml
 
@@ -23,6 +22,7 @@ Yellow = "\033[0;33m"
 CURR_DIR = Path(__file__).resolve().parent
 OPTIONS_PATH = CURR_DIR / "ansible" / "vars" / "install.yaml"
 VENV_BIN = CURR_DIR / "env" / ("Scripts" if os.name == "nt" else "bin")
+BECOME_PASSWORD_FILE = CURR_DIR / ".become-password"
 
 
 @dataclass(frozen=True)
@@ -72,6 +72,8 @@ def build_env() -> dict[str, str]:
     env = os.environ.copy()
     if VENV_BIN.is_dir():
         env["PATH"] = os.pathsep.join((str(VENV_BIN), env.get("PATH", "")))
+    if BECOME_PASSWORD_FILE.is_file():
+        env["ANSIBLE_BECOME_ASK_PASS"] = "false"
     return env
 
 
@@ -88,24 +90,22 @@ def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
     return result
 
 
-def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
-    user_options = ["Yes", "No", "Cancel"]
-
+def prompt_choice() -> bool:
     while True:
-        print("Do you wish to proceed the installation?")
-        for i, opt in enumerate(user_options, 1):
-            print(f"{i}) {opt}")
+        print("Do you wish to proceed with the installation?")
+        print("1) Yes")
+        print("2) No")
+        print("3) Cancel")
 
-        choice = input("> ").strip()
+        choice = input("> ").strip().lower()
 
-        if choice in ["1", "Yes"]:
-            return "Yes"
-        elif choice in ["2", "No"]:
-            return "No"
-        elif choice in ["3", "Cancel"]:
-            return "Cancel"
-        else:
-            print("Invalid option. Please select 1, 2, or 3.")
+        if choice in ("1", "yes"):
+            return True
+
+        if choice in ("2", "no", "3", "cancel"):
+            return False
+
+        print("Invalid option. Please select 1, 2, or 3.")
 
 
 # ==============================
@@ -126,19 +126,13 @@ def main() -> None:
         print(f"\t {step.name}: {state} {marker}")
     print()
 
-    choice = prompt_choice(options=user_options)
+    choice = prompt_choice()
 
-    if choice == "Yes":
+    if choice:
         print("Proceeding with the installation...")
-    elif choice == "No":
+    else:
         print("Installation aborted by the user.")
         sys.exit(0)
-    elif choice == "Cancel":
-        print("Installation cancelled by the user.")
-        sys.exit(0)
-    else:
-        print("Unexpected choice. Exiting.")
-        sys.exit(1)
 
     # ==============================
     # Install la Suite Donnée
@@ -147,17 +141,23 @@ def main() -> None:
 
     total = len(user_options.steps)
     for i, step in enumerate(user_options.steps, start=1):
-        print(f"[Etape {i}/{total}] {step.name.upper()} - {step.description}")
+        print(f"[Etape {i}/{total}] [{step.name.upper()}] - {step.description}")
         if step.enable:
             playbook = step.data.get(
                 "playbook",
                 f"ansible/playbooks/deploy-{user_options.deployment_method}.yaml",
+            )
+            become_args = (
+                ["--become-password-file", str(BECOME_PASSWORD_FILE)]
+                if BECOME_PASSWORD_FILE.is_file()
+                else []
             )
             run(
                 [
                     "ansible-playbook",
                     "-i",
                     "localhost,",
+                    *become_args,
                     playbook,
                     "--extra-vars",
                     f"@{OPTIONS_PATH}",
