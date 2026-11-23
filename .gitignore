@@ -325,3 +325,4 @@ dist
 
 # Additional ignores for this project
 *.lock
+.become-password
