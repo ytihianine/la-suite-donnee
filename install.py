@@ -1,12 +1,11 @@
+import json
 import os
-import shlex
 import subprocess
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Literal
 
 import yaml
 
@@ -21,8 +20,9 @@ Yellow = "\033[0;33m"
 
 # Options
 CURR_DIR = Path(__file__).resolve().parent
-OPTIONS_PATH = CURR_DIR / "install_options.yaml"
+OPTIONS_PATH = CURR_DIR / "ansible" / "vars" / "install.yaml"
 VENV_BIN = CURR_DIR / "env" / ("Scripts" if os.name == "nt" else "bin")
+BECOME_PASSWORD_FILE = CURR_DIR / ".become-password"
 
 
 @dataclass(frozen=True)
@@ -30,31 +30,34 @@ class Options:
     name: str
     description: str
     enable: bool
-    cmd: tuple[str, ...]
-    wait_app: str | None = None
+    data: dict
 
 
 @dataclass(frozen=True)
 class InstallOptions:
     steps: list[Options]
+    deployment_method: str
 
 
 def load_from_yaml(options_path: Path) -> InstallOptions:
     with options_path.open("r") as f:
         _options = yaml.safe_load(stream=f)
 
+    deployment_method = _options["deployment_method"]
+    if deployment_method not in ("helm", "argocd"):
+        raise ValueError(f"Unsupported deployment method: {deployment_method}")
+
     steps = [
         Options(
             name=step["name"],
             description=step["description"],
             enable=step["enable"],
-            cmd=tuple(step["cmd"]),
-            wait_app=step.get("wait_app"),
+            data=step,
         )
-        for step in _options["steps"]
+        for step in _options["install_steps"]
     ]
 
-    return InstallOptions(steps=steps)
+    return InstallOptions(steps=steps, deployment_method=deployment_method)
 
 
 # ==============================
@@ -69,6 +72,8 @@ def build_env() -> dict[str, str]:
     env = os.environ.copy()
     if VENV_BIN.is_dir():
         env["PATH"] = os.pathsep.join((str(VENV_BIN), env.get("PATH", "")))
+    if BECOME_PASSWORD_FILE.is_file():
+        env["ANSIBLE_BECOME_ASK_PASS"] = "false"
     return env
 
 
@@ -85,63 +90,22 @@ def run(cmd: Sequence[str], check: bool = True) -> CompletedProcess[str]:
     return result
 
 
-def wait_for_argocd_app(app_name: str, timeout: int = 300) -> None:
-    print(
-        f"Waiting for ArgoCD application '{app_name}' ",
-        f"to be Healthy and Synced (timeout: {timeout}s)",
-    )
-
-    result = run(
-        [
-            "argocd",
-            "app",
-            "wait",
-            app_name,
-            "--health",
-            "--sync",
-            "--timeout",
-            str(timeout),
-        ],
-        check=False,
-    )
-
-    if result.returncode != 0:
-        print(
-            f"{Red}ERROR: ArgoCD application '{app_name}' ",
-            f"did not become healthy within {timeout}s. Aborting.{Color_Off}",
-        )
-        sys.exit(1)
-
-    print(f"{Green}ArgoCD application '{app_name}' is Healthy and Synced.{Color_Off}")
-
-
-def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
-    print(
-        "This script will install la Suite Donnée with the following installation options:"
-    )
-    for step in options.steps:
-        state = "enabled" if step.enable else "disabled"
-        marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
-        print(f"\t {step.name}: {state} {marker}")
-    print()
-
-    user_options = ["Yes", "No", "Cancel"]
-
+def prompt_choice() -> bool:
     while True:
-        print("Do you wish to proceed the installation?")
-        for i, opt in enumerate(user_options, 1):
-            print(f"{i}) {opt}")
+        print("Do you wish to proceed with the installation?")
+        print("1) Yes")
+        print("2) No")
+        print("3) Cancel")
 
-        choice = input("> ").strip()
+        choice = input("> ").strip().lower()
 
-        if choice in ["1", "Yes"]:
-            return "Yes"
-        elif choice in ["2", "No"]:
-            return "No"
-        elif choice in ["3", "Cancel"]:
-            return "Cancel"
-        else:
-            print("Invalid option. Please select 1, 2, or 3.")
+        if choice in ("1", "yes"):
+            return True
+
+        if choice in ("2", "no", "3", "cancel"):
+            return False
+
+        print("Invalid option. Please select 1, 2, or 3.")
 
 
 # ==============================
@@ -150,19 +114,25 @@ def prompt_choice(options: InstallOptions) -> Literal["Yes", "No", "Cancel"]:
 def main() -> None:
     user_options = load_from_yaml(options_path=OPTIONS_PATH)
 
-    choice = prompt_choice(options=user_options)
+    print()
+    print(
+        "This script will install la Suite Donnée with the following installation options:"
+    )
+    print()
+    print(f"Deployment method: {user_options.deployment_method}")
+    for step in user_options.steps:
+        state = "enabled" if step.enable else "disabled"
+        marker = f"{Green}✔{Color_Off}" if step.enable else f"{Red}✖{Color_Off}"
+        print(f"\t {step.name}: {state} {marker}")
+    print()
 
-    if choice == "Yes":
+    choice = prompt_choice()
+
+    if choice:
         print("Proceeding with the installation...")
-    elif choice == "No":
+    else:
         print("Installation aborted by the user.")
         sys.exit(0)
-    elif choice == "Cancel":
-        print("Installation cancelled by the user.")
-        sys.exit(0)
-    else:
-        print("Unexpected choice. Exiting.")
-        sys.exit(1)
 
     # ==============================
     # Install la Suite Donnée
@@ -171,13 +141,30 @@ def main() -> None:
 
     total = len(user_options.steps)
     for i, step in enumerate(user_options.steps, start=1):
-        print(f"[Etape {i}/{total}] {step.name.upper()} - {step.description}")
+        print(f"[Etape {i}/{total}] [{step.name.upper()}] - {step.description}")
         if step.enable:
-            print("Step is enabled. Running its commands...")
-            for command in step.cmd:
-                run(shlex.split(command))
-            if step.wait_app:
-                wait_for_argocd_app(step.wait_app)
+            playbook = step.data.get(
+                "playbook",
+                f"ansible/playbooks/deploy-{user_options.deployment_method}.yaml",
+            )
+            become_args = (
+                ["--become-password-file", str(BECOME_PASSWORD_FILE)]
+                if BECOME_PASSWORD_FILE.is_file()
+                else []
+            )
+            run(
+                [
+                    "ansible-playbook",
+                    "-i",
+                    "localhost,",
+                    *become_args,
+                    playbook,
+                    "--extra-vars",
+                    f"@{OPTIONS_PATH}",
+                    "--extra-vars",
+                    json.dumps({"install_step": step.data}),
+                ]
+            )
         else:
             print(f"{Yellow}{step.name} is disabled... Skipping{Color_Off}")
 

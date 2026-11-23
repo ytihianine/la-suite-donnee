@@ -1,0 +1,24 @@
+---
+- name: Deploy an application with Helm
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Prepare file-valued chart settings
+      ansible.builtin.set_fact:
+        helm_file_values: "{{ helm_file_values | default([]) + [{'value': item.name ~ '=' ~ playbook_dir ~ '/../../' ~ item.path, 'value_type': 'file'}] }}"
+      loop: "{{ install_step.file_values | default([]) }}"
+
+    - name: Install or upgrade the chart
+      kubernetes.core.helm:
+        name: "{{ install_step.release_name }}"
+        chart_ref: "{{ playbook_dir }}/../../{{ install_step.chart }}"
+        release_namespace: "{{ app_namespace }}"
+        create_namespace: false
+        dependency_update: true
+        values_files:
+          - "{{ playbook_dir }}/../../{{ install_step.chart }}/values-prod.yaml"
+        set_values: "{{ helm_file_values | default(omit) }}"
+        wait: "{{ install_step.wait | default(false) }}"
+        timeout: 10m
+        state: present

@@ -6,6 +6,18 @@
   gather_facts: false
 
   tasks:
+    - name: Check whether ArgoCD CLI is available
+      ansible.builtin.shell: command -v argocd
+      register: argocd_cli
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      become: false
+
+    - name: Skip installation when ArgoCD CLI is already available
+      ansible.builtin.meta: end_play
+      when: argocd_cli.rc == 0
+
     - name: Download ArgoCD CLI
       ansible.builtin.get_url:
         url: 'https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64'
@@ -25,4 +37,9 @@
       ansible.builtin.file:
         path: /tmp/argocd-linux-amd64
         state: absent
+      become: false
+
+    - name: Connect ArgoCD CLI to Kubernetes
+      ansible.builtin.command: argocd login --core
+      changed_when: false
       become: false
