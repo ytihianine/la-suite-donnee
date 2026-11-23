@@ -292,23 +292,39 @@ Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
 **Initialiser les bases de données**
 
-Les bases et rôles applicatifs sont déclarés dans les valeurs des charts CNPG. L'étape Ansible historique `init-postgres-db` reste désactivée car elle exécute les anciens templates SQL, dont le trigger d'événement n'est pas repris dans la configuration CNPG.
+Il existe deux méthodes pour initialiser les bases de données :
+
+| Méthode | Description |
+|---|---|
+| **CNPG (actuelle)** | Les bases et rôles applicatifs sont déclarés directement dans les valeurs des charts CloudNativePG. Aucune étape d'initialisation séparée n'est nécessaire. |
+| **Legacy (désactivée)** | Exécute des templates SQL via le playbook Ansible `init-postgres-db`. Méthode héritée, désactivée par défaut depuis la migration vers CNPG. |
+
+> ⚠️ **Depuis la migration vers CNPG**, l'étape legacy `init-postgres-db` est **désactivée** par défaut dans le fichier [install.yaml](ansible/vars/install.yaml). La méthode recommandée est CNPG, qui ne nécessite aucune étape d'initialisation supplémentaire.
+
+**Méthode CNPG (recommandée — sans init-db)**
+
+Avec les charts CNPG, les bases de données et les rôles applicatifs sont déclarés directement dans les fichiers de valeurs des clusters (voir section [Bases de données](#bases-de-données) ci-dessus). Aucune étape d'initialisation séparée n'est nécessaire.
+
+**Méthode Legacy (avec `init-db`)**
+
+> ⚠️ Cette méthode est **désactivée par défaut**. Elle n'est plus recommandée car elle utilise des templates SQL non compatibles avec la configuration CNPG. Si vous souhaitez l'activer, renseignez `enable: true` pour l'étape `init-postgres-db` dans [install.yaml](ansible/vars/install.yaml).
+
 1. Configurer les values
 
 Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/init-db/vars/main.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 auth:
-    host: db-config-prod-rw
+    host: db-config-prod
     port: 5432
     name: defaultdb
     user: postgres          # Admin
     password: config_admin  # Défini dans le secret db-X-secret.yaml
 ```
 
-2. Configurer les fichier SQL
+2. Configurer les fichiers SQL
 
-Vous pouvez compléter les fichiers SQL pour créer des roles particuliers.  
+Vous pouvez compléter les fichiers SQL pour créer des rôles particuliers.  
 Trois templates sont disponibles:
 - [airflow.sql.jinja](ansible/roles/apps/init-db/templates/airflow.sql.jinja)
 - [superset.sql.jinja](ansible/roles/apps/init-db/templates/superset.sql.jinja)
