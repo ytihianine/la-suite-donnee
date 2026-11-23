@@ -7,8 +7,7 @@
             "@semantic-release/commit-analyzer", {
                 "preset": "conventionalcommits",
                 "releaseRules": [
-                    {"type": "custom", "release": "patch"},
-                    {"type": "release", "release": "major"}
+                    {"type": "refactor", "release": "major"}
                 ]
             }
         ],
@@ -23,11 +22,9 @@
                         {"type": "chore", "hidden": false, "section": "Chores"},
                         {"type": "docs", "hidden": false, "section": "Documentation"},
                         {"type": "style", "hidden": true},
-                        {"type": "refactor", "hidden": true},
+                        {"type": "refactor", "hidden": false, "section": "Breaking changes"},
                         {"type": "perf", "hidden": true},
-                        {"type": "test", "hidden": true},
-                        {"type": "custom", "hidden": false, "section": "Custom"},
-                        {"type": "release", "hidden": true}
+                        {"type": "test", "hidden": true}
                     ]
                 }
             }
