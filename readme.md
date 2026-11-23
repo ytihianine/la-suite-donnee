@@ -267,21 +267,19 @@ La Suite Donnée déploie deux clusters de base de données:
 - un cluster dédié aux configurations des applications
 - un cluster dédié à l'hébergement des données.
 
-Si vous souhaitez installer les clusters, renseignez `enable: true` pour les étapes `db-config` et `db-data` dans votre fichier [install.yaml](ansible/vars/install.yaml).
+Les clusters sont gérés par CloudNativePG. L'opérateur doit déjà être installé par un administrateur du cluster; le chart de l'opérateur dans [charts/postgres/operator](charts/postgres/operator/Chart.yaml) n'est pas activé par l'installateur. Si vous souhaitez créer les clusters, renseignez `enable: true` pour les étapes `db-config` et `db-data` dans votre fichier [install.yaml](ansible/vars/install.yaml).
 
 1. Configurer les secrets
 
-Cluster de configuration: mettre à jour les valeurs du secret dans [db-config-secret.yaml](charts/postgres/config/templates/db-config-secret.yaml).  
-Cluster de données: mettre à jour les valeurs du secret dans [db-data-secret.yaml](charts/postgres/data/templates/db-data-secret.yaml).
+Cluster de configuration: mettre à jour les identifiants des secrets dans [db-config-secret.yaml](charts/postgres/config/templates/db-config-secret.yaml).
+Cluster de données: mettre à jour les identifiants des secrets dans [db-data-secret.yaml](charts/postgres/data/templates/db-data-secret.yaml).
 
 2. Configurer les values
 
 Cluster de configuration: Mettre à jour les valeurs de [values-prod.yaml](charts/postgres/config/values-prod.yaml).  
 Cluster de données: Mettre à jour les valeurs de [values-prod.yaml](charts/postgres/data/values-prod.yaml).
 
-Il n'y a pas de valeurs particulières nécessaires à mettre à jour.
-
-Toutes les options de configuration du Helm chart sont disponibles ici [https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml](https://github.com/bitnami/charts/blob/main/bitnami/postgresql/values.yaml)
+Les valeurs définissent le nom, les ressources, le stockage et la version de PostgreSQL de chaque cluster. Le service d'écriture CNPG est exposé sous le nom `<nom-du-cluster>-rw`.
 
 3. Configurer le manifest
 
@@ -290,21 +288,18 @@ Cluster de données: mettre à jour les valeurs du [manifest.yaml](charts/postgr
 
 Notamment les valeurs du `namespace`, `repoURL` et `targetRevision`.
 
-> ⚠️ Attention ⚠️  
-> Si vos bases de données ont déjà été déployées ou si vous souhaitez changer le mot de passe de l'administrateur `postgres`, il est nécessaire de **supprimer les PVC** associés aux bases de données.  
-> Sauvegardez vos données avant toute manipulation.
+> ⚠️ Les charts CNPG créent de nouveaux clusters et ne réutilisent pas les PVC Bitnami. Sauvegardez puis restaurez les données vers CNPG avant de basculer les applications; conservez les anciens charts sous [charts/postgres/legacy](charts/postgres/legacy) jusqu'à validation de la migration.
 
 **Initialiser les bases de données**
 
-Si vous souhaitez initialiser les bases de données, renseignez `enable: true` pour l'étape `init-postgres-db` dans votre fichier [install.yaml](ansible/vars/install.yaml).
-
+Les bases et rôles applicatifs sont déclarés dans les valeurs des charts CNPG. L'étape Ansible historique `init-postgres-db` reste désactivée car elle exécute les anciens templates SQL, dont le trigger d'événement n'est pas repris dans la configuration CNPG.
 1. Configurer les values
 
 Mettre à jour les valeurs de [main.yaml](ansible/roles/apps/init-db/vars/main.yaml).  
 A minima, il est nécessaire de modifier les sections suivantes:
 ```yaml
 auth:
-    host: db-config-prod-postgresql
+    host: db-config-prod-rw
     port: 5432
     name: defaultdb
     user: postgres          # Admin
