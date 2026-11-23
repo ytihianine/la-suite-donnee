@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: db-config-prod
+spec:
+  destination:
+    namespace: "user-ytihianine"
+    server: https://kubernetes.default.svc
+  source:
+    path: charts/postgres/legacy/config
+    repoURL: https://github.com/ytihianine/la-suite-donnee.git
+    targetRevision: main
+    helm:
+      valueFiles:
+        - values-prod.yaml
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

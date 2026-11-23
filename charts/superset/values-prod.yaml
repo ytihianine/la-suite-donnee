@@ -65,7 +65,7 @@ superset:
     # legacy supersetNode.connections.db_type is honored when this is unset)
     driver: postgresql+psycopg2
     # -- Database host (default: {{ .Release.Name }}-postgresql)
-    host: db-config-prod-postgresql
+    host: db-config-prod-rw
     # -- Database port (default: 5432 when unset; legacy supersetNode.connections.db_port is honored)
     port: 5432
     # -- Database user (default: superset, resolved via superset.db.user)
