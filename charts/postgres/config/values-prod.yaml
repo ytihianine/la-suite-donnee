@@ -5,7 +5,7 @@ cnpg-cluster:
     postgresql: "17"
   cluster:
     instances: 1
-    imageName: ghcr.io/cloudnative-pg/postgresql:17.6
+    imageName: docker.io/bitnamilegacy/postgresql:17.6.0-debian-12-r4
     enableSuperuserAccess: true
     superuserSecret: db-config-secret
     initdb:
@@ -22,3 +22,37 @@ cnpg-cluster:
       requests:
         cpu: 250m
         memory: 5Gi
+    roles:
+      - name: airflow_admin_role
+        ensure: present
+        comment: "Role admin pour gérer la base de données de configuration d'Airflow"
+        login: false
+      - name: airflow_admin_user
+        ensure: present
+        comment: "Utilisateur de la base de données de configuration d'Airflow"
+        login: true
+        inRoles:
+          - airflow_admin_role
+        passwordSecret:
+          name: db-config-airflow-secret
+      - name: superset_admin_role
+        ensure: present
+        comment: "Role admin pour gérer la base de données de configuration de Superset"
+        login: false
+      - name: superset_admin_user
+        ensure: present
+        comment: "Utilisateur de la base de données de configuration de Superset"
+        login: true
+        inRoles:
+          - superset_admin_role
+        passwordSecret:
+          name: db-config-superset-secret
+  databases:
+    - name: airflow_config
+      ensure: present
+      owner: airflow_admin_role
+      databaseReclaimPolicy: retain
+    - name: superset_config
+      ensure: present
+      owner: superset_admin_role
+      databaseReclaimPolicy: retain

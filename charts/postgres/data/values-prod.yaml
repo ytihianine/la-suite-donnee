@@ -5,7 +5,7 @@ cnpg-cluster:
     postgresql: "17"
   cluster:
     instances: 1
-    imageName: ghcr.io/cloudnative-pg/postgresql:17.6
+    imageName: docker.io/bitnamilegacy/postgresql:17.6.0-debian-12-r4
     enableSuperuserAccess: true
     superuserSecret: db-data-secret
     initdb:
@@ -22,3 +22,23 @@ cnpg-cluster:
       requests:
         cpu: 250m
         memory: 5Gi
+    roles:
+      - name: analyst_superset
+        ensure: present
+        comment: "Utilisateur analyste pour accéder à la base de données métier"
+        login: true
+        inRoles:
+          - pg_read_all_data
+        passwordSecret:
+          name: db-data-analyst-secret
+      - name: airflow_task_writer
+        ensure: present
+        comment: "Pour les tâches Airflow"
+        login: true
+        passwordSecret:
+          name: db-data-airflow-task-secret
+  databases:
+    - name: data_store
+      ensure: present
+      owner: airflow_task_writer
+      databaseReclaimPolicy: retain
